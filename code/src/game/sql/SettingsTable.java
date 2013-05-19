@@ -1,63 +1,133 @@
 package game.sql;
 
+import game.settings.Settings;
+
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import sql.Table;
+import sql.SQL;
 
-public class SettingsTable extends Table {
+public class SettingsTable {
   private static SettingsTable _instance = new SettingsTable();
   
   public static SettingsTable getInstance() {
     return _instance;
   }
   
+  private SQL _sql;
+  
+  private PreparedStatement _create;
+  private PreparedStatement _insert;
+  private PreparedStatement _update;
+  
+  private PreparedStatement _drop;
+  private PreparedStatement _select;
+  private PreparedStatement _delete;
+  
+  private int _id;
+  
   private double _version;
   
+  private int _mapSize;
+  private int _mapDepth;
+  private int _mapTileSize;
+  private int _mapAttribSize;
+  
   public SettingsTable() {
-    super("settings", "s_id");
-    _create = _sql.prepareStatement("CREATE TABLE " + _tableName + " (" + _tableID + " INT NOT NULL AUTO_INCREMENT, s_client_version DOUBLE NOT NULL, CONSTRAINT pk_" + _tableID + " UNIQUE (" + _tableID + "))");
-    _insert = _sql.prepareStatement("INSERT INTO " + _tableName + " VALUES (null, ?)");
-    _update = _sql.prepareStatement("UPDATE " + _tableName + " SET s_client_version=? WHERE " + _tableID + "=?");
-    _id = 1;
+    _sql = SQL.getInstance();
+    _create = _sql.prepareStatement("CREATE TABLE settings (" +
+    		                            "s_id INT NOT NULL AUTO_INCREMENT, s_client_version DOUBLE NOT NULL," +
+                                    "s_map_size INT NOT NULL, s_map_depth INT NOT NULL, s_map_tile_size INT NOT NULL, s_map_attrib_size INT NOT NULL" +
+                                    "CONSTRAINT pk_s_id UNIQUE (s_id))");
+    _drop   = _sql.prepareStatement("DROP TABLE settings");
+    _insert = _sql.prepareStatement("INSERT INTO settings VALUES (null, ?)");
+    _delete = _sql.prepareStatement("DELETE FROM CHARACTERS WHERE s_id=?");
+    _update = _sql.prepareStatement("UPDATE settings SET s_client_version=?, s_map_size=?, s_map_depth=?, s_map_tile_size=?, s_map_attrib_size=? WHERE s_id=?");
+    _select = _sql.prepareStatement("SELECT * FROM settings WHERE s_id=?");
+  }
+  
+  public void close() throws SQLException {
+    if(_create != null) _create.close();
+    if(_drop   != null) _drop  .close();
+    if(_insert != null) _insert.close();
+    if(_delete != null) _delete.close();
+    if(_update != null) _update.close();
+    if(_select != null) _select.close();
   }
   
   public double getVersion() {
     return _version;
   }
   
-  public void setVersion(double version) {
-    _version = version;
+  public int getMapSize() {
+    return _mapSize;
+  }
+  
+  public int getMapDepth() {
+    return _mapDepth;
+  }
+  
+  public int getMapTileSize() {
+    return _mapTileSize;
+  }
+  
+  public int getMapAttribSize() {
+    return _mapAttribSize;
   }
   
   public boolean exists() {
-    return super.exists();
+    return _sql.tableExists("settings");
   }
   
   public void create() throws SQLException {
-    super.create();
+    _create.execute();
     insert();
+  }
+  
+  public void drop() throws SQLException {
+    _drop.executeUpdate();
   }
   
   protected void insert() throws SQLException {
     int i = 1;
-    _insert.setDouble(i++, _version);
-    _insert.execute();
+    _insert.setDouble(i++, Settings.Net.Version());
+    _insert.setInt(i++, Settings.Map.Size());
+    _insert.setInt(i++, Settings.Map.Depth());
+    _insert.setInt(i++, Settings.Map.Tile.Size());
+    _insert.setInt(i++, Settings.Map.Attrib.Size());
+    _insert.executeUpdate();
   }
   
-  public void select() throws SQLException {
-    super.select();
-    ResultSet r = _result;
-    
-    r.next();
-    int i = 2;
-    _version = r.getDouble(i++);
+  public void delete() throws SQLException {
+    _delete.setInt(1, _id);
+    _delete.executeUpdate();
   }
   
   public void update() throws SQLException {
     int i = 1;
     _update.setDouble(i++, _version);
     _update.setInt(i++, _id);
-    _update.execute();
+    _update.setInt(i++, Settings.Map.Size());
+    _update.setInt(i++, Settings.Map.Depth());
+    _update.setInt(i++, Settings.Map.Tile.Size());
+    _update.setInt(i++, Settings.Map.Attrib.Size());
+    _update.executeUpdate();
+  }
+  
+  public void select() throws SQLException {
+    _select.setInt(1, _id);
+    ResultSet r = _select.executeQuery();
+    
+    if(r.next()) {
+      int i = 2;
+      _version = r.getDouble(i++);
+      _mapSize = r.getInt(i++);
+      _mapDepth = r.getInt(i++);
+      _mapTileSize = r.getInt(i++);
+      _mapAttribSize = r.getInt(i++);
+    }
+    
+    r.close();
   }
 }
