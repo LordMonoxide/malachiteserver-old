@@ -7,7 +7,7 @@ public class Game {
   private Server _net;
   
   public void start() {
-    Settings.load();
+    Settings.init();
     
     _net = new Server();
     _net.initPackets();
