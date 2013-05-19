@@ -19,20 +19,8 @@ public class Settings {
   private static Properties _settings = new Properties();
   private static File _file = new File("../sql.conf");
   
-  public static void init() {
-    if(!_file.exists()) {
-      _settings.setProperty("host", Settings.SQL.Host());
-      _settings.setProperty("db",   Settings.SQL.DB());
-      _settings.setProperty("user", Settings.SQL.User());
-      _settings.setProperty("pass", Settings.SQL.Pass());
-      _settings.setProperty("port", String.valueOf(Settings.Net.Port()));
-      
-      try {
-        _settings.store(new FileOutputStream(_file), null);
-      } catch(IOException e) {
-        e.printStackTrace();
-      }
-    }
+  public static void load() {
+    if(!_file.exists()) save();
     
     FileInputStream fs = null;
     
@@ -51,7 +39,14 @@ public class Settings {
       try {
         if(!settingsTable.exists()) {
           System.out.println("Creating settings table...");
+          settingsTable.setVersion(Settings.Net.Version());
           settingsTable.create();
+        } else {
+          settingsTable.select();
+          
+          try {
+            Net._instance.load(settingsTable.getVersion(), _settings.getInt("port"));
+          } catch(InvalidDataException e) { }
         }
         
         if(!permissionsTable.exists()) {
@@ -80,27 +75,18 @@ public class Settings {
         e.printStackTrace();
       }
     }
-    
-    load();
   }
   
-  public static void load() {
-    SettingsTable settingsTable = SettingsTable.getInstance();
+  public static void save() {
+    _settings.setProperty("host", Settings.SQL.Host());
+    _settings.setProperty("db",   Settings.SQL.DB());
+    _settings.setProperty("user", Settings.SQL.User());
+    _settings.setProperty("pass", Settings.SQL.Pass());
+    _settings.setProperty("port", String.valueOf(Settings.Net.Port()));
     
     try {
-      settingsTable.select();
-      
-      try {
-        Net._instance._version = settingsTable.getVersion();
-        Net._instance._port = _settings.getInt("port");
-        Map._instance._size = settingsTable.getMapSize();
-        Map._instance._depth = settingsTable.getMapDepth();
-        Map.Tile._instance._size = settingsTable.getMapTileSize();
-        Map.Tile._instance._count = Map.Size() / Map.Tile.Size();
-        Map.Attrib._instance._size = settingsTable.getMapAttribSize();
-        Map.Attrib._instance._count = Map.Size() / Map.Attrib.Size();
-      } catch(InvalidDataException e) { }
-    } catch(SQLException e) {
+      _settings.store(new FileOutputStream(_file), null);
+    } catch(IOException e) {
       e.printStackTrace();
     }
   }
@@ -134,35 +120,10 @@ public class Settings {
     
     public static double Version() { return _instance._version; }
     public static    int Port()    { return _instance._port; }
-  }
-  
-  public static class Map {
-    private static Map _instance = new Map();
     
-    private int _size = 512;
-    private int _depth = 5;
-    
-    public static int Size()  { return _instance._size; }
-    public static int Depth() { return _instance._depth; }
-    
-    public static class Tile {
-      private static Tile _instance = new Tile();
-      
-      private int _size = 32;
-      private int _count;
-      
-      public static int Size()  { return _instance._size; }
-      public static int Count() { return _instance._count; }
-    }
-    
-    public static class Attrib {
-      private static Attrib _instance = new Attrib();
-      
-      private int _size = 16;
-      private int _count;
-      
-      public static int Size()  { return _instance._size; }
-      public static int Count() { return _instance._count; }
+    private void load(double version, int port) {
+      _version = version;
+      _port = port;
     }
   }
 }
