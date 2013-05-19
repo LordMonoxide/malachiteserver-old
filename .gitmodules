@@ -1,0 +1,3 @@
+[submodule "lmnet"]
+	path = code/lmnet
+	url = https://github.com/LordMonoxide/lmnet.git
