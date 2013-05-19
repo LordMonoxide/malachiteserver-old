@@ -3,6 +3,7 @@ package game.data.account;
 public class Account {
   private int _id;
   private String _name;
+  private Character _char;
   
   private Permissions _permissions;
   
@@ -18,6 +19,14 @@ public class Account {
   
   public void setName(String name) {
     _name = name;
+  }
+  
+  public Character getChar() {
+    return _char;
+  }
+  
+  public void setChar(Character c) {
+    _char = c;
   }
   
   public Permissions getPermissions() {
