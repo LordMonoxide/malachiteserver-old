@@ -29,7 +29,11 @@ public class Connection extends network.Connection {
     _account = account;
   }
   
-  public ArrayList<Character> getPlayer() {
+  public Character getCharacter(int index) {
+    return _player.get(index);
+  }
+  
+  public ArrayList<Character> getCharacter() {
     return _player;
   }
   
