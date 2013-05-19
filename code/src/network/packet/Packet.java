@@ -6,9 +6,8 @@ import io.netty.buffer.ByteBuf;
 public abstract class Packet {
   protected Connection _connection;
   
-  public Connection getConnection() {
-    return _connection;
-  }
+  public Connection getConnection() { return _connection; }
+  public void       setConnection(Connection c) { _connection = c; }
   
   public abstract int getIndex();
   public abstract ByteBuf serialize();

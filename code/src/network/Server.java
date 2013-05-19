@@ -30,15 +30,13 @@ public class Server {
   private Events _events;
   
   public Server(Class<? extends Connection> connectionClass) {
-    final Server s = this;
-    
     _bootstrap = new ServerBootstrap()
               .group(new NioEventLoopGroup(), new NioEventLoopGroup())
               .channel(NioServerSocketChannel.class)
               .childHandler(new ChannelInitializer<SocketChannel>() {
                 protected void initChannel(SocketChannel ch) throws Exception {
                   ch.pipeline().addLast(new EncoderLength(), new Encoder());
-                  ch.pipeline().addLast(new DecoderLength(), new Decoder(s));
+                  ch.pipeline().addLast(new DecoderLength(), new Decoder());
                   ch.pipeline().addLast(new Handler());
                 }
     });
@@ -159,6 +157,7 @@ public class Server {
     }
     
     public void messageReceived(ChannelHandlerContext ctx, Packet msg) throws Exception {
+      msg.setConnection(connections().get(ctx.channel()));
       _events.raisePacket(msg);
     }
   }
