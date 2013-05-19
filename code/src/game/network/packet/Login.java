@@ -65,7 +65,7 @@ public class Login extends Packet {
           a.setPermissions(tablePermission.getPermissions());
           
           response._response = Response.RESPONSE_OKAY;
-          response._player = c.getPlayer();
+          response._player = c.getCharacter();
           
           Permissions p = new Permissions();
           p.setPermissions(a.getPermissions());
