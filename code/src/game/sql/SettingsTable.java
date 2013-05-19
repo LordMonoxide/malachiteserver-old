@@ -37,11 +37,11 @@ public class SettingsTable {
   public SettingsTable() {
     _sql = SQL.getInstance();
     _create = _sql.prepareStatement("CREATE TABLE settings (" +
-    		                            "s_id INT NOT NULL AUTO_INCREMENT, s_client_version DOUBLE NOT NULL," +
-                                    "s_map_size INT NOT NULL, s_map_depth INT NOT NULL, s_map_tile_size INT NOT NULL, s_map_attrib_size INT NOT NULL" +
+    		                            "s_id INT NOT NULL, s_client_version DOUBLE NOT NULL," +
+                                    "s_map_size INT NOT NULL, s_map_depth INT NOT NULL, s_map_tile_size INT NOT NULL, s_map_attrib_size INT NOT NULL," +
                                     "CONSTRAINT pk_s_id UNIQUE (s_id))");
     _drop   = _sql.prepareStatement("DROP TABLE settings");
-    _insert = _sql.prepareStatement("INSERT INTO settings VALUES (null, ?)");
+    _insert = _sql.prepareStatement("INSERT INTO settings VALUES (?, ?, ?, ?, ?, ?)");
     _delete = _sql.prepareStatement("DELETE FROM CHARACTERS WHERE s_id=?");
     _update = _sql.prepareStatement("UPDATE settings SET s_client_version=?, s_map_size=?, s_map_depth=?, s_map_tile_size=?, s_map_attrib_size=? WHERE s_id=?");
     _select = _sql.prepareStatement("SELECT * FROM settings WHERE s_id=?");
@@ -54,6 +54,14 @@ public class SettingsTable {
     if(_delete != null) _delete.close();
     if(_update != null) _update.close();
     if(_select != null) _select.close();
+  }
+  
+  public int getID() {
+    return _id;
+  }
+  
+  public void setID(int id) {
+    _id = id;
   }
   
   public double getVersion() {
@@ -91,6 +99,7 @@ public class SettingsTable {
   
   protected void insert() throws SQLException {
     int i = 1;
+    _insert.setInt(i++, _id);
     _insert.setDouble(i++, Settings.Net.Version());
     _insert.setInt(i++, Settings.Map.Size());
     _insert.setInt(i++, Settings.Map.Depth());
@@ -126,6 +135,9 @@ public class SettingsTable {
       _mapDepth = r.getInt(i++);
       _mapTileSize = r.getInt(i++);
       _mapAttribSize = r.getInt(i++);
+    } else {
+      r.close();
+      throw new SQLException("Could not find Settings entry with ID " + _id);
     }
     
     r.close();
