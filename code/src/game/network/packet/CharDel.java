@@ -30,7 +30,7 @@ public class CharDel extends Packet {
       return;
     }
     
-    if(_id < 0 || _id >= c.getPlayer().size()) {
+    if(_id < 0 || _id >= c.getCharacter().size()) {
       c.kick("Invalid char index");
       return;
     }
@@ -42,12 +42,12 @@ public class CharDel extends Packet {
     
     CharactersTable table = CharactersTable.getInstance();
     try {
-      table.delete(c.getPlayer().get(_id));
+      table.delete(c.getCharacter().get(_id));
     } catch(SQLException e) {
       e.printStackTrace();
     }
     
-    c.getPlayer().remove(_id);
+    c.getCharacter().remove(_id);
     c.send(new Response());
   }
   
