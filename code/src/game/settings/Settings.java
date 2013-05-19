@@ -39,7 +39,16 @@ public class Settings {
     try {
       fs = new FileInputStream(_file);
       _settings.load(fs);
-      SQL._instance.load(_settings.getString("host"), _settings.getString("db"), _settings.getString("user"), _settings.getString("pass"));
+      try {
+        SQL._instance._id = _settings.getInt("serverID");
+      } catch(InvalidDataException e) {
+        e.printStackTrace();
+      }
+      
+      SQL._instance._host = _settings.getString("host");
+      SQL._instance._db   = _settings.getString("db");
+      SQL._instance._user = _settings.getString("user");
+      SQL._instance._pass = _settings.getString("pass");
       sql.SQL.create(MySQL.class);
       sql.SQL.getInstance().connect(Settings.SQL.Host(), Settings.SQL.DB(), Settings.SQL.User(), Settings.SQL.Pass());
       
@@ -47,6 +56,8 @@ public class Settings {
       PermissionsTable permissionsTable = PermissionsTable.getInstance();
       AccountsTable accountTable = AccountsTable.getInstance();
       CharactersTable charTable = CharactersTable.getInstance();
+      
+      settingsTable.setID(SQL.ID());
       
       try {
         if(!settingsTable.exists()) {
@@ -108,22 +119,17 @@ public class Settings {
   public static class SQL {
     private static SQL _instance = new SQL();
     
+    private int _id = 1;
     private String _host = "127.0.0.1";
     private String _db   = "m8";
     private String _user = "root";
     private String _pass = "";
     
+    public static int    ID()   { return _instance._id; }
     public static String Host() { return _instance._host; }
     public static String DB()   { return _instance._db; }
     public static String User() { return _instance._user; }
     public static String Pass() { return _instance._pass; }
-    
-    public void load(String host, String db, String user, String pass) {
-      _host = host;
-      _db = db;
-      _user = user;
-      _pass = pass;
-    }
   }
   
   public static class Net {
