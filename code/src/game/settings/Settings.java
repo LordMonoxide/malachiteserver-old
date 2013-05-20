@@ -21,11 +21,12 @@ public class Settings {
   
   public static void init() {
     if(!_file.exists()) {
-      _settings.setProperty("host", Settings.SQL.Host());
-      _settings.setProperty("db",   Settings.SQL.DB());
-      _settings.setProperty("user", Settings.SQL.User());
-      _settings.setProperty("pass", Settings.SQL.Pass());
-      _settings.setProperty("port", String.valueOf(Settings.Net.Port()));
+      _settings.set("serverID", Settings.SQL.ID());
+      _settings.set("host",     Settings.SQL.Host());
+      _settings.set("db",       Settings.SQL.DB());
+      _settings.set("user",     Settings.SQL.User());
+      _settings.set("pass",     Settings.SQL.Pass());
+      _settings.set("port",     String.valueOf(Settings.Net.Port()));
       
       try {
         _settings.store(new FileOutputStream(_file), null);
