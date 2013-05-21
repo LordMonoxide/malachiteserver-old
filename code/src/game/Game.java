@@ -22,6 +22,8 @@ public class Game {
     if(w == null) {
       w = new World(file);
       _world.put(file, w);
+      
+      System.out.println("World " + file + " loaded.");
     }
     
     return w;
