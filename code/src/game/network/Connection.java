@@ -4,11 +4,13 @@ import java.util.ArrayList;
 
 import game.data.account.Account;
 import game.data.account.Character;
+import game.world.Entity;
 import network.packet.Packet;
 
 public class Connection extends network.Connection {
   private Handler _handler;
   private Account _account;
+  private Entity  _entity;
   private ArrayList<Character> _player;
   
   private boolean _inGame;
@@ -27,6 +29,14 @@ public class Connection extends network.Connection {
   
   public void setAccount(Account account) {
     _account = account;
+  }
+  
+  public Entity getEntity() {
+    return _entity;
+  }
+  
+  public void setEntity(Entity entity) {
+    _entity = entity;
   }
   
   public Character getCharacter(int index) {
