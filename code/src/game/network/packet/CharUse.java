@@ -2,8 +2,11 @@ package game.network.packet;
 
 import java.sql.SQLException;
 
+import game.Game;
+import game.data.account.Character;
 import game.network.Connection;
 import game.sql.CharactersTable;
+import game.world.Entity;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import network.packet.Packet;
@@ -40,7 +43,16 @@ public class CharUse extends Packet {
     CharactersTable table = CharactersTable.getInstance();
     
     try {
-      c.getAccount().setChar(table.selectFromAccount(c.getAccount(), c.getCharacter(_index).getID()));
+      Character character = table.selectFromAccount(c.getAccount(), c.getCharacter(_index).getID());
+      
+      Entity e = new Entity();
+      e.setWorld(Game.getInstance().getWorld(character.getWorld()));
+      e.setX(character.getX());
+      e.setY(character.getY());
+      e.setZ(character.getZ());
+      
+      c.getAccount().setChar(character);
+      c.setEntity(e);
       c.setInGame(true);
       
       response._response = Response.RESPONSE_OKAY;
