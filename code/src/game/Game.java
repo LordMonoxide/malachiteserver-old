@@ -9,7 +9,6 @@ import game.world.World;
 
 public class Game {
   private static Game _instance = new Game();
-  
   public static Game getInstance() { return _instance; }
   
   private Server _net;
