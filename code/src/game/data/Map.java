@@ -43,12 +43,15 @@ public class Map extends Serializable {
     Entity[] e = new Entity[_sprite.size()];
     int i = 0;
     
-    for(Map.Sprite sprite : _sprite) {
-      e[i] = new Entity();
-      e[i].setWorld(_world);
-      e[i].setX(sprite._x + _x * Settings.Map.Size());
-      e[i].setY(sprite._y + _y * Settings.Map.Size());
-      e[i].setZ(sprite._z);
+    for(final Map.Sprite sprite : _sprite) {
+      e[i] = new Entity(new Entity.Source() {
+        public String getName() { return null; }
+        public float  getX()    { return sprite._x + _x * Settings.Map.Size(); }
+        public float  getY()    { return sprite._y + _y * Settings.Map.Size(); }
+        public int    getZ()    { return sprite._z; }
+      });
+      
+      _world.addEntity(e[i]);
       i++;
     }
     
