@@ -45,10 +45,11 @@ public class Map extends Serializable {
     
     for(final Map.Sprite sprite : _sprite) {
       e[i] = new Entity(new Entity.Source() {
-        public String getName() { return null; }
-        public float  getX()    { return sprite._x + _x * Settings.Map.Size(); }
-        public float  getY()    { return sprite._y + _y * Settings.Map.Size(); }
-        public int    getZ()    { return sprite._z; }
+        public String getName()   { return null; }
+        public String getSprite() { return sprite._file; }
+        public float  getX()      { return sprite._x + _x * Settings.Map.Size(); }
+        public float  getY()      { return sprite._y + _y * Settings.Map.Size(); }
+        public int    getZ()      { return sprite._z; }
       });
       
       _world.addEntity(e[i]);
