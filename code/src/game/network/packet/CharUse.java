@@ -43,19 +43,21 @@ public class CharUse extends Packet {
     CharactersTable table = CharactersTable.getInstance();
     
     try {
-      Character character = table.selectFromAccount(c.getAccount(), c.getCharacter(_index).getID());
-      
-      Entity e = new Entity();
-      e.setWorld(Game.getInstance().getWorld(character.getWorld()));
-      e.setX(character.getX());
-      e.setY(character.getY());
-      e.setZ(character.getZ());
+      final Character character = table.selectFromAccount(c.getAccount(), c.getCharacter(_index).getID());
       
       c.getAccount().setChar(character);
-      c.setEntity(e);
+      c.setEntity(new Entity(new Entity.Source() {
+        public String getName() { return character.getName(); }
+        public float  getX()    { return character.getX(); }
+        public float  getY()    { return character.getY(); }
+        public int    getZ()    { return character.getZ(); }
+      }));
       c.setInGame(true);
       
+      Game.getInstance().getWorld(character.getWorld()).addEntity(c.getEntity());
+      
       response._response = Response.RESPONSE_OKAY;
+      response._world = character.getWorld();
     } catch(SQLException e) {
       e.printStackTrace();
       
@@ -70,6 +72,7 @@ public class CharUse extends Packet {
     public static final byte RESPONSE_SQL_ERROR = 1;
     
     private byte _response;
+    private String _world;
     
     public int getIndex() {
       return 9;
@@ -78,6 +81,12 @@ public class CharUse extends Packet {
     public ByteBuf serialize() {
       ByteBuf b = Unpooled.buffer(1);
       b.writeByte(_response);
+      
+      if(_response == RESPONSE_OKAY) {
+        b.writeShort(_world.length());
+        b.writeBytes(_world.getBytes());
+      }
+      
       return b;
     }
     
