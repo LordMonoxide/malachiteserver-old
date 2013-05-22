@@ -20,11 +20,13 @@ public class EntityCreate extends Packet {
     ByteBuf b = Unpooled.buffer();
     b.writeShort(_entity.getName().length());
     b.writeBytes(_entity.getName().getBytes());
-    b.writeDouble(_entity.getAcc());
-    b.writeDouble(_entity.getDec());
-    b.writeDouble(_entity.getVelTerm());
-    b.writeDouble(_entity.getX());
-    b.writeDouble(_entity.getY());
+    b.writeShort(_entity.getSprite().length());
+    b.writeBytes(_entity.getSprite().getBytes());
+    b.writeFloat(_entity.getAcc());
+    b.writeFloat(_entity.getDec());
+    b.writeFloat(_entity.getVelTerm());
+    b.writeFloat(_entity.getX());
+    b.writeFloat(_entity.getY());
     b.writeInt(_entity.getZ());
     return b;
   }
