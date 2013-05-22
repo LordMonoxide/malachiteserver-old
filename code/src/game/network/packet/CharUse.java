@@ -34,7 +34,7 @@ public class CharUse extends Packet {
     }
     
     if(_index < 0 || _index >= c.getCharacter().size()) {
-      c.kick("Invalid char index");
+      c.kick("Invalid char index " + _index);
       return;
     }
     
@@ -47,17 +47,21 @@ public class CharUse extends Packet {
       
       c.getAccount().setChar(character);
       c.setEntity(new Entity(new Entity.Source() {
-        public String getName() { return character.getName(); }
-        public float  getX()    { return character.getX(); }
-        public float  getY()    { return character.getY(); }
-        public int    getZ()    { return character.getZ(); }
-      }));
+        public String getName()   { return character.getName(); }
+        public String getSprite() { return character.getSprite(); }
+        public float  getX()      { return character.getX(); }
+        public float  getY()      { return character.getY(); }
+        public int    getZ()      { return character.getZ(); }
+      }, c));
       c.setInGame(true);
-      
-      Game.getInstance().getWorld(character.getWorld()).addEntity(c.getEntity());
       
       response._response = Response.RESPONSE_OKAY;
       response._world = character.getWorld();
+      c.send(response);
+      
+      Game.getInstance().getWorld(character.getWorld()).addEntity(c.getEntity());
+      
+      return;
     } catch(SQLException e) {
       e.printStackTrace();
       
