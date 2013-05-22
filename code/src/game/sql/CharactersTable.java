@@ -31,13 +31,13 @@ public class CharactersTable {
   
   public CharactersTable() {
     _sql = SQL.getInstance();
-    _create        = _sql.prepareStatement("CREATE TABLE characters (c_id INT NOT NULL AUTO_INCREMENT, c_a_id INT NOT NULL, c_name VARCHAR(16) NOT NULL, c_world VARCHAR(40) NOT NULL, c_x FLOAT NOT NULL, c_y FLOAT NOT NULL, c_z INT NOT NULL, CONSTRAINT pk_c_id UNIQUE (c_id), CONSTRAINT pk_c_name UNIQUE (c_name), FOREIGN KEY (c_a_id) REFERENCES accounts(a_id))");
+    _create        = _sql.prepareStatement("CREATE TABLE characters (c_id INT NOT NULL AUTO_INCREMENT, c_a_id INT NOT NULL, c_name VARCHAR(16) NOT NULL, c_sprite VARCHAR(40) NOT NULL, c_world VARCHAR(40) NOT NULL, c_x FLOAT NOT NULL, c_y FLOAT NOT NULL, c_z INT NOT NULL, CONSTRAINT pk_c_id UNIQUE (c_id), CONSTRAINT pk_c_name UNIQUE (c_name), FOREIGN KEY (c_a_id) REFERENCES accounts(a_id))");
     _drop          = _sql.prepareStatement("DROP TABLE characters");
-    _insert        = _sql.prepareStatement("INSERT INTO characters VALUES (null, ?, ?, ?, ?, ?, ?)");
+    _insert        = _sql.prepareStatement("INSERT INTO characters VALUES (null, ?, ?, ?, ?, ?, ?, ?)");
     _delete        = _sql.prepareStatement("DELETE FROM characters WHERE c_id=?");
     _update        = _sql.prepareStatement("UPDATE characters SET c_world=?, c_x=?, c_y=?, c_z=? WHERE c_id=?");
     _selectAccount = _sql.prepareStatement("SELECT c_id, c_name FROM characters WHERE c_a_id=?");
-    _selectPlayer  = _sql.prepareStatement("SELECT c_name, c_world, c_x, c_y, c_z FROM characters WHERE c_id=? AND c_a_id=?");
+    _selectPlayer  = _sql.prepareStatement("SELECT c_name, c_sprite, c_world, c_x, c_y, c_z FROM characters WHERE c_id=? AND c_a_id=?");
     _selectExist   = _sql.prepareStatement("SELECT c_id FROM characters WHERE c_name=?");
   }
   
@@ -68,6 +68,7 @@ public class CharactersTable {
     int i = 1;
     _insert.setInt(i++, p.getAccount().getID());
     _insert.setString(i++, p.getName());
+    _insert.setString(i++, p.getSprite());
     _insert.setString(i++, p.getWorld());
     _insert.setFloat(i++, p.getX());
     _insert.setFloat(i++, p.getY());
@@ -124,6 +125,7 @@ public class CharactersTable {
       int i = 1;
       c = new Character(id, a);
       c.setName(r.getString(i++));
+      c.setSprite(r.getString(i++));
       c.setWorld(r.getString(i++));
       c.setX(r.getFloat(i++));
       c.setY(r.getFloat(i++));
@@ -136,7 +138,7 @@ public class CharactersTable {
   
   public int find(String name) throws SQLException {
     _selectExist.setString(1, name);
-    _selectExist.executeUpdate();
+    _selectExist.executeQuery();
     
     ResultSet r = _selectExist.getResultSet();
     if(r.next()) {
