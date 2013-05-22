@@ -1,10 +1,15 @@
 package game.world;
 
+import network.packet.Packet;
+import game.network.Connection;
 import game.settings.Settings;
 import physics.Movable;
 
 public class Entity extends Movable {
+  private Connection _connection;
+  
   private String _name;
+  private String _sprite;
   
   private World _world;
   private float _rx, _ry;
@@ -14,11 +19,18 @@ public class Entity extends Movable {
   private int _z;
   
   public Entity(Source source) {
+    this(source, null);
+  }
+  
+  public Entity(Source source, Connection connection) {
+    _connection = connection;
+    
     setAcc(0.148f);
     setDec(0.361f);
     setVelTerm(1.75f);
     
     _name = source.getName();
+    _sprite = source.getSprite();
     
     _x = source.getX();
     _y = source.getY();
@@ -41,8 +53,16 @@ public class Entity extends Movable {
     }
   }
   
+  public Connection getConnection() {
+    return _connection;
+  }
+  
   public String getName() {
     return _name;
+  }
+  
+  public String getSprite() {
+    return _sprite;
   }
   
   public World getWorld() {
@@ -134,8 +154,15 @@ public class Entity extends Movable {
     _region = r;
   }
   
+  public void send(Packet packet) {
+    if(_connection != null) {
+      _connection.send(packet);
+    }
+  }
+  
   public static interface Source {
     public String getName();
+    public String getSprite();
     public float  getX();
     public float  getY();
     public int    getZ();
