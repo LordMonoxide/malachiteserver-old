@@ -12,6 +12,7 @@ import network.util.Crypto;
 
 public class CharNew extends Packet {
   private String _name;
+  private String _sprite;
   
   public int getIndex() {
     return 6;
@@ -22,7 +23,8 @@ public class CharNew extends Packet {
   }
   
   public void deserialize(ByteBuf data) throws NotEnoughDataException {
-    _name = new String(data.readBytes(data.readShort()).array());
+    _name   = new String(data.readBytes(data.readShort()).array());
+    _sprite = new String(data.readBytes(data.readShort()).array());
   }
   
   public void process() {
@@ -32,8 +34,8 @@ public class CharNew extends Packet {
       return;
     }
     
-    if(!Crypto.validateText(_name)) {
-      c.kick("Invalid name");
+    if(!Crypto.validateText(_name) || !Crypto.validateText(_sprite)) {
+      c.kick("Invalid name/sprite");
       return;
     }
     
@@ -48,6 +50,7 @@ public class CharNew extends Packet {
       if(index == -1) {
         Character character = new Character(0, c.getAccount());
         character.setName(_name);
+        character.setSprite(_sprite);
         character.setWorld("default");
         character.setX(256);
         character.setY(256);
