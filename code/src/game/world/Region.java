@@ -38,10 +38,12 @@ public class Region {
   public void spawn() {
     despawn();
     _entity = _map.spawn();
+    _world.addEntity(_entity);
   }
   
   public void despawn() {
     if(_entity != null) {
+      _world.removeEntity(_entity);
       _entity = null;
     }
   }
