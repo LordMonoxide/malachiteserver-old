@@ -16,6 +16,8 @@ public class Game {
   private ConcurrentHashMapV8<String, World>  _world  = new ConcurrentHashMapV8<String, World>();
   private ConcurrentHashMapV8<String, Sprite> _sprite = new ConcurrentHashMapV8<String, Sprite>();
   
+  private int _entityID;
+  
   public World getWorld(String file) {
     World w = _world.get(file);
     if(w == null) {
@@ -41,6 +43,10 @@ public class Game {
     }
     
     return s;
+  }
+  
+  public int getNextEntityID() {
+    return _entityID++;
   }
   
   public void start() {
