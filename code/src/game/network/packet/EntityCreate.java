@@ -18,8 +18,14 @@ public class EntityCreate extends Packet {
   
   public ByteBuf serialize() {
     ByteBuf b = Unpooled.buffer();
-    b.writeShort(_entity.getName().length());
-    b.writeBytes(_entity.getName().getBytes());
+    
+    if(_entity.getName() != null) {
+      b.writeShort(_entity.getName().length());
+      b.writeBytes(_entity.getName().getBytes());
+    } else {
+      b.writeShort(0);
+    }
+    
     b.writeShort(_entity.getSprite().length());
     b.writeBytes(_entity.getSprite().getBytes());
     b.writeFloat(_entity.getAcc());
@@ -28,6 +34,9 @@ public class EntityCreate extends Packet {
     b.writeFloat(_entity.getX());
     b.writeFloat(_entity.getY());
     b.writeInt(_entity.getZ());
+    
+    System.out.println("Sending entity " + _entity.getName());
+    
     return b;
   }
   
