@@ -32,7 +32,13 @@ public class Server {
     
     _server.events().onConnect(new network.Server.Events.Connect() {
       public void event(network.Connection c) {
-        ((Connection)c).setHandler(_connect);
+        connect((Connection)c);
+      }
+    });
+    
+    _server.events().onDisconnect(new network.Server.Events.Connect() {
+      public void event(network.Connection c) {
+        disconnect((Connection)c);
       }
     });
     
@@ -69,5 +75,16 @@ public class Server {
         }
       }
     });
+  }
+  
+  private void connect(Connection connection) {
+    connection.setHandler(_connect);
+  }
+  
+  private void disconnect(Connection connection) {
+    System.out.println(connection.isInGame());
+    if(connection.isInGame()) {
+      connection.getEntity().remove();
+    }
   }
 }
