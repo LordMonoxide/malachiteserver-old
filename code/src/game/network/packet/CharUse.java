@@ -28,7 +28,7 @@ public class CharUse extends Packet {
   
   public void process() {
     Connection c = (Connection)_connection;
-    if(c.getAccount() == null) {
+    if(!c.isInMenu()) {
       c.kick("Not logged in");
       return;
     }
@@ -53,7 +53,6 @@ public class CharUse extends Packet {
         public float  getY()      { return character.getY(); }
         public int    getZ()      { return character.getZ(); }
       }, c));
-      c.setInGame(true);
       
       response._response = Response.RESPONSE_OKAY;
       response._world = character.getWorld();
