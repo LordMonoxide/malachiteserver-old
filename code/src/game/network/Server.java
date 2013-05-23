@@ -82,7 +82,6 @@ public class Server {
   }
   
   private void disconnect(Connection connection) {
-    System.out.println(connection.isInGame());
     if(connection.isInGame()) {
       connection.getEntity().remove();
     }
