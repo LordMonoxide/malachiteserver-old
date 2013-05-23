@@ -5,6 +5,7 @@ import game.network.packet.CharNew;
 import game.network.packet.CharUse;
 import game.network.packet.Connect;
 import game.network.packet.EntityCreate;
+import game.network.packet.EntityDestroy;
 import game.network.packet.Login;
 import game.network.packet.Permissions;
 import game.settings.Settings;
@@ -62,6 +63,7 @@ public class Server {
     Packets.add(CharUse.class);
     Packets.add(CharUse.Response.class);
     Packets.add(EntityCreate.class);
+    Packets.add(EntityDestroy.class);
   }
   
   public void start() {
