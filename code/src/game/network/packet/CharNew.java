@@ -55,6 +55,7 @@ public class CharNew extends Packet {
         character.setY(256);
         character.setZ(2);
         table.insert(character);
+        c.getCharacter().add(character);
         response._response = Response.RESPONSE_OKAY;
         
         System.out.println(c.getAccount().getName() + " (" + c.getChannel().remoteAddress() + ") created character " + character.getName());
