@@ -42,10 +42,9 @@ public class CharNew extends Packet {
     Response response = new Response();
     
     CharactersTable table = CharactersTable.getInstance();
-    int index;
     
     try {
-      index = table.find(_name);
+      int index = table.find(_name);
       
       if(index == -1) {
         Character character = new Character(0, c.getAccount());
