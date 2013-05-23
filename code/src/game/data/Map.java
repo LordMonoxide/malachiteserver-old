@@ -6,29 +6,22 @@ import game.data.util.Buffer;
 import game.data.util.Serializable;
 import game.settings.Settings;
 import game.world.Entity;
-import game.world.World;
 
 public class Map extends Serializable {
   private static final int VERSION = 3;
   
-  protected World _world;
   protected int _x, _y;
   protected Layer[] _layer = new Layer[Settings.Map.Depth()];
   protected LinkedList<Sprite> _sprite = new LinkedList<Sprite>();
   
-  public Map(World world, int x, int y) {
+  public Map(String world, int x, int y) {
     super("worlds/" + world, x + "x" + y);
-    _world = world;
     _x = x;
     _y = y;
     
     for(int z = 0; z < _layer.length; z++) {
       _layer[z] = new Layer();
     }
-  }
-  
-  public World getWorld() {
-    return _world;
   }
   
   public int getX() {
@@ -52,7 +45,6 @@ public class Map extends Serializable {
         public int    getZ()      { return sprite._z; }
       });
       
-      _world.addEntity(e[i]);
       i++;
     }
     
