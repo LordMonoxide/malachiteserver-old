@@ -31,7 +31,7 @@ public class CharDel extends Packet {
     }
     
     if(_id < 0 || _id >= c.getCharacter().size()) {
-      c.kick("Invalid char index");
+      c.kick("Invalid char index " + _id);
       return;
     }
     
