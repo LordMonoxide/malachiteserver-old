@@ -42,26 +42,38 @@ public class CharDel extends Packet {
     
     String name = c.getCharacter(_id).getName();
     
+    Response response = new Response();
+    
     CharactersTable table = CharactersTable.getInstance();
+    
     try {
       table.delete(c.getCharacter().get(_id));
+      c.getCharacter().remove(_id);
+      response._response = Response.RESPONSE_OKAY;
+      
+      System.out.println(c.getAccount().getName() + " (" + c.getChannel().remoteAddress() + ") deleted character " + name);
     } catch(SQLException e) {
+      response._response = Response.RESPONSE_SQL_EXCEPTION;
       e.printStackTrace();
     }
     
-    c.getCharacter().remove(_id);
-    c.send(new Response());
-    
-    System.out.println(c.getAccount().getName() + " (" + c.getChannel().remoteAddress() + ") deleted character " + name);
+    c.send(response);
   }
   
   public static class Response extends Packet {
+    public static final byte RESPONSE_OKAY = 0;
+    public static final byte RESPONSE_SQL_EXCEPTION = 1;
+    
+    private byte _response;
+    
     public int getIndex() {
       return 5;
     }
     
     public ByteBuf serialize() {
-      return Unpooled.EMPTY_BUFFER;
+      ByteBuf b = Unpooled.buffer(1);
+      b.writeByte(_response);
+      return b;
     }
     
     public void deserialize(ByteBuf data) throws NotEnoughDataException {
