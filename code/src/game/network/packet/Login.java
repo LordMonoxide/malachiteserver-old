@@ -33,7 +33,7 @@ public class Login extends Packet {
   
   public void process() {
     Connection c = (Connection)_connection;
-    if(c.getAccount() != null) {
+    if(c.isInMenu()) {
       c.kick("Already logged in");
       return;
     }
