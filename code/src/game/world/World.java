@@ -62,6 +62,14 @@ public class World extends Sandbox {
     return r;
   }
   
+  private void loadRegions(int x, int y, int radius) {
+    for(int x1 = x - radius; x1 <= x + radius; x1++) {
+      for(int y1 = y - radius; y1 <= y + radius; y1++) {
+        getRegion(x1, y1);
+      }
+    }
+  }
+  
   public void addEntity(Entity[] e) {
     for(Entity entity : e) {
       addEntity(entity);
@@ -71,6 +79,10 @@ public class World extends Sandbox {
   public void addEntity(Entity e) {
     e.setWorld(this);
     e.setRegion(getRegion(e.getMX(), e.getMY()));
+    
+    if(e.getConnection() != null) {
+      loadRegions(e.getMX(), e.getMY(), 6);
+    }
     
     _entity.add(e);
     addToSandbox(e);
