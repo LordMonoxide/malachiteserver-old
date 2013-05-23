@@ -19,6 +19,8 @@ public class EntityCreate extends Packet {
   public ByteBuf serialize() {
     ByteBuf b = Unpooled.buffer();
     
+    b.writeInt(_entity.getID());
+    
     if(_entity.getName() != null) {
       b.writeShort(_entity.getName().length());
       b.writeBytes(_entity.getName().getBytes());
