@@ -3,6 +3,7 @@ package game.world;
 import game.data.Map;
 import game.network.Connection;
 import game.network.packet.EntityCreate;
+import game.network.packet.EntityDestroy;
 
 import java.io.File;
 import java.util.HashMap;
@@ -107,6 +108,7 @@ public class World extends Sandbox {
       _connection.remove(e.getConnection());
     }
     
+    sendEntityDestroyToAll(e);
     removeFromSandbox(e);
     _entity.remove(e);
     e.setWorld(null);
@@ -121,6 +123,10 @@ public class World extends Sandbox {
   
   public void sendEntityToAll(Entity e) {
     send(new EntityCreate(e));
+  }
+  
+  public void sendEntityDestroyToAll(Entity e) {
+    send(new EntityDestroy(e));
   }
   
   public void sendEntitiesTo(Connection c) {
