@@ -30,8 +30,8 @@ public class EntityMoveStop extends Packet {
   }
   
   public void deserialize(ByteBuf data) throws NotEnoughDataException {
-    _x    = data.readFloat();
-    _y    = data.readFloat();
+    _x = data.readFloat();
+    _y = data.readFloat();
   }
   
   public void process() {
