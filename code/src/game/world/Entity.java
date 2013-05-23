@@ -154,6 +154,10 @@ public class Entity extends Movable {
     _region = r;
   }
   
+  public void remove() {
+    _world.removeEntity(this);
+  }
+  
   public void send(Packet packet) {
     if(_connection != null) {
       _connection.send(packet);
