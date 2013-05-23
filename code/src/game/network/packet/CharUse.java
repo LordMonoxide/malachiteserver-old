@@ -56,6 +56,7 @@ public class CharUse extends Packet {
       
       response._response = Response.RESPONSE_OKAY;
       response._world = character.getWorld();
+      response._id = c.getEntity().getID();
       c.send(response);
       
       Game.getInstance().getWorld(character.getWorld()).addEntity(c.getEntity());
@@ -76,6 +77,7 @@ public class CharUse extends Packet {
     
     private byte _response;
     private String _world;
+    private int _id;
     
     public int getIndex() {
       return 9;
@@ -88,6 +90,8 @@ public class CharUse extends Packet {
       if(_response == RESPONSE_OKAY) {
         b.writeShort(_world.length());
         b.writeBytes(_world.getBytes());
+        b.writeInt(_id);
+        System.out.println(_id);
       }
       
       return b;
