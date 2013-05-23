@@ -93,7 +93,6 @@ public class CharUse extends Packet {
         b.writeShort(_world.length());
         b.writeBytes(_world.getBytes());
         b.writeInt(_id);
-        System.out.println(_id);
       }
       
       return b;
