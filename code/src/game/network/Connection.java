@@ -13,14 +13,12 @@ public class Connection extends network.Connection {
   private Entity  _entity;
   private ArrayList<Character> _player;
   
-  private boolean _inGame;
-  
-  public boolean isInGame() {
-    return _inGame;
+  public boolean isInMenu() {
+    return _account != null;
   }
   
-  public void setInGame(boolean inGame) {
-    _inGame = inGame;
+  public boolean isInGame() {
+    return _entity != null;
   }
   
   public Account getAccount() {
