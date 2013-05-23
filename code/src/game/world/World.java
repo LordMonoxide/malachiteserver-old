@@ -42,7 +42,7 @@ public class World extends Sandbox {
       Map m = _map.get(name);
       
       if(m == null) {
-        m = new Map(this, x, y);
+        m = new Map(_name, x, y);
         
         if(m.load()) {
           System.out.println("Map " + name + " loaded.");
@@ -56,6 +56,7 @@ public class World extends Sandbox {
       r = new Region(this);
       r.setMap(m);
       _region.put(name, r);
+      r.spawn();
     }
     
     return r;
@@ -70,6 +71,7 @@ public class World extends Sandbox {
   public void addEntity(Entity e) {
     e.setWorld(this);
     e.setRegion(getRegion(e.getMX(), e.getMY()));
+    
     _entity.add(e);
     addToSandbox(e);
     
@@ -77,7 +79,12 @@ public class World extends Sandbox {
       _connection.add(e.getConnection());
     }
     
+    System.out.println("Sending " + e.getName() + " to all");
     send(new EntityCreate(e));
+    
+    if(e.getConnection() != null) {
+      sendEntitiesTo(e.getConnection());
+    }
   }
   
   public void removeEntity(Entity[] e) {
@@ -98,7 +105,15 @@ public class World extends Sandbox {
   
   public void send(Packet packet) {
     for(Connection c : _connection) {
+      System.out.println("Sending data to " + c.getEntity().getName());
       c.send(packet);
+    }
+  }
+  
+  public void sendEntitiesTo(Connection c) {
+    for(Entity e : _entity) {
+      System.out.println("sendEntitiesTo " + e.getName());
+      c.send(new EntityCreate(e));
     }
   }
 }
