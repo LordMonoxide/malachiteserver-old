@@ -75,14 +75,11 @@ public class World extends Sandbox {
     _entity.add(e);
     addToSandbox(e);
     
-    if(e.getConnection() != null) {
-      _connection.add(e.getConnection());
-    }
-    
     System.out.println("Sending " + e.getName() + " to all");
     send(new EntityCreate(e));
     
     if(e.getConnection() != null) {
+      _connection.add(e.getConnection());
       sendEntitiesTo(e.getConnection());
     }
   }
