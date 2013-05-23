@@ -61,7 +61,7 @@ public class Login extends Packet {
           Account a = new Account(tableAccount.getID());
           c.setPlayer(tableChar.selectFromAccount(a));
           c.setAccount(a);
-          a.setName(_name);
+          a.setName(tableAccount.getName());
           a.setPermissions(tablePermission.getPermissions());
           
           response._response = Response.RESPONSE_OKAY;
@@ -70,6 +70,8 @@ public class Login extends Packet {
           Permissions p = new Permissions();
           p.setPermissions(a.getPermissions());
           c.send(p);
+          
+          System.out.println(c.getChannel().remoteAddress() + " logged into " + a.getName());
         } else {
           response._response = Response.RESPONSE_NOT_AUTHD;
         }

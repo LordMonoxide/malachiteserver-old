@@ -57,6 +57,8 @@ public class CharNew extends Packet {
         character.setZ(2);
         table.insert(character);
         response._response = Response.RESPONSE_OKAY;
+        
+        System.out.println(c.getAccount().getName() + " (" + c.getChannel().remoteAddress() + ") created character " + character.getName());
       } else {
         response._response = Response.RESPONSE_EXISTS;
       }

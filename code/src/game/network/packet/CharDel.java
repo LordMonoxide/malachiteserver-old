@@ -40,6 +40,8 @@ public class CharDel extends Packet {
       return;
     }
     
+    String name = c.getCharacter(_id).getName();
+    
     CharactersTable table = CharactersTable.getInstance();
     try {
       table.delete(c.getCharacter().get(_id));
@@ -49,6 +51,8 @@ public class CharDel extends Packet {
     
     c.getCharacter().remove(_id);
     c.send(new Response());
+    
+    System.out.println(c.getAccount().getName() + " (" + c.getChannel().remoteAddress() + ") deleted character " + name);
   }
   
   public static class Response extends Packet {

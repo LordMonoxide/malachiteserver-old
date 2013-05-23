@@ -80,12 +80,20 @@ public class Server {
   }
   
   private void connect(Connection connection) {
+    System.out.println("Got connection from " + connection.getChannel().remoteAddress());
     connection.setHandler(_connect);
   }
   
   private void disconnect(Connection connection) {
     if(connection.isInGame()) {
+      System.out.println(connection.getAccount().getName() + "/" + connection.getEntity().getName() + " (" + connection.getChannel().remoteAddress() + ") lost connection");
       connection.getEntity().remove();
+    } else {
+      if(connection.isInMenu()) {
+        System.out.println(connection.getAccount().getName() + " (" + connection.getChannel().remoteAddress() + ") lost connection");
+      } else {
+        System.out.println(connection.getChannel().remoteAddress() + " lost connection");
+      }
     }
   }
 }

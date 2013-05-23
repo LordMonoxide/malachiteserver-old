@@ -59,6 +59,8 @@ public class CharUse extends Packet {
       response._id = c.getEntity().getID();
       c.send(response);
       
+      System.out.println(c.getAccount().getName() + " (" + c.getChannel().remoteAddress() + ") is using character " + character.getName());
+      
       Game.getInstance().getWorld(character.getWorld()).addEntity(c.getEntity());
       
       return;
