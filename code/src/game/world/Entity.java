@@ -1,12 +1,15 @@
 package game.world;
 
 import network.packet.Packet;
+import game.Game;
 import game.network.Connection;
 import game.settings.Settings;
 import physics.Movable;
 
 public class Entity extends Movable {
   private Connection _connection;
+  
+  private int _id;
   
   private String _name;
   private String _sprite;
@@ -23,6 +26,8 @@ public class Entity extends Movable {
   }
   
   public Entity(Source source, Connection connection) {
+    _id = Game.getInstance().getNextEntityID();
+    
     _connection = connection;
     
     setAcc(0.148f);
@@ -55,6 +60,10 @@ public class Entity extends Movable {
   
   public Connection getConnection() {
     return _connection;
+  }
+  
+  public int getID() {
+    return _id;
   }
   
   public String getName() {
