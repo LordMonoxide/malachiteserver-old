@@ -37,8 +37,6 @@ public class EntityCreate extends Packet {
     b.writeFloat(_entity.getY());
     b.writeInt(_entity.getZ());
     
-    System.out.println("Sending entity " + _entity.getName());
-    
     return b;
   }
   
