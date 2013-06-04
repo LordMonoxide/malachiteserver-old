@@ -7,18 +7,28 @@ import java.io.IOException;
 public abstract class Serializable {
   protected String _path;
   protected String _file;
+  private int _crc;
   
   protected Serializable(String path, String file) {
     _path = path;
     _file = file;
   }
   
+  public String getPath() {
+    return _path;
+  }
+  
   public String getFile() {
     return _file;
   }
   
+  public int getCRC() {
+    return _crc;
+  }
+  
   public void save() {
     Buffer b = serialize();
+    _crc = b.crc();
     
     try {
       b.save(new File("../data/" + _path + "/" + _file));
@@ -31,6 +41,7 @@ public abstract class Serializable {
     try {
       Buffer b = new Buffer(new File("../data/" + _path + "/" + _file));
       deserialize(b);
+      _crc = b.crc();
       return true;
     } catch(FileNotFoundException e) {
     } catch(IOException e) {
