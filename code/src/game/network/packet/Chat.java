@@ -6,10 +6,12 @@ import io.netty.buffer.Unpooled;
 import network.packet.Packet;
 
 public class Chat extends Packet {
+  private String _name;
   private String _text;
   
   public Chat() { }
-  public Chat(String text) {
+  public Chat(String name, String text) {
+    _name = name;
     _text = text;
   }
   
@@ -19,6 +21,8 @@ public class Chat extends Packet {
   
   public ByteBuf serialize() {
     ByteBuf b = Unpooled.buffer();
+    b.writeShort(_name.length());
+    b.writeBytes(_name.getBytes());
     b.writeShort(_text.length());
     b.writeBytes(_text.getBytes());
     return b;
@@ -32,6 +36,6 @@ public class Chat extends Packet {
   
   public void process() {
     Connection c = (Connection)_connection;
-    c.getEntity().getWorld().send(new Chat(_text));
+    c.getEntity().getWorld().send(new Chat(c.getEntity().getName(), _text));
   }
 }
