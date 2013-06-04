@@ -6,6 +6,7 @@ import game.network.packet.EntityCreate;
 import game.network.packet.EntityDestroy;
 import game.network.packet.EntityMoveStart;
 import game.network.packet.EntityMoveStop;
+import game.network.packet.editors.SaveMap;
 import game.network.packet.menu.CharDel;
 import game.network.packet.menu.CharNew;
 import game.network.packet.menu.CharUse;
@@ -73,6 +74,7 @@ public class Server {
     Packets.add(Data.Request.class);
     Packets.add(Data.Response.class);
     Packets.add(Chat.class);
+    Packets.add(SaveMap.class);
   }
   
   public void start() {
