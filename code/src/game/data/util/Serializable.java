@@ -20,6 +20,15 @@ public abstract class Serializable {
     return _crc;
   }
   
+  public void updateCRC() {
+    try {
+      Buffer b = new Buffer(_file);
+      _crc = b.crc();
+    } catch(IOException e) {
+      _crc = 0;
+    }
+  }
+  
   public void save() {
     Buffer b = serialize();
     _crc = b.crc();
