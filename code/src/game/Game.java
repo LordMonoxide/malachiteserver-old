@@ -1,5 +1,7 @@
 package game;
 
+import java.io.File;
+
 import io.netty.util.internal.chmv8.ConcurrentHashMapV8;
 
 import game.data.Sprite;
@@ -17,6 +19,20 @@ public class Game {
   private ConcurrentHashMapV8<String, Sprite> _sprite = new ConcurrentHashMapV8<String, Sprite>();
   
   private int _entityID;
+  
+  private void loadSprites() {
+    File dir = new File("../data/sprites");
+    if(!dir.exists()) dir.mkdirs();
+    
+    _sprite.clear();
+    
+    for(File f : dir.listFiles()) {
+      if(f.isFile()) {
+        Sprite s = new Sprite(f.getName());
+        
+      }
+    }
+  }
   
   public World getWorld(String file) {
     World w = _world.get(file);
