@@ -28,8 +28,9 @@ public class Game {
     
     for(File f : dir.listFiles()) {
       if(f.isFile()) {
-        Sprite s = new Sprite(f.getName());
-        
+        Sprite s = new Sprite(f);
+        s.load();
+        _sprite.put(f.getName(), s);
       }
     }
   }
@@ -47,18 +48,7 @@ public class Game {
   }
   
   public Sprite getSprite(String file) {
-    Sprite s = _sprite.get(file);
-    if(s == null) {
-      if((s = new Sprite(file)).load()) {
-        System.out.println("Sprite " + file + " loaded.");
-      } else {
-        System.err.println("Couldn't load sprite " + file);
-      }
-      
-      _sprite.put(file, s);
-    }
-    
-    return s;
+    return _sprite.get(file);
   }
   
   public int getNextEntityID() {
@@ -67,6 +57,8 @@ public class Game {
   
   public void start() {
     Settings.init();
+    
+    loadSprites();
     
     _net = new Server();
     _net.initPackets();
