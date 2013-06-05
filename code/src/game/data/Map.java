@@ -1,5 +1,6 @@
 package game.data;
 
+import java.io.File;
 import java.util.LinkedList;
 
 import game.data.util.Buffer;
@@ -15,7 +16,7 @@ public class Map extends Serializable {
   protected LinkedList<Sprite> _sprite = new LinkedList<Sprite>();
   
   public Map(String world, int x, int y) {
-    super("worlds/" + world, x + "x" + y);
+    super(new File("../data/worlds/" + world + "/" + x + "x" + y));
     _x = x;
     _y = y;
     

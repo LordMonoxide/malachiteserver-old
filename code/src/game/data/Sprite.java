@@ -1,5 +1,6 @@
 package game.data;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import game.data.util.Buffer;
@@ -17,8 +18,8 @@ public class Sprite extends Serializable implements Data {
   protected ArrayList<Anim> _anim = new ArrayList<Anim>();
   protected String _script;
   
-  public Sprite(String file) {
-    super("sprites", file);
+  public Sprite(File file) {
+    super(file);
     
     _script = "function init() {\n\n" +
               "}\n\n" +
