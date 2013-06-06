@@ -75,6 +75,9 @@ public class Server {
     Packets.add(Data.Response.class);
     Packets.add(Chat.class);
     Packets.add(SaveMap.class);
+    Packets.add(Data.MapRequest.class);
+    Packets.add(Data.Info.class);
+    Packets.add(Data.MapResponse.class);
   }
   
   public void start() {
