@@ -47,7 +47,7 @@ public class SaveMap extends Packet {
       map.deserialize(new Buffer(data.data));
       map.save();
       
-      world.send(new Data.Request(map));
+      world.send(new Data.MapResponse(map, true));
     }
   }
   
