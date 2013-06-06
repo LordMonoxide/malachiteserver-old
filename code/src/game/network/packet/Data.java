@@ -1,6 +1,8 @@
 package game.network.packet;
 
+import game.Game;
 import game.data.Map;
+import game.data.Sprite;
 import game.data.util.Serializable;
 import game.network.Connection;
 import io.netty.buffer.ByteBuf;
@@ -8,7 +10,8 @@ import io.netty.buffer.Unpooled;
 import network.packet.Packet;
 
 public class Data {
-  public static final byte DATA_TYPE_MAP = 1;
+  public static final byte DATA_TYPE_MAP    = 1;
+  public static final byte DATA_TYPE_SPRITE = 2;
   
   public static class Request extends Packet {
     private byte _type;
@@ -19,12 +22,14 @@ public class Data {
     public Request() { }
     public Request(Serializable data) {
       if(data instanceof Map) {
-        _type = DATA_TYPE_MAP;
-        
         Map m = (Map)data;
+        _type = DATA_TYPE_MAP;
         _x = m.getX();
         _y = m.getY();
-      } else {
+      }
+      
+      if(data instanceof Sprite) {
+        _type = DATA_TYPE_SPRITE;
         _file = data.getFile();
       }
       
@@ -69,10 +74,13 @@ public class Data {
     public void process() {
       switch(_type) {
         case DATA_TYPE_MAP:
-          Connection c = (Connection)_connection;
-          Map m = c.getEntity().getWorld().getRegion(_x, _y).getMap();
+          Map m = ((Connection)_connection).getEntity().getWorld().getRegion(_x, _y).getMap();
+          _connection.send(new Response(m, m.getCRC() != _crc));
+          break;
           
-          c.send(new Response(m, m.getCRC() != _crc));
+        case DATA_TYPE_SPRITE:
+          Sprite data = Game.getInstance().getSprite(_file);
+          _connection.send(new Response(data, data.getCRC() != _crc));
           break;
       }
     }
@@ -87,12 +95,14 @@ public class Data {
     public Response() { }
     public Response(Serializable data, boolean needed) {
       if(data instanceof Map) {
-        _type = DATA_TYPE_MAP;
-        
         Map m = (Map)data;
+        _type = DATA_TYPE_MAP;
         _x = m.getX();
         _y = m.getY();
-      } else {
+      }
+      
+      if(data instanceof Sprite) {
+        _type = DATA_TYPE_SPRITE;
         _file = data.getFile();
       }
       
