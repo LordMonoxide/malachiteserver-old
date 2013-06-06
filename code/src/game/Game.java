@@ -47,6 +47,8 @@ public class Game {
     return w;
   }
   
+  public Sprite[] getSprites() { return _sprite.values().toArray(new Sprite[0]); }
+  
   public Sprite getSprite(String file) {
     return _sprite.get(file);
   }
