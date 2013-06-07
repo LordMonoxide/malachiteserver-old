@@ -2,6 +2,8 @@ package game;
 
 import java.io.File;
 
+import network.packet.Packet;
+
 import io.netty.util.internal.chmv8.ConcurrentHashMapV8;
 
 import game.data.Sprite;
@@ -72,5 +74,11 @@ public class Game {
     _net.start();
     
     //TODO: Need to close SQL tables
+  }
+  
+  public void send(Packet packet) {
+    for(World world : _world.values()) {
+      world.send(packet);
+    }
   }
 }
