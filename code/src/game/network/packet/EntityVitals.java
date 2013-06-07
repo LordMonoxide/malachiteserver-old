@@ -19,6 +19,8 @@ public class EntityVitals extends Packet {
   public ByteBuf serialize() {
     ByteBuf b = Unpooled.buffer();
     
+    b.writeInt(_entity.getID());
+    
     for(int i = 0; i < Entity.Stats.VITALS; i++) {
       b.writeInt(_entity.stats().vital(i).val);
       b.writeInt(_entity.stats().vital(i).max);
