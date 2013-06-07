@@ -3,6 +3,7 @@ package game.network.packet;
 import game.Game;
 import game.data.Map;
 import game.data.Sprite;
+import game.data.util.Buffer;
 import game.data.util.Serializable;
 import game.network.Connection;
 import io.netty.buffer.ByteBuf;
@@ -88,13 +89,16 @@ public class Data {
     private byte _type;
     private String _file;
     private byte[] _data;
+    private int _crc;
     
     public Response() { }
     public Response(Serializable data) {
       if(data instanceof Sprite) _type = DATA_TYPE_SPRITE;
       
+      Buffer b = data.serialize();
       _file = data.getFile();
-      _data = data.serialize().serialize();
+      _data = b.serialize();
+      _crc  = b.crc();
     }
     
     public int getIndex() {
@@ -108,6 +112,7 @@ public class Data {
       b.writeBytes(_file.getBytes());
       b.writeInt(_data.length);
       b.writeBytes(_data);
+      b.writeInt(_crc);
       return b;
     }
     
