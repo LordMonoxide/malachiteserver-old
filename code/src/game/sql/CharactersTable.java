@@ -119,7 +119,7 @@ public class CharactersTable {
     Character c = null;
     
     if(r.next()) {
-      int i = 1;
+      int i = 3;
       c = new Character(id, a);
       c.setName(r.getString(i++));
       c.setSprite(r.getString(i++));
