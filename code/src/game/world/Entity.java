@@ -21,6 +21,8 @@ public class Entity extends Movable {
   private Region _region;
   private int _z;
   
+  private Stats _stats;
+  
   public Entity(Source source) {
     this(source, null);
   }
@@ -56,6 +58,8 @@ public class Entity extends Movable {
       _ry += Settings.Map.Size();
       _my -= 1;
     }
+    
+    _stats = new Stats();
   }
   
   public Connection getConnection() {
@@ -163,6 +167,10 @@ public class Entity extends Movable {
     _region = r;
   }
   
+  public Stats stats() {
+    return _stats;
+  }
+  
   public void remove() {
     _world.removeEntity(this);
   }
@@ -179,5 +187,39 @@ public class Entity extends Movable {
     public float  getX();
     public float  getY();
     public int    getZ();
+  }
+  
+  public static class Stats {
+    public static final int VITALS = 2;
+    public static final int VITAL_HP = 0;
+    public static final int VITAL_MP = 1;
+    public static final int STATS = 3;
+    public static final int STAT_STR = 0;
+    public static final int STAT_INT = 1;
+    public static final int STAT_DEX = 2;
+    
+    private Vital[] _vital;
+    private Stat[]  _stat;
+    
+    public Stats() {
+      _vital = new Vital[VITALS];
+      _stat  = new Stat [STATS];
+      
+      for(int i = 0; i < VITALS; i++) _vital[i] = new Vital();
+      for(int i = 0; i < STATS;  i++) _stat [i] = new Stat();
+    }
+    
+    public Vital vital(int index) { return _vital[index]; }
+    public Stat  stat (int index) { return _stat [index]; }
+    
+    public static class Vital {
+      public int val;
+      public int max;
+    }
+    
+    public static class Stat {
+      public int val;
+      public float exp;
+    }
   }
 }
