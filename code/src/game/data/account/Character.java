@@ -1,5 +1,7 @@
 package game.data.account;
 
+import game.world.Entity.Stats;
+
 public class Character {
   private int _id;
   private Account _account;
@@ -8,10 +10,12 @@ public class Character {
   private String _sprite;
   private float _x, _y;
   private int _z;
+  private Stats _stats;
   
   public Character(int id, Account account) {
     _id = id;
     _account = account;
+    _stats = new Stats();
   }
   
   public int     getID()      { return _id; }
@@ -22,6 +26,7 @@ public class Character {
   public float   getX()       { return _x; }
   public float   getY()       { return _y; }
   public int     getZ()       { return _z; }
+  public Stats   stats()      { return _stats; }
   
   public void setID     (int id)          { _id = id; }
   public void setAccount(Account account) { _account = account; }
