@@ -22,8 +22,8 @@ public class EntityVitals extends Packet {
     b.writeInt(_entity.getID());
     
     for(int i = 0; i < Entity.Stats.VITALS; i++) {
-      b.writeInt(_entity.stats().vital(i).val);
       b.writeInt(_entity.stats().vital(i).max);
+      b.writeInt(_entity.stats().vital(i).val);
     }
     
     return b;
