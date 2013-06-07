@@ -215,7 +215,7 @@ public class Entity extends Movable {
     
     public void calculateMaxVitals() {
       _vital[VITAL_HP].max = (int)(Math.pow(_stat[STAT_STR].val, 1.6) * 1.3 + 100);
-      _vital[VITAL_MP].max = (int)(Math.pow(_stat[STAT_STR].val, 1.2) * 3 + 40);
+      _vital[VITAL_MP].max = (int)(Math.pow(_stat[STAT_INT].val, 1.2) * 3 + 40);
     }
     
     public Vital vital(int index) { return _vital[index]; }
