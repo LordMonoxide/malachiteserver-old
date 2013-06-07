@@ -3,52 +3,81 @@ package game.sql;
 import game.data.account.Permissions;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import sql.Table;
+import sql.SQL;
 
-public class PermissionsTable extends Table {
+public class PermissionsTable {
   private static PermissionsTable _instance = new PermissionsTable();
+  public static PermissionsTable getInstance() { return _instance; }
   
-  public static PermissionsTable getInstance() {
-    return _instance;
-  }
+  private SQL _sql;
+  
+  private PreparedStatement _create;
+  private PreparedStatement _insert;
+  private PreparedStatement _update;
+  
+  private PreparedStatement _drop;
+  private PreparedStatement _select;
+  private PreparedStatement _delete;
   
   private Permissions _permissions;
   
+  private int _id;
+  
   public PermissionsTable() {
-    super("permissions", "p_id");
+    _sql = SQL.getInstance();
     _create = _sql.prepareStatement("CREATE TABLE permissions (" +
-                                   "p_id INT NOT NULL AUTO_INCREMENT," +
-                                   "p_p_login BOOL NOT NULL,p_p_alter_chars BOOL NOT NULL,p_p_speak BOOL NOT NULL,p_p_whisper BOOL NOT NULL,p_p_shout BOOL NOT NULL," +
-                                   "p_m_broadcast BOOL NOT NULL,p_m_warp_self BOOL NOT NULL,p_m_warp_others BOOL NOT NULL,p_m_kick BOOL NOT NULL,p_m_ban BOOL NOT NULL,p_m_view_info BOOL NOT NULL,p_m_view_chat_logs BOOL NOT NULL,p_m_mute BOOL NOT NULL," +
-                                   "p_g_spawn_sprites BOOL NOT NULL,p_g_spawn_items BOOL NOT NULL,p_g_spawn_spells BOOL NOT NULL,p_g_spawn_npcs BOOL NOT NULL,p_g_spawn_effects BOOL NOT NULL,p_g_respawn_maps BOOL NOT NULL,p_g_alter_local_weather BOOL NOT NULL,p_g_alter_regional_weather BOOL NOT NULL,p_g_alter_global_weather BOOL NOT NULL,p_g_alter_time BOOL NOT NULL," +
-                                   "p_e_can_edit_maps BOOL NOT NULL,p_e_can_edit_sprites BOOL NOT NULL,p_e_can_edit_items BOOL NOT NULL,p_e_can_edit_spells BOOL NOT NULL,p_e_can_edit_npcs BOOL NOT NULL,p_e_can_edit_effects BOOL NOT NULL," +
-                                   "p_a_can_grant_permissions BOOL NOT NULL,p_a_can_view_detailed_info BOOL NOT NULL,p_a_can_ban_permanently BOOL NOT NULL," +
-                                   "CONSTRAINT pk_p_id UNIQUE (p_id)" +
+                                   "id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT," +
+                                   "p_login BOOL NOT NULL, p_alter_chars BOOL NOT NULL, p_speak BOOL NOT NULL, p_whisper BOOL NOT NULL, p_shout BOOL NOT NULL," +
+                                   "m_broadcast BOOL NOT NULL, m_warp_self BOOL NOT NULL, m_warp_others BOOL NOT NULL, m_kick BOOL NOT NULL, m_ban BOOL NOT NULL, m_view_info BOOL NOT NULL, m_view_chat_logs BOOL NOT NULL, m_mute BOOL NOT NULL," +
+                                   "g_spawn_sprites BOOL NOT NULL, g_spawn_items BOOL NOT NULL, g_spawn_spells BOOL NOT NULL, g_spawn_npcs BOOL NOT NULL, g_spawn_effects BOOL NOT NULL, g_respawn_maps BOOL NOT NULL, g_alter_local_weather BOOL NOT NULL, g_alter_regional_weather BOOL NOT NULL, g_alter_global_weather BOOL NOT NULL, g_alter_time BOOL NOT NULL," +
+                                   "e_edit_maps BOOL NOT NULL, e_edit_sprites BOOL NOT NULL, e_edit_items BOOL NOT NULL, e_edit_spells BOOL NOT NULL, e_edit_npcs BOOL NOT NULL, e_edit_effects BOOL NOT NULL," +
+                                   "a_grant_permissions BOOL NOT NULL, a_view_detailed_info BOOL NOT NULL, a_ban_permanently BOOL NOT NULL," +
+                                   "PRIMARY KEY (id)" +
                                    ")");
+    _drop   = _sql.prepareStatement("DROP TABLE permissions");
     _insert = _sql.prepareStatement("INSERT INTO permissions VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    _delete = _sql.prepareStatement("DELETE FROM permissions WHERE id=?");
     _update = _sql.prepareStatement("UPDATE characters SET " +
-                                   "p_p_login=?,p_p_alter_chars=?,p_p_speak=?,p_p_whisper=?,p_p_shout=?," +
-                                   "p_m_broadcast=?,p_m_warp_self=?,p_m_warp_others=?,p_m_kick=?,p_m_ban=?,p_m_view_info=?,p_m_view_chat_logs=?,p_m_mute=?" +
-                                   "p_g_spawn_sprites=?,p_g_spawn_items=?,p_g_spawn_spells=?,p_g_spawn_npcs=?,p_g_spawn_effects=?,p_g_respawn_maps=?,p_g_alter_local_weather=?,p_g_alter_regional_weather=?,p_g_alter_global_weather=?,p_g_alter_time=?," +
-                                   "p_e_can_edit_maps=?,p_e_can_edit_sprites=?,p_e_can_edit_items=?,p_e_can_edit_spells=?,p_e_can_edit_npcs=?,p_e_can_edit_effects=?,p_a_can_grant_permissions=?,p_a_can_view_detailed_info=?,p_a_can_ban_permanently=?," +
-                                   "WHERE p_id=?");
+                                   "p_login=?,p_alter_chars=?,p_speak=?,p_whisper=?,p_shout=?," +
+                                   "m_broadcast=?,m_warp_self=?,m_warp_others=?,m_kick=?,m_ban=?,m_view_info=?,m_view_chat_logs=?,m_mute=?" +
+                                   "g_spawn_sprites=?,g_spawn_items=?,g_spawn_spells=?,g_spawn_npcs=?,g_spawn_effects=?,g_respawn_maps=?,g_alter_local_weather=?,g_alter_regional_weather=?,g_alter_global_weather=?,g_alter_time=?," +
+                                   "e_edit_maps=?,e_edit_sprites=?,e_edit_items=?,e_edit_spells=?,e_edit_npcs=?,e_edit_effects=?,a_grant_permissions=?,a_view_detailed_info=?,a_ban_permanently=?," +
+                                   "WHERE id=?");
+    _select = _sql.prepareStatement("SELECT * FROM permissions WHERE id=? LIMIT 1");
+  }
+  
+  public int getID() {
+    return _id;
+  }
+  
+  public void setID(int id) {
+    _id = id;
+  }
+  
+  public void close() throws SQLException {
+    if(_create != null) _create.close();
+    if(_drop   != null) _drop  .close();
+    if(_insert != null) _insert.close();
+    if(_delete != null) _delete.close();
+    if(_update != null) _update.close();
+    if(_select != null) _select.close();
   }
   
   public boolean exists() {
-    return super.exists();
+    return _sql.tableExists("permissions");
   }
   
   public void create() throws SQLException {
-    super.create();
-    
+    _create.execute();
     _permissions = Permissions.getDefaultPermissions();
     insert();
   }
   
   public void drop() throws SQLException {
-    super.drop();
+    _drop.executeUpdate();
   }
   
   public void insert() throws SQLException {
@@ -56,46 +85,9 @@ public class PermissionsTable extends Table {
     _insert.execute();
   }
   
-  public void select() throws SQLException {
-    super.select();
-    
-    if(_result.next()) {
-      int i = 2;
-      
-      _permissions = new Permissions();
-      _permissions.setLogin(_result.getBoolean(i++));
-      _permissions.setAlterChars(_result.getBoolean(i++));
-      _permissions.setSpeak(_result.getBoolean(i++));
-      _permissions.setWhisper(_result.getBoolean(i++));
-      _permissions.setShout(_result.getBoolean(i++));
-      _permissions.setBroadcast(_result.getBoolean(i++));
-      _permissions.setWarpSelf(_result.getBoolean(i++));
-      _permissions.setWarpOthers(_result.getBoolean(i++));
-      _permissions.setKick(_result.getBoolean(i++));
-      _permissions.setBan(_result.getBoolean(i++));
-      _permissions.setViewInfo(_result.getBoolean(i++));
-      _permissions.setViewChatLogs(_result.getBoolean(i++));
-      _permissions.setMute(_result.getBoolean(i++));
-      _permissions.setSpawnSprites(_result.getBoolean(i++));
-      _permissions.setSpawnItems(_result.getBoolean(i++));
-      _permissions.setSpawnSpells(_result.getBoolean(i++));
-      _permissions.setSpawnNPCs(_result.getBoolean(i++));
-      _permissions.setSpawnEffects(_result.getBoolean(i++));
-      _permissions.setRespawnMaps(_result.getBoolean(i++));
-      _permissions.setAlterLocalWeather(_result.getBoolean(i++));
-      _permissions.setAlterRegionalWeather(_result.getBoolean(i++));
-      _permissions.setAlterGlobalWeather(_result.getBoolean(i++));
-      _permissions.setAlterTime(_result.getBoolean(i++));
-      _permissions.setEditMaps(_result.getBoolean(i++));
-      _permissions.setEditSprites(_result.getBoolean(i++));
-      _permissions.setEditItems(_result.getBoolean(i++));
-      _permissions.setEditSpells(_result.getBoolean(i++));
-      _permissions.setEditNPCs(_result.getBoolean(i++));
-      _permissions.setEditEffects(_result.getBoolean(i++));
-      _permissions.setGrantPermissions(_result.getBoolean(i++));
-      _permissions.setViewDetailedInfo(_result.getBoolean(i++));
-      _permissions.setBanPermanently(_result.getBoolean(i++));
-    }
+  public void delete() throws SQLException {
+    _delete.setInt(1, _id);
+    _delete.executeUpdate();
   }
   
   public void update() throws SQLException {
@@ -104,8 +96,49 @@ public class PermissionsTable extends Table {
     _update.execute();
   }
   
-  public void delete() throws SQLException {
-    super.delete();
+  public void select() throws SQLException {
+    int i = 1;
+    
+    _select.setInt(i++, _id);
+    ResultSet r = _select.executeQuery();
+    
+    if(r.next()) {
+      _permissions = new Permissions();
+      _permissions.setLogin(r.getBoolean(i++));
+      _permissions.setAlterChars(r.getBoolean(i++));
+      _permissions.setSpeak(r.getBoolean(i++));
+      _permissions.setWhisper(r.getBoolean(i++));
+      _permissions.setShout(r.getBoolean(i++));
+      _permissions.setBroadcast(r.getBoolean(i++));
+      _permissions.setWarpSelf(r.getBoolean(i++));
+      _permissions.setWarpOthers(r.getBoolean(i++));
+      _permissions.setKick(r.getBoolean(i++));
+      _permissions.setBan(r.getBoolean(i++));
+      _permissions.setViewInfo(r.getBoolean(i++));
+      _permissions.setViewChatLogs(r.getBoolean(i++));
+      _permissions.setMute(r.getBoolean(i++));
+      _permissions.setSpawnSprites(r.getBoolean(i++));
+      _permissions.setSpawnItems(r.getBoolean(i++));
+      _permissions.setSpawnSpells(r.getBoolean(i++));
+      _permissions.setSpawnNPCs(r.getBoolean(i++));
+      _permissions.setSpawnEffects(r.getBoolean(i++));
+      _permissions.setRespawnMaps(r.getBoolean(i++));
+      _permissions.setAlterLocalWeather(r.getBoolean(i++));
+      _permissions.setAlterRegionalWeather(r.getBoolean(i++));
+      _permissions.setAlterGlobalWeather(r.getBoolean(i++));
+      _permissions.setAlterTime(r.getBoolean(i++));
+      _permissions.setEditMaps(r.getBoolean(i++));
+      _permissions.setEditSprites(r.getBoolean(i++));
+      _permissions.setEditItems(r.getBoolean(i++));
+      _permissions.setEditSpells(r.getBoolean(i++));
+      _permissions.setEditNPCs(r.getBoolean(i++));
+      _permissions.setEditEffects(r.getBoolean(i++));
+      _permissions.setGrantPermissions(r.getBoolean(i++));
+      _permissions.setViewDetailedInfo(r.getBoolean(i++));
+      _permissions.setBanPermanently(r.getBoolean(i++));
+    }
+    
+    r.close();
   }
   
   public Permissions getPermissions() {

@@ -12,10 +12,7 @@ import sql.SQL;
 
 public class CharactersTable {
   private static CharactersTable _instance = new CharactersTable();
-  
-  public static CharactersTable getInstance() {
-    return _instance;
-  }
+  public static CharactersTable getInstance() { return _instance; }
   
   private SQL _sql;
   
@@ -31,14 +28,14 @@ public class CharactersTable {
   
   public CharactersTable() {
     _sql = SQL.getInstance();
-    _create        = _sql.prepareStatement("CREATE TABLE characters (c_id INT NOT NULL AUTO_INCREMENT, c_a_id INT NOT NULL, c_name VARCHAR(16) NOT NULL, c_sprite VARCHAR(40) NOT NULL, c_world VARCHAR(40) NOT NULL, c_x FLOAT NOT NULL, c_y FLOAT NOT NULL, c_z INT NOT NULL, CONSTRAINT pk_c_id UNIQUE (c_id), CONSTRAINT pk_c_name UNIQUE (c_name), FOREIGN KEY (c_a_id) REFERENCES accounts(a_id))");
+    _create        = _sql.prepareStatement("CREATE TABLE characters (id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT, account_id INTEGER UNSIGNED NOT NULL, name VARCHAR(16) NOT NULL, sprite VARCHAR(40) NOT NULL, world VARCHAR(40) NOT NULL, x FLOAT NOT NULL, y FLOAT NOT NULL, z INTEGER UNSIGNED NOT NULL, PRIMARY KEY (id), UNIQUE KEY characters_name_unique (name), FOREIGN KEY (account_id) REFERENCES accounts(id))");
     _drop          = _sql.prepareStatement("DROP TABLE characters");
     _insert        = _sql.prepareStatement("INSERT INTO characters VALUES (null, ?, ?, ?, ?, ?, ?, ?)");
-    _delete        = _sql.prepareStatement("DELETE FROM characters WHERE c_id=?");
-    _update        = _sql.prepareStatement("UPDATE characters SET c_world=?, c_x=?, c_y=?, c_z=? WHERE c_id=?");
-    _selectAccount = _sql.prepareStatement("SELECT c_id, c_name FROM characters WHERE c_a_id=?");
-    _selectPlayer  = _sql.prepareStatement("SELECT c_name, c_sprite, c_world, c_x, c_y, c_z FROM characters WHERE c_id=? AND c_a_id=?");
-    _selectExist   = _sql.prepareStatement("SELECT c_id FROM characters WHERE c_name=?");
+    _delete        = _sql.prepareStatement("DELETE FROM characters WHERE id=?");
+    _update        = _sql.prepareStatement("UPDATE characters SET world=?, x=?, y=?, z=? WHERE id=?");
+    _selectAccount = _sql.prepareStatement("SELECT id, name FROM characters WHERE account_id=? LIMIT 1");
+    _selectPlayer  = _sql.prepareStatement("SELECT * FROM characters WHERE id=? AND account_id=? LIMIT 1");
+    _selectExist   = _sql.prepareStatement("SELECT id FROM characters WHERE name=? LIMIT 1");
   }
   
   public void close() throws SQLException {

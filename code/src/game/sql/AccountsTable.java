@@ -1,37 +1,67 @@
 package game.sql;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import sql.Table;
+import sql.SQL;
 
-public class AccountsTable extends Table {
+public class AccountsTable {
   private static AccountsTable _instance = new AccountsTable();
+  public static AccountsTable getInstance() { return _instance; }
   
-  public static AccountsTable getInstance() {
-    return _instance;
-  }
+  private SQL _sql;
   
+  private PreparedStatement _create;
+  private PreparedStatement _insert;
+  private PreparedStatement _update;
+  
+  private PreparedStatement _drop;
+  private PreparedStatement _select;
+  private PreparedStatement _delete;
+  
+  private int _id;
   private String _name;
   private String _pass;
   private int _permissions;
   
   private AccountsTable() {
-    super("accounts", "a_name");
-    _create = _sql.prepareStatement("CREATE TABLE accounts (a_id INT NOT NULL AUTO_INCREMENT, a_name VARCHAR(40) NOT NULL, a_pass CHAR(64) NOT NULL, a_p_id INT NOT NULL, CONSTRAINT pk_a_id UNIQUE (a_id), CONSTRAINT pk_a_name UNIQUE (a_name), FOREIGN KEY (a_p_id) REFERENCES permissions(p_id))");
+    _sql = SQL.getInstance();
+    _create = _sql.prepareStatement("CREATE TABLE accounts (id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT, name VARCHAR(40) NOT NULL, pass CHAR(64) NOT NULL, permission_id INTEGER UNSIGNED NOT NULL, PRIMARY KEY (id), UNIQUE KEY accounts_name_unique (name), FOREIGN KEY (permission_id) REFERENCES permissions(id))");
+    _drop   = _sql.prepareStatement("DROP TABLE accounts");
     _insert = _sql.prepareStatement("INSERT INTO accounts VALUES (null, ?, ?, ?)");
-    _update = _sql.prepareStatement("UPDATE accounts SET a_name=?, a_pass=?, a_p_id=? WHERE a_id=?");
+    _delete = _sql.prepareStatement("DELETE FROM accounts WHERE id=?");
+    _update = _sql.prepareStatement("UPDATE accounts SET name=?, pass=?, permission_id=? WHERE id=?");
+    _select = _sql.prepareStatement("SELECT * FROM accounts WHERE name=? LIMIT 1");
+  }
+  
+  public void close() throws SQLException {
+    if(_create != null) _create.close();
+    if(_drop   != null) _drop  .close();
+    if(_insert != null) _insert.close();
+    if(_delete != null) _delete.close();
+    if(_update != null) _update.close();
+    if(_select != null) _select.close();
+  }
+  
+  public int getID() {
+    return _id;
+  }
+  
+  public void setID(int id) {
+    _id = id;
   }
   
   public boolean exists() {
-    return super.exists();
+    return _sql.tableExists("accounts");
   }
   
   public void create() throws SQLException {
-    super.create();
+    _create.execute();
   }
   
   public void drop() throws SQLException {
-    super.drop();
+    _drop.executeUpdate();
   }
   
   public void insert() throws SQLException {
@@ -42,17 +72,9 @@ public class AccountsTable extends Table {
     _insert.execute();
   }
   
-  public void select() throws SQLException {
-    _select.setString(1, _name);
-    _result = _select.executeQuery();
-    
-    if(_result.next()) {
-      int i = 1;
-      _id = _result.getInt(i++);
-      _name = _result.getString(i++);
-      _pass = _result.getString(i++);
-      _permissions = _result.getInt(i++);
-    }
+  public void delete() throws SQLException {
+    _delete.setString(1, _name);
+    _delete.execute();
   }
   
   public void update() throws SQLException {
@@ -64,9 +86,19 @@ public class AccountsTable extends Table {
     _update.execute();
   }
   
-  public void delete() throws SQLException {
-    _delete.setString(1, _name);
-    _delete.execute();
+  public void select() throws SQLException {
+    _select.setString(1, _name);
+    ResultSet r = _select.executeQuery();
+    
+    if(r.next()) {
+      int i = 1;
+      _id = r.getInt(i++);
+      _name = r.getString(i++);
+      _pass = r.getString(i++);
+      _permissions = r.getInt(i++);
+    }
+    
+    r.close();
   }
   
   public String getName() {

@@ -10,10 +10,7 @@ import sql.SQL;
 
 public class SettingsTable {
   private static SettingsTable _instance = new SettingsTable();
-  
-  public static SettingsTable getInstance() {
-    return _instance;
-  }
+  public static SettingsTable getInstance() { return _instance; }
   
   private SQL _sql;
   
@@ -37,14 +34,14 @@ public class SettingsTable {
   public SettingsTable() {
     _sql = SQL.getInstance();
     _create = _sql.prepareStatement("CREATE TABLE settings (" +
-    		                            "s_id INT NOT NULL, s_client_version DOUBLE NOT NULL," +
-                                    "s_map_size INT NOT NULL, s_map_depth INT NOT NULL, s_map_tile_size INT NOT NULL, s_map_attrib_size INT NOT NULL," +
-                                    "CONSTRAINT pk_s_id UNIQUE (s_id))");
+    		                            "id INTEGER UNSIGNED NOT NULL, version DOUBLE NOT NULL," +
+                                    "map_size INTEGER UNSIGNED NOT NULL, map_depth INTEGER UNSIGNED NOT NULL, map_tile_size INTEGER UNSIGNED NOT NULL, map_attrib_size INTEGER UNSIGNED NOT NULL," +
+                                    "PRIMARY KEY (id))");
     _drop   = _sql.prepareStatement("DROP TABLE settings");
     _insert = _sql.prepareStatement("INSERT INTO settings VALUES (?, ?, ?, ?, ?, ?)");
-    _delete = _sql.prepareStatement("DELETE FROM CHARACTERS WHERE s_id=?");
-    _update = _sql.prepareStatement("UPDATE settings SET s_client_version=?, s_map_size=?, s_map_depth=?, s_map_tile_size=?, s_map_attrib_size=? WHERE s_id=?");
-    _select = _sql.prepareStatement("SELECT * FROM settings WHERE s_id=?");
+    _delete = _sql.prepareStatement("DELETE FROM settings WHERE id=?");
+    _update = _sql.prepareStatement("UPDATE settings SET version=?, map_size=?, map_depth=?, map_tile_size=?, map_attrib_size=? WHERE id=?");
+    _select = _sql.prepareStatement("SELECT * FROM settings WHERE id=? LIMIT 1");
   }
   
   public void close() throws SQLException {
