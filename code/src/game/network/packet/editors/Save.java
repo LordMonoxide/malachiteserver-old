@@ -87,7 +87,6 @@ public abstract class Save extends Packet {
         return;
       }
       
-      World world = c.getEntity().getWorld();
       Game game = Game.getInstance();
       game.data.Sprite sprite;
       
@@ -96,7 +95,7 @@ public abstract class Save extends Packet {
         sprite.deserialize(new Buffer(data.data));
         sprite.save();
         
-        world.send(new Data.Response(sprite));
+        game.send(new Data.Response(sprite));
       }
     }
   }
