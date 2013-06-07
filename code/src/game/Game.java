@@ -50,7 +50,12 @@ public class Game {
   public Sprite[] getSprites() { return _sprite.values().toArray(new Sprite[0]); }
   
   public Sprite getSprite(String file) {
-    return _sprite.get(file);
+    Sprite s = _sprite.get(file);
+    if(s == null) {
+      s = new Sprite(new File("../data/sprites/" + file));
+      _sprite.put(file, s);
+    }
+    return s;
   }
   
   public int getNextEntityID() {
