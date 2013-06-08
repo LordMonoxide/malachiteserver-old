@@ -42,6 +42,10 @@ public class EntityCreate extends Packet {
       b.writeInt(_entity.stats().vital(i).val);
     }
     
+    for(int i = 0; i < Entity.Stats.STATS; i++) {
+      b.writeInt(_entity.stats().stat(i).val);
+    }
+    
     return b;
   }
   
