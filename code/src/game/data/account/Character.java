@@ -1,7 +1,5 @@
 package game.data.account;
 
-import game.world.Entity.Stats;
-
 public class Character {
   private int _id;
   private Account _account;
