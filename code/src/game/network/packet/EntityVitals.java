@@ -20,11 +20,10 @@ public class EntityVitals extends Packet {
     ByteBuf b = Unpooled.buffer();
     
     b.writeInt(_entity.getID());
-    
-    for(int i = 0; i < Entity.Stats.VITALS; i++) {
-      b.writeInt(_entity.stats().vital(i).max);
-      b.writeInt(_entity.stats().vital(i).val);
-    }
+    b.writeInt(_entity.stats().vitalHP().max());
+    b.writeInt(_entity.stats().vitalHP().val());
+    b.writeInt(_entity.stats().vitalMP().max());
+    b.writeInt(_entity.stats().vitalMP().val());
     
     return b;
   }

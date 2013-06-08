@@ -20,10 +20,9 @@ public class EntityStats extends Packet {
     ByteBuf b = Unpooled.buffer();
     
     b.writeInt(_entity.getID());
-    
-    for(int i = 0; i < Entity.Stats.STATS; i++) {
-      b.writeInt(_entity.stats().stat(i).val);
-    }
+    b.writeInt(_entity.stats().statSTR().val);
+    b.writeInt(_entity.stats().statINT().val);
+    b.writeInt(_entity.stats().statDEX().val);
     
     return b;
   }
