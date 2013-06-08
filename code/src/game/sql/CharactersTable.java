@@ -17,23 +17,23 @@ public class CharactersTable {
   private SQL _sql;
   
   private PreparedStatement _create;
+  private PreparedStatement _drop;
   private PreparedStatement _insert;
+  private PreparedStatement _delete;
   private PreparedStatement _update;
   
-  private PreparedStatement _drop;
   private PreparedStatement _selectAccount;
   private PreparedStatement _selectPlayer;
   private PreparedStatement _selectExist;
-  private PreparedStatement _delete;
   
   public CharactersTable() {
     _sql = SQL.getInstance();
-    _create        = _sql.prepareStatement("CREATE TABLE characters (id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT, account_id INTEGER UNSIGNED NOT NULL, name VARCHAR(16) NOT NULL, sprite VARCHAR(40) NOT NULL, world VARCHAR(40) NOT NULL, x FLOAT NOT NULL, y FLOAT NOT NULL, z INTEGER UNSIGNED NOT NULL, PRIMARY KEY (id), UNIQUE KEY characters_name_unique (name), FOREIGN KEY (account_id) REFERENCES accounts(id))");
+    _create        = _sql.prepareStatement("CREATE TABLE characters (id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT, account_id INTEGER UNSIGNED NOT NULL, name VARCHAR(16) NOT NULL, sprite VARCHAR(40) NOT NULL, world VARCHAR(40) NOT NULL, x FLOAT NOT NULL, y FLOAT NOT NULL, z INTEGER UNSIGNED NOT NULL, hp INTEGER UNSIGNED NOT NULL, mp INTEGER UNSIGNED NOT NULL, str INTEGER UNSIGNED NOT NULL, str_exp FLOAT NOT NULL, `int` INTEGER UNSIGNED NOT NULL, int_exp FLOAT NOT NULL, dex INTEGER UNSIGNED NOT NULL, dex_exp FLOAT NOT NULL, PRIMARY KEY (id), UNIQUE KEY characters_name_unique (name), FOREIGN KEY (account_id) REFERENCES accounts(id))");
     _drop          = _sql.prepareStatement("DROP TABLE characters");
-    _insert        = _sql.prepareStatement("INSERT INTO characters VALUES (null, ?, ?, ?, ?, ?, ?, ?)");
+    _insert        = _sql.prepareStatement("INSERT INTO characters VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
     _delete        = _sql.prepareStatement("DELETE FROM characters WHERE id=?");
-    _update        = _sql.prepareStatement("UPDATE characters SET world=?, x=?, y=?, z=? WHERE id=?");
-    _selectAccount = _sql.prepareStatement("SELECT id, name FROM characters WHERE account_id=? LIMIT 1");
+    _update        = _sql.prepareStatement("UPDATE characters SET world=?, x=?, y=?, z=?, hp=?, mp=?, str=?, str_exp=?, int=?, int_exp=?, dex=?, dex_exp=? WHERE id=?");
+    _selectAccount = _sql.prepareStatement("SELECT id, name FROM characters WHERE account_id=?");
     _selectPlayer  = _sql.prepareStatement("SELECT * FROM characters WHERE id=? AND account_id=? LIMIT 1");
     _selectExist   = _sql.prepareStatement("SELECT id FROM characters WHERE name=? LIMIT 1");
   }
@@ -49,12 +49,11 @@ public class CharactersTable {
     if(_selectExist != null) _selectExist.close();
   }
   
-  public boolean exists() {
-    return _sql.tableExists("characters");
-  }
-  
   public void create() throws SQLException {
-    _create.executeUpdate();
+    if(!_sql.tableExists("characters")) {
+      System.out.println("Creating characters table...");
+      _create.executeUpdate();
+    }
   }
   
   public void drop() throws SQLException {
@@ -70,6 +69,14 @@ public class CharactersTable {
     _insert.setFloat(i++, p.getX());
     _insert.setFloat(i++, p.getY());
     _insert.setInt(i++, p.getZ());
+    _insert.setInt(i++, p.stats().vitalHP().val());
+    _insert.setInt(i++, p.stats().vitalMP().val());
+    _insert.setInt(i++, p.stats().statSTR().val);
+    _insert.setFloat(i++, p.stats().statSTR().exp);
+    _insert.setInt(i++, p.stats().statINT().val);
+    _insert.setFloat(i++, p.stats().statINT().exp);
+    _insert.setInt(i++, p.stats().statDEX().val);
+    _insert.setFloat(i++, p.stats().statDEX().exp);
     _insert.executeUpdate();
     
     _selectExist.setString(1, p.getName());
@@ -91,6 +98,14 @@ public class CharactersTable {
     _update.setFloat(i++, p.getX());
     _update.setFloat(i++, p.getY());
     _update.setInt(i++, p.getZ());
+    _update.setInt(i++, p.stats().vitalHP().val());
+    _update.setInt(i++, p.stats().vitalMP().val());
+    _update.setInt(i++, p.stats().statSTR().val);
+    _update.setFloat(i++, p.stats().statSTR().exp);
+    _update.setInt(i++, p.stats().statINT().val);
+    _update.setFloat(i++, p.stats().statINT().exp);
+    _update.setInt(i++, p.stats().statDEX().val);
+    _update.setFloat(i++, p.stats().statDEX().exp);
     _update.setInt(i++, p.getID());
     _update.executeUpdate();
   }
@@ -127,9 +142,18 @@ public class CharactersTable {
       c.setX(r.getFloat(i++));
       c.setY(r.getFloat(i++));
       c.setZ(r.getInt(i++));
+      c.stats().vitalHP().val(r.getInt(i++));
+      c.stats().vitalMP().val(r.getInt(i++));
+      c.stats().statSTR().val = r.getInt(i++);
+      c.stats().statSTR().exp = r.getFloat(i++);
+      c.stats().statINT().val = r.getInt(i++);
+      c.stats().statINT().exp = r.getFloat(i++);
+      c.stats().statDEX().val = r.getInt(i++);
+      c.stats().statDEX().exp = r.getFloat(i++);
     }
     
     r.close();
+    
     return c;
   }
   
