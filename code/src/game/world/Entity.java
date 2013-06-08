@@ -228,7 +228,6 @@ public class Entity extends Movable {
     
     public static class Stat {
       public int val;
-      public float exp;
     }
   }
 }
