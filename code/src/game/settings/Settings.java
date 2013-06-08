@@ -76,10 +76,7 @@ public class Settings {
           accountTable.create();
         }
         
-        if(!charTable.exists()) {
-          System.out.println("Creating character table...");
-          charTable.create();
-        }
+        charTable.create();
       } catch(SQLException e) {
         e.printStackTrace();
       }
