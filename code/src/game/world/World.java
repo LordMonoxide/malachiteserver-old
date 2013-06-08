@@ -88,7 +88,6 @@ public class World extends Sandbox {
     _entity.add(e);
     addToSandbox(e);
     
-    //System.out.println("Sending " + e.getName() + " to all");
     sendEntityToAll(e);
     
     if(e.getConnection() != null) {
@@ -116,7 +115,6 @@ public class World extends Sandbox {
   
   public void send(Packet packet) {
     for(Connection c : _connection) {
-      //System.out.println("Sending data to " + c.getEntity().getName());
       c.send(packet);
     }
   }
@@ -131,7 +129,6 @@ public class World extends Sandbox {
   
   public void sendEntitiesTo(Connection c) {
     for(Entity e : _entity) {
-      //System.out.println("sendEntitiesTo " + e.getName());
       c.send(new EntityCreate(e));
     }
   }
