@@ -75,8 +75,9 @@ public class Login extends Packet {
           
           System.out.println(c.getChannel().remoteAddress() + " logged into " + a.getName());
           
-          Data.Info request = new Data.Info(Game.getInstance().getSprites());
-          c.send(request);
+          Game g = Game.getInstance();
+          if(g.getSpriteCount() != 0) c.send(new Data.Info(g.getSprite()));
+          if(g.getItemCount()   != 0) c.send(new Data.Info(g.getItem()));
         } else {
           response._response = Response.RESPONSE_NOT_AUTHD;
         }
