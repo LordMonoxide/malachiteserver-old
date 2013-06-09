@@ -1,6 +1,7 @@
 package game.network.packet;
 
 import game.Game;
+import game.data.Item;
 import game.data.Map;
 import game.data.Sprite;
 import game.data.util.Buffer;
@@ -13,6 +14,7 @@ import network.packet.Packet;
 public class Data {
   public static final byte DATA_TYPE_MAP = 1;
   public static final byte DATA_TYPE_SPRITE = 2;
+  public static final byte DATA_TYPE_ITEM = 3;
   
   public static class Info extends Packet {
     private Serializable[] _data;
@@ -32,9 +34,8 @@ public class Data {
     public ByteBuf serialize() {
       ByteBuf b = Unpooled.buffer();
       
-      if(_data[0] instanceof Sprite) {
-        b.writeByte(DATA_TYPE_SPRITE);
-      }
+      if(_data[0] instanceof Sprite) b.writeByte(DATA_TYPE_SPRITE);
+      if(_data[0] instanceof Item)   b.writeByte(DATA_TYPE_ITEM);
       
       b.writeInt(_data.length);
       
@@ -76,12 +77,14 @@ public class Data {
     }
     
     public void process() {
+      Serializable data = null;
+      
       switch(_type) {
-        case DATA_TYPE_SPRITE:
-          Sprite data = Game.getInstance().getSprite(_file);
-          _connection.send(new Response(data));
-          break;
+        case DATA_TYPE_SPRITE: data = Game.getInstance().getSprite(_file); break;
+        case DATA_TYPE_ITEM:   data = Game.getInstance().getItem(_file);   break;
       }
+      
+      _connection.send(new Response(data));
     }
   }
   
@@ -94,6 +97,7 @@ public class Data {
     public Response() { }
     public Response(Serializable data) {
       if(data instanceof Sprite) _type = DATA_TYPE_SPRITE;
+      if(data instanceof Item)   _type = DATA_TYPE_ITEM;
       
       Buffer b = data.serialize();
       _file = data.getFile();
