@@ -57,7 +57,7 @@ public class AccountsTable {
   }
   
   public void create() throws SQLException {
-    _create.execute();
+    _create.executeUpdate();
   }
   
   public void drop() throws SQLException {
@@ -69,12 +69,12 @@ public class AccountsTable {
     _insert.setString(i++, _name);
     _insert.setString(i++, _pass);
     _insert.setInt(i++, _permissions);
-    _insert.execute();
+    _insert.executeUpdate();
   }
   
   public void delete() throws SQLException {
     _delete.setString(1, _name);
-    _delete.execute();
+    _delete.executeUpdate();
   }
   
   public void update() throws SQLException {
@@ -83,7 +83,7 @@ public class AccountsTable {
     _update.setString(i++, _pass);
     _update.setInt(i++, _permissions);
     _update.setInt(i++, _id);
-    _update.execute();
+    _update.executeUpdate();
   }
   
   public void select() throws SQLException {

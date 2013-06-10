@@ -76,7 +76,7 @@ public class SettingsTable {
   }
   
   public void create() throws SQLException {
-    _create.execute();
+    _create.executeUpdate();
     insert();
   }
   

@@ -82,7 +82,7 @@ public class PermissionsTable {
   
   public void insert() throws SQLException {
     updateValues(_insert);
-    _insert.execute();
+    _insert.executeUpdate();
   }
   
   public void delete() throws SQLException {
@@ -93,7 +93,7 @@ public class PermissionsTable {
   public void update() throws SQLException {
     updateValues(_update);
     _update.setInt(32, _id);
-    _update.execute();
+    _update.executeUpdate();
   }
   
   public void select() throws SQLException {
