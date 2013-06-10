@@ -35,10 +35,7 @@ public class Settings {
       }
     }
     
-    FileInputStream fs = null;
-    
-    try {
-      fs = new FileInputStream(_file);
+    try(FileInputStream fs = new FileInputStream(_file)) {
       _settings.load(fs);
       try {
         SQL._instance._id = _settings.getInt("serverID");
@@ -82,12 +79,6 @@ public class Settings {
       }
     } catch(IOException e) {
       e.printStackTrace();
-    } finally {
-      try {
-        fs.close();
-      } catch(IOException e) {
-        e.printStackTrace();
-      }
     }
     
     load();
@@ -108,6 +99,7 @@ public class Settings {
         Map.Tile._instance._count = Map.Size() / Map.Tile.Size();
         Map.Attrib._instance._size = settingsTable.getMapAttribSize();
         Map.Attrib._instance._count = Map.Size() / Map.Attrib.Size();
+        Player.Inventory._instance._size = settingsTable.getPlayerInventorySize();
       } catch(InvalidDataException e) { }
     } catch(SQLException e) {
       e.printStackTrace();
@@ -167,6 +159,18 @@ public class Settings {
       
       public static int Size()  { return _instance._size; }
       public static int Count() { return _instance._count; }
+    }
+  }
+  
+  public static class Player {
+    //private static Player _instance = new Player();
+    
+    public static class Inventory {
+      private static Inventory _instance = new Inventory();
+      
+      private int _size = 40;
+      
+      public static int Size() { return _instance._size; }
     }
   }
 }
