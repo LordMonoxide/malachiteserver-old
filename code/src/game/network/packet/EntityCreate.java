@@ -37,14 +37,6 @@ public class EntityCreate extends Packet {
     b.writeFloat(_entity.getY());
     b.writeInt(_entity.getZ());
     
-    b.writeInt(_entity.stats().vitalHP().max());
-    b.writeInt(_entity.stats().vitalHP().val());
-    b.writeInt(_entity.stats().vitalMP().max());
-    b.writeInt(_entity.stats().vitalMP().val());
-    b.writeInt(_entity.stats().statSTR().val);
-    b.writeInt(_entity.stats().statINT().val);
-    b.writeInt(_entity.stats().statDEX().val);
-    
     return b;
   }
   
