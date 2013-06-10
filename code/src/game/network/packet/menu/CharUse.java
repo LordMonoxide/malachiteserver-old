@@ -6,6 +6,8 @@ import game.Game;
 import game.data.account.Character;
 import game.data.account.Stats;
 import game.network.Connection;
+import game.network.packet.EntityStats;
+import game.network.packet.EntityVitals;
 import game.settings.Settings;
 import game.sql.CharactersTable;
 import game.world.Entity;
@@ -59,9 +61,7 @@ public class CharUse extends Packet {
         public Inv[]  getInv()    {
           Inv[] inv = new Inv[Settings.Player.Inventory.Size()];
           for(int i = 0; i < inv.length; i++) {
-            inv[i] = new Inv();
-            inv[i].item(Game.getInstance().getItem(character.inv(i).file()));
-            inv[i].val(character.inv(i).val());
+            inv[i] = new Inv(character.inv(i).file(), character.inv(i).val());
           }
           return inv;
         }
@@ -75,6 +75,9 @@ public class CharUse extends Packet {
       System.out.println(c.getAccount().getName() + " (" + c.getChannel().remoteAddress() + ") is using character " + character.getName());
       
       Game.getInstance().getWorld(character.getWorld()).addEntity(c.getEntity());
+      
+      c.send(new EntityVitals(c.getEntity()));
+      c.send(new EntityStats (c.getEntity()));
       
       return;
     } catch(SQLException e) {
