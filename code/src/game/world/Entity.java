@@ -204,6 +204,13 @@ public class Entity extends Movable {
   }
   
   public static class Inv {
+    public Inv(String file, int val) {
+      if(file != null) {
+        _item = Game.getInstance().getItem(file);
+        _val  = val;
+      }
+    }
+    
     private Item _item;
     private  int _val;
     
