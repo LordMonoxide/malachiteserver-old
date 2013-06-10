@@ -4,9 +4,12 @@ import java.sql.SQLException;
 
 import game.Game;
 import game.data.account.Character;
+import game.data.account.Stats;
 import game.network.Connection;
+import game.settings.Settings;
 import game.sql.CharactersTable;
 import game.world.Entity;
+import game.world.Entity.Inv;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import network.packet.Packet;
@@ -52,6 +55,16 @@ public class CharUse extends Packet {
         public float  getX()      { return character.getX(); }
         public float  getY()      { return character.getY(); }
         public int    getZ()      { return character.getZ(); }
+        public Stats  getStats()  { return character.stats().copy(); }
+        public Inv[]  getInv()    {
+          Inv[] inv = new Inv[Settings.Player.Inventory.Size()];
+          for(int i = 0; i < inv.length; i++) {
+            inv[i] = new Inv();
+            inv[i].item(Game.getInstance().getItem(character.inv(i).file()));
+            inv[i].val(character.inv(i).val());
+          }
+          return inv;
+        }
       }, c));
       
       response._response = Response.RESPONSE_OKAY;
