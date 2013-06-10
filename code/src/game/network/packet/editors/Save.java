@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import game.Game;
 import game.data.util.Buffer;
+import game.data.util.Serializable;
 import game.network.Connection;
 import game.network.packet.Data;
 import game.world.World;
@@ -88,14 +89,39 @@ public abstract class Save extends Packet {
       }
       
       Game game = Game.getInstance();
-      game.data.Sprite sprite;
+      Serializable s;
       
       for(TempData data : _data) {
-        sprite = game.getSprite(data.file);
-        sprite.deserialize(new Buffer(data.data));
-        sprite.save();
+        s = game.getSprite(data.file);
+        s.deserialize(new Buffer(data.data));
+        s.save();
         
-        game.send(new Data.Response(sprite));
+        game.send(new Data.Response(s));
+      }
+    }
+  }
+  
+  public static class Item extends Save {
+    public int getIndex() {
+      return 24;
+    }
+    
+    public void process() {
+      Connection c = (Connection)_connection;
+      if(!c.getAccount().getPermissions().canEditItems()) {
+        c.kick("Not auth'd to edit items");
+        return;
+      }
+      
+      Game game = Game.getInstance();
+      Serializable s;
+      
+      for(TempData data :_data) {
+        s = game.getItem(data.file);
+        s.deserialize(new Buffer(data.data));
+        s.save();
+        
+        game.send(new Data.Response(s));
       }
     }
   }
