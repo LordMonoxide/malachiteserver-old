@@ -28,6 +28,21 @@ public class Stats {
     _mp._max = (int)(Math.pow(_int.val, 1.2) * 3 + 40);
   }
   
+  public Stats copy() {
+    Stats s = new Stats();
+    s._hp._val = _hp._val;
+    s._hp._max = _hp._max;
+    s._mp._val = _mp._val;
+    s._mp._max = _mp._max;
+    s._str.val = _str.val;
+    s._str.exp = _str.exp;
+    s._int.val = _str.val;
+    s._int.exp = _str.exp;
+    s._dex.val = _str.val;
+    s._dex.exp = _str.exp;
+    return s;
+  }
+  
   public class Vital {
     private Vital() { }
     
