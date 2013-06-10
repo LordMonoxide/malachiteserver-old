@@ -1,6 +1,14 @@
 package game;
 
+import java.awt.AWTException;
+import java.awt.SystemTray;
+import java.awt.TrayIcon;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
+import java.sql.SQLException;
+
+import javax.swing.ImageIcon;
 
 import network.packet.Packet;
 
@@ -10,11 +18,18 @@ import game.data.Item;
 import game.data.Sprite;
 import game.network.Server;
 import game.settings.Settings;
+import game.sql.AccountsTable;
+import game.sql.CharactersTable;
+import game.sql.PermissionsTable;
+import game.sql.SettingsTable;
 import game.world.World;
 
 public class Game {
   private static Game _instance = new Game();
   public static Game getInstance() { return _instance; }
+  
+  private SystemTray tray = SystemTray.getSystemTray();
+  private TrayIcon   icon;
   
   private Server _net;
   
@@ -99,6 +114,8 @@ public class Game {
   }
   
   public void start() {
+    addToSystemTray();
+    
     Settings.init();
     
     loadSprites();
@@ -107,8 +124,50 @@ public class Game {
     _net = new Server();
     _net.initPackets();
     _net.start();
+  }
+  
+  public void destroy() {
+    System.out.println("Shutting down...");
     
-    //TODO: Need to close SQL tables
+    //TODO: Close sockets
+    //TODO: Stop handler threads
+    
+    try { CharactersTable .getInstance().close(); } catch(SQLException e) { }
+    try { AccountsTable   .getInstance().close(); } catch(SQLException e) { }
+    try { PermissionsTable.getInstance().close(); } catch(SQLException e) { }
+    try { SettingsTable   .getInstance().close(); } catch(SQLException e) { }
+    
+    removeFromSystemTray();
+    
+    //TODO: Not this
+    System.exit(0);
+  }
+  
+  public void addToSystemTray() {
+    if(!SystemTray.isSupported()) {
+      System.out.println("SystemTray is not supported");
+      return;
+    }
+    
+    icon = new TrayIcon(new ImageIcon("../icon.png", "Icon").getImage());
+    
+    try {
+      tray.add(icon);
+    } catch(AWTException e) {
+      System.out.println("SystemTray is not supported");
+      e.printStackTrace();
+      return;
+    }
+    
+    icon.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent arg0) {
+        destroy();
+      }
+    });
+  }
+  
+  public void removeFromSystemTray() {
+    tray.remove(icon);
   }
   
   public void send(Packet packet) {
