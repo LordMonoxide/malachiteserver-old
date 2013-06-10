@@ -2,11 +2,14 @@ package game.sql;
 
 import game.data.account.Account;
 import game.data.account.Character;
+import game.settings.Settings;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+
+import com.mysql.jdbc.Statement;
 
 import sql.SQL;
 
@@ -22,20 +25,35 @@ public class CharactersTable {
   private PreparedStatement _delete;
   private PreparedStatement _update;
   
+  private PreparedStatement _createInv;
+  private PreparedStatement _dropInv;
+  private PreparedStatement _insertInv;
+  private PreparedStatement _deleteInv;
+  private PreparedStatement _updateInv;
+  
   private PreparedStatement _selectAccount;
   private PreparedStatement _selectPlayer;
   private PreparedStatement _selectExist;
+  private PreparedStatement _selectInv;
   
   public CharactersTable() {
     _sql = SQL.getInstance();
-    _create        = _sql.prepareStatement("CREATE TABLE characters (id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT, account_id INTEGER UNSIGNED NOT NULL, name VARCHAR(16) NOT NULL, sprite VARCHAR(40) NOT NULL, world VARCHAR(40) NOT NULL, x FLOAT NOT NULL, y FLOAT NOT NULL, z INTEGER UNSIGNED NOT NULL, hp INTEGER UNSIGNED NOT NULL, mp INTEGER UNSIGNED NOT NULL, str INTEGER UNSIGNED NOT NULL, str_exp FLOAT NOT NULL, `int` INTEGER UNSIGNED NOT NULL, int_exp FLOAT NOT NULL, dex INTEGER UNSIGNED NOT NULL, dex_exp FLOAT NOT NULL, PRIMARY KEY (id), UNIQUE KEY characters_name_unique (name), FOREIGN KEY (account_id) REFERENCES accounts(id))");
-    _drop          = _sql.prepareStatement("DROP TABLE characters");
-    _insert        = _sql.prepareStatement("INSERT INTO characters VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    _delete        = _sql.prepareStatement("DELETE FROM characters WHERE id=?");
-    _update        = _sql.prepareStatement("UPDATE characters SET world=?, x=?, y=?, z=?, hp=?, mp=?, str=?, str_exp=?, int=?, int_exp=?, dex=?, dex_exp=? WHERE id=?");
+    _create    = _sql.prepareStatement("CREATE TABLE characters (id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT, account_id INTEGER UNSIGNED NOT NULL, name VARCHAR(16) NOT NULL, sprite VARCHAR(40) NOT NULL, world VARCHAR(40) NOT NULL, x FLOAT NOT NULL, y FLOAT NOT NULL, z INTEGER UNSIGNED NOT NULL, hp INTEGER UNSIGNED NOT NULL, mp INTEGER UNSIGNED NOT NULL, str INTEGER UNSIGNED NOT NULL, str_exp FLOAT NOT NULL, `int` INTEGER UNSIGNED NOT NULL, int_exp FLOAT NOT NULL, dex INTEGER UNSIGNED NOT NULL, dex_exp FLOAT NOT NULL, PRIMARY KEY (id), UNIQUE KEY characters_name_unique (name), FOREIGN KEY (account_id) REFERENCES accounts(id))", Statement.RETURN_GENERATED_KEYS);
+    _drop      = _sql.prepareStatement("DROP TABLE characters");
+    _insert    = _sql.prepareStatement("INSERT INTO characters VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    _delete    = _sql.prepareStatement("DELETE FROM characters WHERE id=?");
+    _update    = _sql.prepareStatement("UPDATE characters SET world=?, x=?, y=?, z=?, hp=?, mp=?, str=?, str_exp=?, int=?, int_exp=?, dex=?, dex_exp=? WHERE id=?");
+    
+    _createInv = _sql.prepareStatement("CREATE TABLE character_invs (id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT, character_id INTEGER UNSIGNED NOT NULL, file VARCHAR(40) NOT NULL, val INTEGER UNSIGNED NOT NULL, PRIMARY KEY (id), FOREIGN KEY (character_id) REFERENCES characters(id))", Statement.RETURN_GENERATED_KEYS);
+    _dropInv   = _sql.prepareStatement("DROP TABLE characters_invs");
+    _insertInv = _sql.prepareStatement("INSERT INTO character_invs VALUES (null, ?, ?, ?)");
+    _deleteInv = _sql.prepareStatement("DELETE FROM character_invs WHERE character_id=?");
+    _updateInv = _sql.prepareStatement("UPDATE character_invs SET file=?, val=? WHERE id=?");
+    
     _selectAccount = _sql.prepareStatement("SELECT id, name FROM characters WHERE account_id=?");
     _selectPlayer  = _sql.prepareStatement("SELECT * FROM characters WHERE id=? AND account_id=? LIMIT 1");
     _selectExist   = _sql.prepareStatement("SELECT id FROM characters WHERE name=? LIMIT 1");
+    _selectInv     = _sql.prepareStatement("SELECT id, file, val FROM character_invs WHERE character_id=?");
   }
   
   public void close() throws SQLException {
@@ -44,9 +62,15 @@ public class CharactersTable {
     if(_insert != null) _insert.close();
     if(_delete != null) _delete.close();
     if(_update != null) _update.close();
+    if(_createInv != null) _createInv.close();
+    if(_dropInv   != null) _dropInv  .close();
+    if(_insertInv != null) _insertInv.close();
+    if(_deleteInv != null) _deleteInv.close();
+    if(_updateInv != null) _updateInv.close();
     if(_selectAccount != null) _selectAccount.close();
     if(_selectPlayer != null) _selectPlayer.close();
     if(_selectExist != null) _selectExist.close();
+    if(_selectInv != null) _selectInv.close();
   }
   
   public void create() throws SQLException {
@@ -54,10 +78,16 @@ public class CharactersTable {
       System.out.println("Creating characters table...");
       _create.executeUpdate();
     }
+    
+    if(!_sql.tableExists("character_invs")) {
+      System.out.println("Creating character_invs table...");
+      _createInv.executeUpdate();
+    }
   }
   
   public void drop() throws SQLException {
     _drop.executeUpdate();
+    _dropInv.executeUpdate();
   }
   
   public void insert(Character p) throws SQLException {
@@ -79,17 +109,33 @@ public class CharactersTable {
     _insert.setFloat(i++, p.stats().statDEX().exp);
     _insert.executeUpdate();
     
-    _selectExist.setString(1, p.getName());
-    ResultSet r = _selectExist.executeQuery();
+    ResultSet r = _insert.getGeneratedKeys();
     if(r.next()) {
       p.setID(r.getInt(1));
     }
     r.close();
+    
+    for(Character.Inv inv : p.inv()) {
+      i = 1;
+      _insertInv.setInt(i++, p.getID());
+      _insertInv.setString(i++, inv.file());
+      _insertInv.setInt(i++, inv.val());
+      _insertInv.executeUpdate();
+      
+      r = _insert.getGeneratedKeys();
+      if(r.next()) {
+        inv.id(r.getInt(1));
+      }
+      r.close();
+    }
   }
   
   public void delete(Character p) throws SQLException {
     _delete.setInt(1, p.getID());
     _delete.executeUpdate();
+    
+    _deleteInv.setInt(1, p.getID());
+    _deleteInv.executeUpdate();
   }
   
   public void update(Character p) throws SQLException {
@@ -150,6 +196,19 @@ public class CharactersTable {
       c.stats().statINT().exp = r.getFloat(i++);
       c.stats().statDEX().val = r.getInt(i++);
       c.stats().statDEX().exp = r.getFloat(i++);
+      
+      _selectInv.setInt(1, id);
+      ResultSet inv = _selectInv.executeQuery();
+      
+      int n = 0;
+      while(inv.next()) {
+        c.inv(n).id(inv.getInt(1));
+        c.inv(n).file(inv.getString(2));
+        c.inv(n).val(inv.getInt(3));
+        if(n++ >= Settings.Player.Inventory.Size()) break;
+      }
+      
+      inv.close();
     }
     
     r.close();
