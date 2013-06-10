@@ -3,10 +3,12 @@ package game.data;
 import java.io.File;
 import java.util.LinkedList;
 
+import game.data.account.Stats;
 import game.data.util.Buffer;
 import game.data.util.Serializable;
 import game.settings.Settings;
 import game.world.Entity;
+import game.world.Entity.Inv;
 
 public class Map extends Serializable {
   private static final int VERSION = 3;
@@ -44,6 +46,8 @@ public class Map extends Serializable {
         public float  getX()      { return sprite._x + _x * Settings.Map.Size(); }
         public float  getY()      { return sprite._y + _y * Settings.Map.Size(); }
         public int    getZ()      { return sprite._z; }
+        public Stats  getStats()  { return null; }
+        public Inv[]  getInv()    { return null; }
       });
       
       i++;
