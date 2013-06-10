@@ -83,6 +83,7 @@ public class Server {
     Packets.add(Save.Sprite.class);
     Packets.add(EntityVitals.class);
     Packets.add(EntityStats.class);
+    Packets.add(Save.Item.class);
   }
   
   public void start() {
