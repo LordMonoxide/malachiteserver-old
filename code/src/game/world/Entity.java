@@ -2,6 +2,7 @@ package game.world;
 
 import network.packet.Packet;
 import game.Game;
+import game.data.Item;
 import game.data.account.Stats;
 import game.network.Connection;
 import game.settings.Settings;
@@ -23,6 +24,7 @@ public class Entity extends Movable {
   private int _z;
   
   private Stats _stats;
+  private Inv[] _inv;
   
   public Entity(Source source) {
     this(source, null);
@@ -60,7 +62,8 @@ public class Entity extends Movable {
       _my -= 1;
     }
     
-    _stats = new Stats();
+    _stats = source.getStats();
+    _inv   = source.getInv();
   }
   
   public Connection getConnection() {
@@ -172,6 +175,14 @@ public class Entity extends Movable {
     return _stats;
   }
   
+  public Inv inv(int index) {
+    return _inv[index];
+  }
+  
+  public Inv[] inv() {
+    return _inv;
+  }
+  
   public void remove() {
     _world.removeEntity(this);
   }
@@ -188,5 +199,17 @@ public class Entity extends Movable {
     public float  getX();
     public float  getY();
     public int    getZ();
+    public Stats  getStats();
+    public Inv[]  getInv();
+  }
+  
+  public static class Inv {
+    private Item _item;
+    private  int _val;
+    
+    public Item item() { return _item; }
+    public  int val () { return _val;  }
+    public void item(Item item) { _item = item; }
+    public void val ( int val)  { _val  = val;  }
   }
 }
