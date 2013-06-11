@@ -113,6 +113,16 @@ public class World extends Sandbox {
     e.setWorld(null);
   }
   
+  public Entity findEntity(String name) {
+    for(Entity e : _entity) {
+      if(e.getName() != null && e.getName().equalsIgnoreCase(name)) {
+        return e;
+      }
+    }
+    
+    return null;
+  }
+  
   public void send(Packet packet) {
     for(Connection c : _connection) {
       c.send(packet);
