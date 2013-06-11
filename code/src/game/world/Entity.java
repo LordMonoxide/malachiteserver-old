@@ -5,6 +5,7 @@ import game.Game;
 import game.data.Item;
 import game.data.account.Stats;
 import game.network.Connection;
+import game.network.packet.EntityMoveStop;
 import game.settings.Settings;
 import physics.Movable;
 
@@ -185,6 +186,11 @@ public class Entity extends Movable {
   
   public void remove() {
     _world.removeEntity(this);
+  }
+  
+  public void warp(float x, float y) {
+    setXY(x, y);
+    _world.send(new EntityMoveStop(this));
   }
   
   public void send(Packet packet) {
