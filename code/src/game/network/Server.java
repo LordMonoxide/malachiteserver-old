@@ -4,6 +4,7 @@ import game.network.packet.Chat;
 import game.network.packet.Data;
 import game.network.packet.EntityCreate;
 import game.network.packet.EntityDestroy;
+import game.network.packet.EntityInv;
 import game.network.packet.EntityMoveStart;
 import game.network.packet.EntityMoveStop;
 import game.network.packet.EntityStats;
@@ -84,6 +85,7 @@ public class Server {
     Packets.add(EntityVitals.class);
     Packets.add(EntityStats.class);
     Packets.add(Save.Item.class);
+    Packets.add(EntityInv.class);
   }
   
   public void start() {
