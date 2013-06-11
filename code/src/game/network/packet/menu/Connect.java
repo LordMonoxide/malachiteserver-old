@@ -1,5 +1,6 @@
 package game.network.packet.menu;
 
+import game.network.Connection;
 import game.network.Server;
 import game.settings.Settings;
 import io.netty.buffer.ByteBuf;
@@ -24,7 +25,7 @@ public class Connect extends Packet {
     if(_version != Settings.Net.Version()) {
       _connection.kick("Invalid version");
     } else {
-      ((game.network.Connection)_connection).setHandler(Server.getMenuHandler());
+      ((Connection)_connection).setHandler(Server.getMenuHandler());
     }
   }
 }
