@@ -22,7 +22,7 @@ public class EntityInv extends Packet {
     b.writeInt(_entity.getID());
     
     for(Entity.Inv inv : _entity.inv()) {
-      if(inv.item() != null) {
+      if(inv != null) {
         b.writeByte (inv.item().getFile().length());
         b.writeBytes(inv.item().getFile().getBytes());
         b.writeInt  (inv.val());
