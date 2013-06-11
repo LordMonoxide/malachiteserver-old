@@ -4,6 +4,7 @@ import game.network.Connection;
 import game.network.Server;
 import game.settings.Settings;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import network.packet.Packet;
 
 public class Connect extends Packet {
@@ -14,7 +15,13 @@ public class Connect extends Packet {
   }
   
   public ByteBuf serialize() {
-    return null;
+    ByteBuf b = Unpooled.buffer();
+    b.writeShort(Settings.Map.Size());
+    b.writeByte (Settings.Map.Depth());
+    b.writeByte (Settings.Map.Tile.Size());
+    b.writeByte (Settings.Map.Attrib.Size());
+    b.writeByte (Settings.Player.Inventory.Size());
+    return b;
   }
   
   public void deserialize(ByteBuf data) throws NotEnoughDataException {
@@ -26,6 +33,7 @@ public class Connect extends Packet {
       _connection.kick("Invalid version");
     } else {
       ((Connection)_connection).setHandler(Server.getMenuHandler());
+      _connection.send(new Connect());
     }
   }
 }
