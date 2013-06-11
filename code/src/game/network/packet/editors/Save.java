@@ -92,7 +92,7 @@ public abstract class Save extends Packet {
       Serializable s;
       
       for(TempData data : _data) {
-        s = game.getSprite(data.file);
+        s = game.getSprite(data.file, true);
         s.deserialize(new Buffer(data.data));
         s.save();
         
@@ -117,7 +117,7 @@ public abstract class Save extends Packet {
       Serializable s;
       
       for(TempData data :_data) {
-        s = game.getItem(data.file);
+        s = game.getItem(data.file, true);
         s.deserialize(new Buffer(data.data));
         s.save();
         
