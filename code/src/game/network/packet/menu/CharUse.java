@@ -6,6 +6,7 @@ import game.Game;
 import game.data.account.Character;
 import game.data.account.Stats;
 import game.network.Connection;
+import game.network.packet.EntityInv;
 import game.network.packet.EntityStats;
 import game.network.packet.EntityVitals;
 import game.settings.Settings;
@@ -78,6 +79,7 @@ public class CharUse extends Packet {
       
       c.send(new EntityVitals(c.getEntity()));
       c.send(new EntityStats (c.getEntity()));
+      c.send(new EntityInv   (c.getEntity()));
       
       return;
     } catch(SQLException e) {
