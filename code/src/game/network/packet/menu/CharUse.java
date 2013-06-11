@@ -62,7 +62,11 @@ public class CharUse extends Packet {
         public Inv[]  getInv()    {
           Inv[] inv = new Inv[Settings.Player.Inventory.Size()];
           for(int i = 0; i < inv.length; i++) {
-            inv[i] = new Inv(character.inv(i).file(), character.inv(i).val());
+            if(character.inv(i).file() != null) {
+              inv[i] = new Inv(i, Game.getInstance().getItem(character.inv(i).file()), character.inv(i).val());
+            } else {
+              inv[i] = null;
+            }
           }
           return inv;
         }
