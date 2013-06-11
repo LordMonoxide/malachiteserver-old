@@ -19,10 +19,13 @@ public class EntityInv extends Packet {
   public ByteBuf serialize() {
     ByteBuf b = Unpooled.buffer();
     
+    b.writeInt(_entity.getID());
+    
     for(Entity.Inv inv : _entity.inv()) {
       if(inv.item() != null) {
         b.writeByte (inv.item().getFile().length());
         b.writeBytes(inv.item().getFile().getBytes());
+        b.writeInt  (inv.val());
       } else {
         b.writeByte(0);
       }
