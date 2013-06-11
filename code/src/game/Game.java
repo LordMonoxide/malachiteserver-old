@@ -91,18 +91,20 @@ public class Game {
   public Sprite[] getSprite() { return _sprite.values().toArray(new Sprite[0]); }
   public Item  [] getItem()   { return _item  .values().toArray(new Item  [0]); }
   
-  public Sprite getSprite(String file) {
+  public Sprite getSprite(String file) { return getSprite(file, false); }
+  public Sprite getSprite(String file, boolean create) {
     Sprite s = _sprite.get(file);
-    if(s == null) {
+    if(s == null && create) {
       s = new Sprite(new File("../data/sprites/" + file));
       _sprite.put(file, s);
     }
     return s;
   }
   
-  public Item getItem(String file) {
+  public Item getItem(String file) { return getItem(file, false); }
+  public Item getItem(String file, boolean create) {
     Item i = _item.get(file);
-    if(i == null) {
+    if(i == null && create) {
       i = new Item(new File("../data/items/" + file));
       _item.put(file, i);
     }
