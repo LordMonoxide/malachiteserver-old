@@ -193,6 +193,35 @@ public class Entity extends Movable {
     _world.send(new EntityMoveStop(this));
   }
   
+  public Inv findOpenItemSlot(Item item) {
+    for(int i = 0; i < _inv.length; i++) {
+      if(_inv[i] != null) {
+        if(_inv[i]._item == item) {
+          return _inv[i];
+        }
+      }
+    }
+    
+    for(int i = 0; i < _inv.length; i++) {
+      if(_inv[i] == null) {
+        _inv[i] = new Inv(i, item, 0);
+        return _inv[i];
+      }
+    }
+    
+    return null;
+  }
+  
+  public Inv giveItem(Item item, int val) {
+    Inv inv = findOpenItemSlot(item);
+    if(inv != null) {
+      inv._val += val;
+      return inv;
+    }
+    
+    return null;
+  }
+  
   public void send(Packet packet) {
     if(_connection != null) {
       _connection.send(packet);
@@ -210,18 +239,20 @@ public class Entity extends Movable {
   }
   
   public static class Inv {
-    public Inv(String file, int val) {
-      if(file != null) {
-        _item = Game.getInstance().getItem(file);
-        _val  = val;
-      }
+    private int _index;
+    
+    public Inv(int index, Item item, int val) {
+      _index = index;
+      _item  = item;
+      _val   = val;
     }
     
     private Item _item;
     private  int _val;
     
-    public Item item() { return _item; }
-    public  int val () { return _val;  }
+    public  int index() { return _index; }
+    public Item item()  { return _item; }
+    public  int val ()  { return _val;  }
     public void item(Item item) { _item = item; }
     public void val ( int val)  { _val  = val;  }
   }
