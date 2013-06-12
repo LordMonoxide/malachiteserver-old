@@ -64,8 +64,6 @@ public class CharUse extends Packet {
           for(int i = 0; i < inv.length; i++) {
             if(character.inv(i).file() != null) {
               inv[i] = new Inv(i, Game.getInstance().getItem(character.inv(i).file()), character.inv(i).val());
-            } else {
-              inv[i] = null;
             }
           }
           return inv;
