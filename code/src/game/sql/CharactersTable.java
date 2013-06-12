@@ -40,13 +40,13 @@ public class CharactersTable {
     _sql = SQL.getInstance();
     _create    = _sql.prepareStatement("CREATE TABLE characters (id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT, account_id INTEGER UNSIGNED NOT NULL, name VARCHAR(16) NOT NULL, sprite VARCHAR(40) NOT NULL, world VARCHAR(40) NOT NULL, x FLOAT NOT NULL, y FLOAT NOT NULL, z INTEGER UNSIGNED NOT NULL, hp INTEGER UNSIGNED NOT NULL, mp INTEGER UNSIGNED NOT NULL, str INTEGER UNSIGNED NOT NULL, str_exp FLOAT NOT NULL, `int` INTEGER UNSIGNED NOT NULL, int_exp FLOAT NOT NULL, dex INTEGER UNSIGNED NOT NULL, dex_exp FLOAT NOT NULL, PRIMARY KEY (id), UNIQUE KEY characters_name_unique (name), FOREIGN KEY (account_id) REFERENCES accounts(id))", Statement.RETURN_GENERATED_KEYS);
     _drop      = _sql.prepareStatement("DROP TABLE characters");
-    _insert    = _sql.prepareStatement("INSERT INTO characters VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    _insert    = _sql.prepareStatement("INSERT INTO characters VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
     _delete    = _sql.prepareStatement("DELETE FROM characters WHERE id=?");
     _update    = _sql.prepareStatement("UPDATE characters SET world=?, x=?, y=?, z=?, hp=?, mp=?, str=?, str_exp=?, int=?, int_exp=?, dex=?, dex_exp=? WHERE id=?");
     
     _createInv = _sql.prepareStatement("CREATE TABLE character_invs (id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT, character_id INTEGER UNSIGNED NOT NULL, file VARCHAR(40) NOT NULL, val INTEGER UNSIGNED NOT NULL, PRIMARY KEY (id), FOREIGN KEY (character_id) REFERENCES characters(id))", Statement.RETURN_GENERATED_KEYS);
     _dropInv   = _sql.prepareStatement("DROP TABLE characters_invs");
-    _insertInv = _sql.prepareStatement("INSERT INTO character_invs VALUES (null, ?, ?, ?)");
+    _insertInv = _sql.prepareStatement("INSERT INTO character_invs VALUES (null, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
     _deleteInv = _sql.prepareStatement("DELETE FROM character_invs WHERE character_id=?");
     _updateInv = _sql.prepareStatement("UPDATE character_invs SET file=?, val=? WHERE id=?");
     
