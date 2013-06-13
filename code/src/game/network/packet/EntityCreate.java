@@ -30,12 +30,13 @@ public class EntityCreate extends Packet {
     
     b.writeShort(_entity.getSprite().length());
     b.writeBytes(_entity.getSprite().getBytes());
+    b.writeInt  (_entity.getType().ordinal());
     b.writeFloat(_entity.getAcc());
     b.writeFloat(_entity.getDec());
     b.writeFloat(_entity.getVelTerm());
     b.writeFloat(_entity.getX());
     b.writeFloat(_entity.getY());
-    b.writeInt(_entity.getZ());
+    b.writeByte (_entity.getZ());
     
     return b;
   }
