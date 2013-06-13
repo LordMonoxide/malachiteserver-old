@@ -10,6 +10,10 @@ import game.settings.Settings;
 import physics.Movable;
 
 public class Entity extends Movable {
+  public String toString() {
+    return "Entity '" + _name + "' on '" + _world + "' at (" + _x + ", " + _y + ", " + _z + ")";
+  }
+  
   private Connection _connection;
   
   private int _id;
