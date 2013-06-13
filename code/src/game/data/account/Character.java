@@ -1,6 +1,10 @@
 package game.data.account;
 
+import java.sql.SQLException;
+
 import game.settings.Settings;
+import game.sql.CharactersTable;
+import game.world.Entity;
 
 public class Character {
   private int _id;
@@ -46,10 +50,42 @@ public class Character {
   public void setZ      (int z)              { _z = z; }
   public void inv       (int index, Inv inv) { _inv[index] = inv; }
   
+  public void save(Entity entity) {
+    _name = entity.getName();
+    _world = entity.getWorld().getName();
+    _sprite = entity.getSprite();
+    _x = entity.getX();
+    _y = entity.getY();
+    _z = entity.getZ();
+    _stats.statSTR().val = entity.stats().statSTR().val;
+    _stats.statINT().val = entity.stats().statINT().val;
+    _stats.statDEX().val = entity.stats().statDEX().val;
+    _stats.calculateMaxVitals();
+    _stats.vitalHP().val(entity.stats().vitalHP().val());
+    _stats.vitalMP().val(entity.stats().vitalMP().val());
+    
+    for(int i = 0; i < Settings.Player.Inventory.Size(); i++) {
+      if(entity.inv(i) != null) {
+        _inv[i]._file = entity.inv(i).item().getFile();
+        _inv[i]._val  = entity.inv(i).val();
+      } else {
+        _inv[i]._file = null;
+        _inv[i]._val = 0;
+      }
+    }
+    
+    try {
+      CharactersTable.getInstance().update(this);
+    } catch(SQLException e) {
+      System.err.println("ERROR SAVING PLAYER " + _name);
+      e.printStackTrace();
+    }
+  }
+  
   public class Inv {
     private Inv() { }
     
-    private    int _id;
+    private    int _id = -1;
     private String _file;
     private    int _val;
     
