@@ -14,6 +14,10 @@ import network.packet.Packet;
 import physics.Sandbox;
 
 public class World extends Sandbox {
+  public String toString() {
+    return "world '" + _name + "'";
+  }
+  
   private HashMap<String, Region> _region = new HashMap<String, Region>();
   private HashMap<String, Map> _map = new HashMap<String, Map>();
   
@@ -33,6 +37,10 @@ public class World extends Sandbox {
   
   public void destroy() {
     stopSandbox();
+  }
+  
+  public String getName() { 
+    return _name;
   }
   
   public Region getRegion(int x, int y) {
