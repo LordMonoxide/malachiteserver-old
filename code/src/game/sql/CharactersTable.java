@@ -42,9 +42,9 @@ public class CharactersTable {
     _drop      = _sql.prepareStatement("DROP TABLE characters");
     _insert    = _sql.prepareStatement("INSERT INTO characters VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
     _delete    = _sql.prepareStatement("DELETE FROM characters WHERE id=?");
-    _update    = _sql.prepareStatement("UPDATE characters SET world=?, x=?, y=?, z=?, hp=?, mp=?, str=?, str_exp=?, int=?, int_exp=?, dex=?, dex_exp=? WHERE id=?");
+    _update    = _sql.prepareStatement("UPDATE characters SET world=?, x=?, y=?, z=?, hp=?, mp=?, str=?, str_exp=?, `int`=?, int_exp=?, dex=?, dex_exp=? WHERE id=?");
     
-    _createInv = _sql.prepareStatement("CREATE TABLE character_invs (id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT, character_id INTEGER UNSIGNED NOT NULL, file VARCHAR(40) NOT NULL, val INTEGER UNSIGNED NOT NULL, PRIMARY KEY (id), FOREIGN KEY (character_id) REFERENCES characters(id))", Statement.RETURN_GENERATED_KEYS);
+    _createInv = _sql.prepareStatement("CREATE TABLE character_invs (id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT, character_id INTEGER UNSIGNED NOT NULL, file VARCHAR(40), val INTEGER UNSIGNED NOT NULL, PRIMARY KEY (id), FOREIGN KEY (character_id) REFERENCES characters(id))", Statement.RETURN_GENERATED_KEYS);
     _dropInv   = _sql.prepareStatement("DROP TABLE characters_invs");
     _insertInv = _sql.prepareStatement("INSERT INTO character_invs VALUES (null, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
     _deleteInv = _sql.prepareStatement("DELETE FROM character_invs WHERE character_id=?");
@@ -110,9 +110,7 @@ public class CharactersTable {
     _insert.executeUpdate();
     
     ResultSet r = _insert.getGeneratedKeys();
-    if(r.next()) {
-      p.setID(r.getInt(1));
-    }
+    if(r.next()) p.setID(r.getInt(1));
     r.close();
     
     for(Character.Inv inv : p.inv()) {
@@ -123,9 +121,7 @@ public class CharactersTable {
       _insertInv.executeUpdate();
       
       r = _insert.getGeneratedKeys();
-      if(r.next()) {
-        inv.id(r.getInt(1));
-      }
+      if(r.next()) inv.id(r.getInt(1));
       r.close();
     }
   }
@@ -154,6 +150,13 @@ public class CharactersTable {
     _update.setFloat(i++, p.stats().statDEX().exp);
     _update.setInt(i++, p.getID());
     _update.executeUpdate();
+    
+    for(Character.Inv inv : p.inv()) {
+      _updateInv.setString(1, inv.file());
+      _updateInv.setInt(2, inv.val());
+      _updateInv.setInt(3, inv.id());
+      _updateInv.executeUpdate();
+    }
   }
   
   public ArrayList<Character> selectFromAccount(Account a) throws SQLException {
