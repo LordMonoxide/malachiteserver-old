@@ -51,7 +51,11 @@ public class Stats {
     
     public int val() { return _val; }
     public int max() { return _max; }
-    public void val(int val) { _val = val; }
+    public void val(int val) {
+      if(val <    0) val =    0;
+      if(val > _max) val = _max;
+      _val = val;
+    }
     
     public void restore() { _val = _max; }
   }
