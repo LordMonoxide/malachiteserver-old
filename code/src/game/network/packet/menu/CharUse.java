@@ -68,6 +68,7 @@ public class CharUse extends Packet {
           }
           return inv;
         }
+        public Entity.Type getType() { return Entity.Type.Player; }
       }, c));
       
       response._response = Response.RESPONSE_OKAY;
