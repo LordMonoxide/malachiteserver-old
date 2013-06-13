@@ -16,6 +16,7 @@ public class Entity extends Movable {
   
   private String _name;
   private String _sprite;
+  private Type   _type;
   
   private World _world;
   private float _rx, _ry;
@@ -42,6 +43,7 @@ public class Entity extends Movable {
     
     _name = source.getName();
     _sprite = source.getSprite();
+    _type = source.getType();
     
     _x = source.getX();
     _y = source.getY();
@@ -81,6 +83,10 @@ public class Entity extends Movable {
   
   public String getSprite() {
     return _sprite;
+  }
+  
+  public Type getType() {
+    return _type;
   }
   
   public World getWorld() {
@@ -236,6 +242,11 @@ public class Entity extends Movable {
     public int    getZ();
     public Stats  getStats();
     public Inv[]  getInv();
+    public Type   getType();
+  }
+  
+  public enum Type {
+    Player, Sprite, Item;
   }
   
   public static class Inv {
