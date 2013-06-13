@@ -42,13 +42,14 @@ public class Map extends Serializable {
     
     for(final Sprite sprite : _sprite) {
       e[i] = new Entity(new Entity.Source() {
-        public String getName()   { return null; }
-        public String getSprite() { return sprite._file; }
-        public float  getX()      { return sprite._x + _x * Settings.Map.Size(); }
-        public float  getY()      { return sprite._y + _y * Settings.Map.Size(); }
-        public int    getZ()      { return sprite._z; }
-        public Stats  getStats()  { return null; }
-        public Inv[]  getInv()    { return null; }
+        public String      getName()   { return null; }
+        public String      getSprite() { return sprite._file; }
+        public float       getX()      { return sprite._x + _x * Settings.Map.Size(); }
+        public float       getY()      { return sprite._y + _y * Settings.Map.Size(); }
+        public int         getZ()      { return sprite._z; }
+        public Stats       getStats()  { return null; }
+        public Inv[]       getInv()    { return null; }
+        public Entity.Type getType()   { return Entity.Type.Sprite; }
       });
       
       i++;
@@ -56,13 +57,14 @@ public class Map extends Serializable {
     
     for(final Item item : _item) {
       e[i] = new Entity(new Entity.Source() {
-        public String getName()   { return null; }
-        public String getSprite() { return item._file; }
-        public float getX()       { return item._x + _x * Settings.Map.Size(); }
-        public float getY()       { return item._y + _y * Settings.Map.Size(); }
-        public int getZ()         { return item._z; }
-        public Stats getStats()   { return null; }
-        public Inv[] getInv()     { return null; }
+        public String      getName()   { return null; }
+        public String      getSprite() { return item._file; }
+        public float       getX()      { return item._x + _x * Settings.Map.Size(); }
+        public float       getY()      { return item._y + _y * Settings.Map.Size(); }
+        public int         getZ()      { return item._z; }
+        public Stats       getStats()  { return null; }
+        public Inv[]       getInv()    { return null; }
+        public Entity.Type getType()   { return Entity.Type.Item; }
       });
       
       i++;
