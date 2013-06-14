@@ -3,9 +3,9 @@ package game.network.packet.menu;
 import java.sql.SQLException;
 
 import game.Game;
+import game.data.Map;
 import game.data.account.Character;
 import game.data.account.Stats;
-import game.data.util.Data;
 import game.network.Connection;
 import game.network.packet.EntityInv;
 import game.network.packet.EntityStats;
@@ -54,14 +54,14 @@ public class CharUse extends Packet {
       
       c.getAccount().setChar(character);
       c.setEntity(new Entity(new Entity.Source() {
-        public Data   getData()   { return null; }
-        public String getName()   { return character.getName(); }
-        public String getSprite() { return character.getSprite(); }
-        public float  getX()      { return character.getX(); }
-        public float  getY()      { return character.getY(); }
-        public int    getZ()      { return character.getZ(); }
-        public Stats  getStats()  { return character.stats().copy(); }
-        public Inv[]  getInv()    {
+        public Map.Data getData()   { return null; }
+        public String   getName()   { return character.getName(); }
+        public String   getSprite() { return character.getSprite(); }
+        public float    getX()      { return character.getX(); }
+        public float    getY()      { return character.getY(); }
+        public int      getZ()      { return character.getZ(); }
+        public Stats    getStats()  { return character.stats().copy(); }
+        public Inv[]    getInv()    {
           Inv[] inv = new Inv[Settings.Player.Inventory.Size()];
           for(int i = 0; i < inv.length; i++) {
             if(character.inv(i).file() != null) {
