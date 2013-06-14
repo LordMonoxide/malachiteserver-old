@@ -1,6 +1,7 @@
 package game.network.packet;
 
-import game.data.Item;
+import game.Game;
+import game.data.Map;
 import game.network.Connection;
 import game.world.Entity;
 import io.netty.buffer.ByteBuf;
@@ -38,8 +39,7 @@ public class EntityInteract extends Packet {
     switch(e.getType()) {
       case Item:
         if(e.isCloseTo(c.getEntity())) {
-          //TODO: VALUE
-          Entity.Inv inv = c.getEntity().giveItem((Item)e.getData(), 1);
+          Entity.Inv inv = c.getEntity().giveItem(Game.getInstance().getItem(e.getData()._file), ((Map.Item)e.getData())._val);
           
           if(inv != null) {
             e.remove();
