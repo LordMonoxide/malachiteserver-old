@@ -3,8 +3,8 @@ package game.world;
 import network.packet.Packet;
 import game.Game;
 import game.data.Item;
+import game.data.Map;
 import game.data.account.Stats;
-import game.data.util.Data;
 import game.network.Connection;
 import game.network.packet.EntityMoveStop;
 import game.settings.Settings;
@@ -33,7 +33,7 @@ public class Entity extends Movable {
   private Stats _stats;
   private Inv[] _inv;
   
-  private Data _source;
+  private Map.Data _source;
   
   public Entity(Source source) {
     this(source, null);
@@ -86,7 +86,7 @@ public class Entity extends Movable {
     return _id;
   }
   
-  public Data getData() {
+  public Map.Data getData() {
     return _source;
   }
   
@@ -252,15 +252,15 @@ public class Entity extends Movable {
   }
   
   public static interface Source {
-    public Data   getData();
-    public String getName();
-    public String getSprite();
-    public float  getX();
-    public float  getY();
-    public int    getZ();
-    public Stats  getStats();
-    public Inv[]  getInv();
-    public Type   getType();
+    public Map.Data getData();
+    public String   getName();
+    public String   getSprite();
+    public float    getX();
+    public float    getY();
+    public int      getZ();
+    public Stats    getStats();
+    public Inv[]    getInv();
+    public Type     getType();
   }
   
   public enum Type {
