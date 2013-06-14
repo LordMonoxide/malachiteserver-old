@@ -121,6 +121,14 @@ public class World extends Sandbox {
     e.setWorld(null);
   }
   
+  public Entity getEntity(int id) {
+    for(Entity e : _entity) {
+      if(e.getID() == id) return e;
+    }
+    
+    return null;
+  }
+  
   public Entity findEntity(String name) {
     for(Entity e : _entity) {
       if(e.getName() != null && e.getName().equalsIgnoreCase(name)) {
