@@ -31,6 +31,7 @@ public class SettingsTable {
   private int _mapTileSize;
   private int _mapAttribSize;
   
+  private int _playerReach;
   private int _playerInventorySize;
   
   public SettingsTable() {
@@ -38,12 +39,12 @@ public class SettingsTable {
     _create = _sql.prepareStatement("CREATE TABLE settings (" +
     		                            "id INTEGER UNSIGNED NOT NULL, version DOUBLE NOT NULL," +
                                     "map_size INTEGER UNSIGNED NOT NULL, map_depth INTEGER UNSIGNED NOT NULL, map_tile_size INTEGER UNSIGNED NOT NULL, map_attrib_size INTEGER UNSIGNED NOT NULL," +
-    		                            "player_inventory_size INTEGER UNSIGNED NOT NULL," +
+    		                            "player_reach INTEGER UNSIGNED NOT NULL, player_inventory_size INTEGER UNSIGNED NOT NULL," +
                                     "PRIMARY KEY (id))");
     _drop   = _sql.prepareStatement("DROP TABLE settings");
-    _insert = _sql.prepareStatement("INSERT INTO settings VALUES (?, ?, ?, ?, ?, ?, ?)");
+    _insert = _sql.prepareStatement("INSERT INTO settings VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
     _delete = _sql.prepareStatement("DELETE FROM settings WHERE id=?");
-    _update = _sql.prepareStatement("UPDATE settings SET version=?, map_size=?, map_depth=?, map_tile_size=?, map_attrib_size=?, player_inventory_size=? WHERE id=?");
+    _update = _sql.prepareStatement("UPDATE settings SET version=?, map_size=?, map_depth=?, map_tile_size=?, map_attrib_size=?, player_reach=?, player_inventory_size=? WHERE id=?");
     _select = _sql.prepareStatement("SELECT * FROM settings WHERE id=? LIMIT 1");
   }
   
@@ -69,6 +70,7 @@ public class SettingsTable {
   public int getMapDepth() { return _mapDepth; }
   public int getMapTileSize() { return _mapTileSize; }
   public int getMapAttribSize() { return _mapAttribSize; }
+  public int getPlayerReach() { return _playerReach; }
   public int getPlayerInventorySize() { return _playerInventorySize; }
   
   public boolean exists() {
@@ -92,6 +94,7 @@ public class SettingsTable {
     _insert.setInt(i++, Settings.Map.Depth());
     _insert.setInt(i++, Settings.Map.Tile.Size());
     _insert.setInt(i++, Settings.Map.Attrib.Size());
+    _insert.setInt(i++, Settings.Player.Reach());
     _insert.setInt(i++, Settings.Player.Inventory.Size());
     _insert.executeUpdate();
   }
@@ -109,6 +112,7 @@ public class SettingsTable {
     _update.setInt(i++, Settings.Map.Depth());
     _update.setInt(i++, Settings.Map.Tile.Size());
     _update.setInt(i++, Settings.Map.Attrib.Size());
+    _update.setInt(i++, Settings.Player.Reach());
     _update.setInt(i++, Settings.Player.Inventory.Size());
     _update.executeUpdate();
   }
@@ -124,6 +128,7 @@ public class SettingsTable {
       _mapDepth = r.getInt(i++);
       _mapTileSize = r.getInt(i++);
       _mapAttribSize = r.getInt(i++);
+      _playerReach = r.getInt(i++);
       _playerInventorySize = r.getInt(i++);
     } else {
       r.close();
