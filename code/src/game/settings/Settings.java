@@ -99,6 +99,7 @@ public class Settings {
         Map.Tile._instance._count = Map.Size() / Map.Tile.Size();
         Map.Attrib._instance._size = settingsTable.getMapAttribSize();
         Map.Attrib._instance._count = Map.Size() / Map.Attrib.Size();
+        Player._instance._reach = settingsTable.getPlayerReach();
         Player.Inventory._instance._size = settingsTable.getPlayerInventorySize();
       } catch(InvalidDataException e) { }
     } catch(SQLException e) {
@@ -163,7 +164,11 @@ public class Settings {
   }
   
   public static class Player {
-    //private static Player _instance = new Player();
+    private static Player _instance = new Player();
+    
+    private int _reach = 50;
+    
+    public static int Reach() { return _instance._reach; }
     
     public static class Inventory {
       private static Inventory _instance = new Inventory();
