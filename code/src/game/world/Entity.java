@@ -4,6 +4,7 @@ import network.packet.Packet;
 import game.Game;
 import game.data.Item;
 import game.data.account.Stats;
+import game.data.util.Data;
 import game.network.Connection;
 import game.network.packet.EntityMoveStop;
 import game.settings.Settings;
@@ -32,6 +33,8 @@ public class Entity extends Movable {
   private Stats _stats;
   private Inv[] _inv;
   
+  private Data _source;
+  
   public Entity(Source source) {
     this(source, null);
   }
@@ -44,6 +47,8 @@ public class Entity extends Movable {
     setAcc(0.148f);
     setDec(0.361f);
     setVelTerm(1.75f);
+    
+    _source = source.getData();
     
     _name = source.getName();
     _sprite = source.getSprite();
@@ -79,6 +84,10 @@ public class Entity extends Movable {
   
   public int getID() {
     return _id;
+  }
+  
+  public Data getData() {
+    return _source;
   }
   
   public String getName() {
@@ -232,6 +241,10 @@ public class Entity extends Movable {
     return null;
   }
   
+  public boolean isCloseTo(Entity e) {
+    return Math.sqrt(Math.pow(_x - e._x, 2) + Math.pow(_y - e._y, 2)) <= Settings.Player.Reach();
+  }
+  
   public void send(Packet packet) {
     if(_connection != null) {
       _connection.send(packet);
@@ -239,6 +252,7 @@ public class Entity extends Movable {
   }
   
   public static interface Source {
+    public Data   getData();
     public String getName();
     public String getSprite();
     public float  getX();
