@@ -44,13 +44,16 @@ public class InvUse extends Packet {
         
         switch(item.getType() & Item.ITEM_SUBTYPE_BITMASK) {
           case Item.ITEM_TYPE_POTION_HEAL:
-            hp = item.getHPHeal();
-            mp = item.getMPHeal();
+            if((item.getType() & Item.ITEM_TYPE_POTION_HEAL_PERCENT) == 0) {
+              hp = item.getHPHeal();
+              mp = item.getMPHeal();
+            } else {
+              hp = (int)(e.stats().vitalHP().max() * ((float)item.getHPHeal() / 100));
+              mp = (int)(e.stats().vitalMP().max() * ((float)item.getMPHeal() / 100));
+            }
             break;
             
           case Item.ITEM_TYPE_POTION_BUFF:
-            hp = e.stats().vitalHP().val() * (item.getHPHeal() / 100);
-            mp = e.stats().vitalMP().val() * (item.getMPHeal() / 100);
             break;
         }
         
