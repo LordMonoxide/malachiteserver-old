@@ -199,6 +199,10 @@ public class Entity extends Movable {
     return _inv[index];
   }
   
+  public void inv(int index, Inv inv) {
+    _inv[index] = inv;
+  }
+  
   public Inv[] inv() {
     return _inv;
   }
