@@ -3,6 +3,7 @@ package game.network.packet;
 import game.Game;
 import game.data.Item;
 import game.data.account.Permissions;
+import game.data.account.Stats;
 import game.network.Connection;
 import game.world.Entity;
 import game.world.World;
@@ -65,7 +66,7 @@ public class Chat extends Packet {
           if(text.length < 3) return;
           
           if((e = world.findEntity(text[1])) == null) {
-            c.send(new Chat("Server", "That player doesn't exist"));
+            c.send(new Chat("Server", "That entity doesn't exist"));
             return;
           }
           
@@ -119,7 +120,7 @@ public class Chat extends Packet {
           } else if(text.length == 3) {
             e = world.findEntity(text[1]);
             if(e == null) {
-              c.send(new Chat("Server", "That player doesn't exist"));
+              c.send(new Chat("Server", "That entity doesn't exist"));
               return;
             }
             
@@ -140,6 +141,80 @@ public class Chat extends Packet {
             c.send(new Chat("Server", e.getName() + "'s inventory is full"));
             return;
           }
+          
+          break;
+          
+        case "/vital":
+          Stats.Vital vital = null;
+          boolean relative = false;
+          int heal;
+          
+          int entityIndex = 0, vitalIndex = 0, valIndex = 0;
+          
+          switch(text.length) {
+            case 2:
+              valIndex = 1;
+              break;
+              
+            case 3:
+              if(text[1].equals("hp") || text[1].equals("mp")) {
+                vitalIndex = 1;
+              } else {
+                entityIndex = 1;
+              }
+              
+              valIndex = 2;
+              break;
+              
+            case 4:
+              entityIndex = 1;
+              vitalIndex = 2;
+              valIndex = 3;
+              break;
+              
+            default:
+              c.send(new Chat("Server", "Usage: /vital [entity] [hp/mp] [+/-]value"));
+              return;
+          }
+          
+          if(entityIndex == 0) {
+            e = c.getEntity();
+          } else {
+            e = world.findEntity(text[entityIndex]);
+            if(e == null) {
+              c.send(new Chat("Server", "That entity doesn't exist"));
+              return;
+            }
+          }
+          
+          if(vitalIndex == 0) {
+            vital = e.stats().vitalHP();
+          } else {
+            if(text[vitalIndex].equals("hp")) {
+              vital = e.stats().vitalHP();
+            } else if(text[vitalIndex].equals("mp")) {
+              vital = e.stats().vitalMP();
+            }
+          }
+          
+          if(text[valIndex].startsWith("+") || text[valIndex].startsWith("-")) {
+            relative = true;
+          }
+          
+          try {
+            heal = Integer.parseInt(text[valIndex]);
+          } catch(Exception ex) {
+            c.send(new Chat("Server", "Usage: /vital [entity] [vital] [+/-]value"));
+            return;
+          }
+          
+          if(relative) {
+            vital.heal(heal);
+          } else {
+            vital.val(heal);
+          }
+          
+          e.getWorld().send(new EntityVitals(e));
           
           break;
       }
