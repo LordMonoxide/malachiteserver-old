@@ -136,7 +136,7 @@ public class Chat extends Packet {
           
           Entity.Inv inv = e.giveItem(item, 1);
           if(inv != null) {
-            e.send(new EntityInvUpdate(e, inv));
+            e.send(new EntityInvUpdate(e, inv, inv.index()));
           } else {
             c.send(new Chat("Server", e.getName() + "'s inventory is full"));
             return;

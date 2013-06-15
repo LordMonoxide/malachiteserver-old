@@ -43,7 +43,7 @@ public class EntityInteract extends Packet {
           
           if(inv != null) {
             e.remove();
-            c.send(new EntityInvUpdate(c.getEntity(), inv));
+            c.send(new EntityInvUpdate(c.getEntity(), inv, inv.index()));
           }
         } else {
           c.send(new Chat("Server", "You aren't close enough to pick that up."));
