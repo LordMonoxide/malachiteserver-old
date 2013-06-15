@@ -61,6 +61,8 @@ public class Item extends Serializable implements Data {
   public static final int ITEM_ATTRIBS_BITMASK          = 0xFFFFFF00;
   public static final int ITEM_ATTRIBS_BITSHIFT         = 8;
   
+  public static final int ITEM_TYPE_NONE                = 0x00;
+  
   public static final int ITEM_TYPE_WEAPON              = 0x01;
   public static final int ITEM_TYPE_WEAPON_MELEE        = 0x00 * 0x10;
   public static final int ITEM_TYPE_WEAPON_BOW          = 0x01 * 0x10;
