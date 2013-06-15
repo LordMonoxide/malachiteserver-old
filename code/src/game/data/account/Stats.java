@@ -57,6 +57,7 @@ public class Stats {
       _val = val;
     }
     
+    public void heal(int heal) { val(_val + heal); }
     public void restore() { _val = _max; }
   }
   
