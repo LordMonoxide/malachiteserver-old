@@ -8,10 +8,12 @@ import network.packet.Packet;
 public class EntityInvUpdate extends Packet {
   private Entity _entity;
   private Entity.Inv _inv;
+  private int _index;
   
-  public EntityInvUpdate(Entity entity, Entity.Inv inv) {
+  public EntityInvUpdate(Entity entity, Entity.Inv inv, int index) {
     _entity = entity;
     _inv = inv;
+    _index = index;
   }
   
   public int getIndex() {
@@ -22,7 +24,7 @@ public class EntityInvUpdate extends Packet {
     ByteBuf b = Unpooled.buffer();
     
     b.writeInt(_entity.getID());
-    b.writeByte(_inv.index());
+    b.writeByte(_index);
     if(_inv != null) {
       b.writeByte (_inv.item().getFile().length());
       b.writeBytes(_inv.item().getFile().getBytes());
