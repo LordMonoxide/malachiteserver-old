@@ -3,12 +3,10 @@ package game.data;
 import java.io.File;
 import java.util.LinkedList;
 
-import game.data.account.Stats;
 import game.data.util.Buffer;
 import game.data.util.Serializable;
 import game.settings.Settings;
 import game.world.Entity;
-import game.world.Entity.Inv;
 
 public class Map extends Serializable {
   private static final int VERSION = 4;
@@ -42,15 +40,16 @@ public class Map extends Serializable {
     
     for(final Sprite sprite : _sprite) {
       e[i] = new Entity(new Entity.Source() {
-        public Data        getData()   { return sprite; }
-        public String      getName()   { return null; }
-        public String      getSprite() { return sprite._file; }
-        public float       getX()      { return sprite._x + _x * Settings.Map.Size(); }
-        public float       getY()      { return sprite._y + _y * Settings.Map.Size(); }
-        public int         getZ()      { return sprite._z; }
-        public Stats       getStats()  { return null; }
-        public Inv[]       getInv()    { return null; }
-        public Entity.Type getType()   { return Entity.Type.Sprite; }
+        public Data         getData()   { return sprite; }
+        public Entity.Type  getType()   { return Entity.Type.Sprite; }
+        public String       getName()   { return null; }
+        public String       getSprite() { return sprite._file; }
+        public float        getX()      { return sprite._x + _x * Settings.Map.Size(); }
+        public float        getY()      { return sprite._y + _y * Settings.Map.Size(); }
+        public int          getZ()      { return sprite._z; }
+        public Entity.Stats getStats()  { return null; }
+        public Entity.Inv[] getInv()    { return null; }
+        public Entity.Source.Equip getEquip() { return null; }
       });
       
       i++;
@@ -58,15 +57,16 @@ public class Map extends Serializable {
     
     for(final Item item : _item) {
       e[i] = new Entity(new Entity.Source() {
-        public Data        getData()   { return item; }
-        public String      getName()   { return null; }
-        public String      getSprite() { return item._file; }
-        public float       getX()      { return item._x + _x * Settings.Map.Size(); }
-        public float       getY()      { return item._y + _y * Settings.Map.Size(); }
-        public int         getZ()      { return item._z; }
-        public Stats       getStats()  { return null; }
-        public Inv[]       getInv()    { return null; }
-        public Entity.Type getType()   { return Entity.Type.Item; }
+        public Data         getData()   { return item; }
+        public Entity.Type  getType()   { return Entity.Type.Item; }
+        public String       getName()   { return null; }
+        public String       getSprite() { return item._file; }
+        public float        getX()      { return item._x + _x * Settings.Map.Size(); }
+        public float        getY()      { return item._y + _y * Settings.Map.Size(); }
+        public int          getZ()      { return item._z; }
+        public Entity.Stats getStats()  { return null; }
+        public Entity.Inv[] getInv()    { return null; }
+        public Entity.Source.Equip getEquip() { return null; }
       });
       
       i++;

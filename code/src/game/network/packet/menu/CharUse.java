@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import game.Game;
 import game.data.Map;
 import game.data.account.Character;
-import game.data.account.Stats;
 import game.network.Connection;
 import game.network.packet.EntityInv;
 import game.network.packet.EntityStats;
@@ -54,14 +53,28 @@ public class CharUse extends Packet {
       
       c.getAccount().setChar(character);
       c.setEntity(new Entity(new Entity.Source() {
-        public Map.Data getData()   { return null; }
-        public String   getName()   { return character.getName(); }
-        public String   getSprite() { return character.getSprite(); }
-        public float    getX()      { return character.getX(); }
-        public float    getY()      { return character.getY(); }
-        public int      getZ()      { return character.getZ(); }
-        public Stats    getStats()  { return character.stats().copy(); }
-        public Inv[]    getInv()    {
+        public Map.Data     getData()   { return null; }
+        public Entity.Type  getType()   { return Entity.Type.Player; }
+        public String       getName()   { return character.getName(); }
+        public String       getSprite() { return character.getSprite(); }
+        public float        getX()      { return character.getX(); }
+        public float        getY()      { return character.getY(); }
+        public int          getZ()      { return character.getZ(); }
+        public Entity.Stats getStats()  {
+          Entity.Stats stats = new Entity.Stats();
+          stats.statSTR().val = character.stats().STR;
+          stats.statSTR().exp = character.stats().STREXP;
+          stats.statINT().val = character.stats().INT;
+          stats.statINT().exp = character.stats().INTEXP;
+          stats.statDEX().val = character.stats().DEX;
+          stats.statDEX().exp = character.stats().DEXEXP;
+          stats.updateMaxVitals();
+          stats.vitalHP().val(character.stats().HP);
+          stats.vitalMP().val(character.stats().MP);
+          return stats;
+        }
+        
+        public Entity.Inv[] getInv()    {
           Inv[] inv = new Inv[Settings.Player.Inventory.Size()];
           for(int i = 0; i < inv.length; i++) {
             if(character.inv(i).file() != null) {
@@ -70,7 +83,17 @@ public class CharUse extends Packet {
           }
           return inv;
         }
-        public Entity.Type getType() { return Entity.Type.Player; }
+        
+        public Entity.Source.Equip getEquip() {
+          Entity.Source.Equip equip = new Entity.Source.Equip() {
+            public int getHand1()           { return character.equip().hand1(); }
+            public int getHand2()           { return character.equip().hand2(); }
+            public int getArmour(int index) { return character.equip().armour(index); }
+            public int getBling (int index) { return character.equip().bling (index); }
+          };
+          
+          return equip;
+        }
       }, c));
       
       response._response = Response.RESPONSE_OKAY;
