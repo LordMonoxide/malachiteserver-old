@@ -289,4 +289,21 @@ public class Entity extends Movable {
     public void item(Item item) { _item = item; }
     public void val ( int val)  { _val  = val;  }
   }
+  
+  public static class Equip {
+    private Entity.Inv   _hand1;
+    private Entity.Inv   _hand2;
+    private Entity.Inv[] _armour = new Entity.Inv[Item.ITEM_TYPE_ARMOUR_COUNT];
+    private Entity.Inv[] _bling  = new Entity.Inv[Item.ITEM_TYPE_BLING_COUNT];
+    
+    public Entity.Inv hand1()          { return _hand1; }
+    public Entity.Inv hand2()          { return _hand2; }
+    public Entity.Inv armour(int type) { return _armour[type]; }
+    public Entity.Inv bling (int type) { return _bling [type]; }
+    
+    public void hand1 (Entity.Inv inv)           { _hand1        = inv; }
+    public void hand2 (Entity.Inv inv)           { _hand2        = inv; }
+    public void armour(int type, Entity.Inv inv) { _armour[type] = inv; }
+    public void bling (int type, Entity.Inv inv) { _bling [type] = inv; }
+  }
 }
