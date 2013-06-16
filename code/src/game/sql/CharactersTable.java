@@ -139,11 +139,11 @@ public class CharactersTable {
   }
   
   public void delete(Character p) throws SQLException {
-    _delete.setInt(1, p.getID());
-    _delete.executeUpdate();
-    
     _deleteInv.setInt(1, p.getID());
     _deleteInv.executeUpdate();
+    
+    _delete.setInt(1, p.getID());
+    _delete.executeUpdate();
   }
   
   public void update(Character p) throws SQLException {
