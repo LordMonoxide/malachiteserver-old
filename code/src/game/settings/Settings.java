@@ -19,6 +19,14 @@ public class Settings {
   private static Properties _settings = new Properties();
   private static File _file = new File("../sql.conf");
   
+  public static int calculateMaxHP(int strength) {
+    return (int)(Math.pow(strength, 1.6) * 1.3 + 100);
+  }
+  
+  public static int calculateMaxMP(int intelligence) {
+    return (int)(Math.pow(intelligence, 1.2) * 3 + 40);
+  }
+  
   public static void init() {
     if(!_file.exists()) {
       _settings.set("serverID", Settings.SQL.ID());
