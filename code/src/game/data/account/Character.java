@@ -61,12 +61,11 @@ public class Character {
     _x = entity.getX();
     _y = entity.getY();
     _z = entity.getZ();
-    _stats.statSTR().val = entity.stats().statSTR().val;
-    _stats.statINT().val = entity.stats().statINT().val;
-    _stats.statDEX().val = entity.stats().statDEX().val;
-    _stats.calculateMaxVitals();
-    _stats.vitalHP().val(entity.stats().vitalHP().val());
-    _stats.vitalMP().val(entity.stats().vitalMP().val());
+    _stats.STR = entity.stats().statSTR().val;
+    _stats.INT = entity.stats().statINT().val;
+    _stats.DEX = entity.stats().statDEX().val;
+    _stats.HP = entity.stats().vitalHP().val();
+    _stats.MP = entity.stats().vitalMP().val();
     
     for(int i = 0; i < Settings.Player.Inventory.Size(); i++) {
       if(entity.inv(i) != null) {
@@ -84,6 +83,12 @@ public class Character {
       System.err.println("ERROR SAVING PLAYER " + _name);
       e.printStackTrace();
     }
+  }
+  
+  public class Stats {
+    public int HP, MP;
+    public int STR, INT, DEX;
+    public float STREXP, INTEXP, DEXEXP;
   }
   
   public class Inv {
@@ -106,6 +111,14 @@ public class Character {
     private int   _hand2;
     private int[] _armour = new int[Item.ITEM_TYPE_ARMOUR_COUNT];
     private int[] _bling  = new int[Item.ITEM_TYPE_BLING_COUNT];
+    
+    public Equip() {
+      _hand1 = -1;
+      _hand2 = -1;
+      
+      for(int i = 0; i < _armour.length; i++) _armour[i] = -1;
+      for(int i = 0; i < _bling .length; i++) _bling [i] = -1;
+    }
     
     public int hand1()          { return _hand1; }
     public int hand2()          { return _hand2; }
