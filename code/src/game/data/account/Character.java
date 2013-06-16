@@ -76,6 +76,17 @@ public class Character {
         _inv[i]._val = 0;
       }
     }
+
+    _equip._hand1 = entity.equip().hand1() != null ? entity.equip().hand1().index() : -1;
+    _equip._hand2 = entity.equip().hand2() != null ? entity.equip().hand2().index() : -1;
+    
+    for(int i = 0; i < _equip._armour.length; i++) {
+      _equip._armour[i] = entity.equip().armour(i) != null ? entity.equip().armour(i).index() : -1;
+    }
+    
+    for(int i = 0; i < _equip._bling.length; i++) {
+      _equip._bling[i] = entity.equip().bling(i) != null ? entity.equip().bling(i).index() : -1;
+    }
     
     try {
       CharactersTable.getInstance().update(this);
@@ -89,6 +100,11 @@ public class Character {
     public int HP, MP;
     public int STR, INT, DEX;
     public float STREXP, INTEXP, DEXEXP;
+    
+    public Stats() {
+      HP = Settings.calculateMaxHP(STR);
+      MP = Settings.calculateMaxMP(INT);
+    }
   }
   
   public class Inv {
@@ -124,7 +140,6 @@ public class Character {
     public int hand2()          { return _hand2; }
     public int armour(int type) { return _armour[type]; }
     public int bling (int type) { return _bling [type]; }
-    
     public void hand1 (int inv)           { _hand1        = inv; }
     public void hand2 (int inv)           { _hand2        = inv; }
     public void armour(int type, int inv) { _armour[type] = inv; }
