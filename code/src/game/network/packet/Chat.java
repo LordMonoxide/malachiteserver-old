@@ -3,7 +3,6 @@ package game.network.packet;
 import game.Game;
 import game.data.Item;
 import game.data.account.Permissions;
-import game.data.account.Stats;
 import game.network.Connection;
 import game.world.Entity;
 import game.world.World;
@@ -145,7 +144,7 @@ public class Chat extends Packet {
           break;
           
         case "/vital":
-          Stats.Vital vital = null;
+          Entity.Stats.Vital vital = null;
           boolean relative = false;
           int heal;
           
