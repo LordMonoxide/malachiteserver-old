@@ -7,12 +7,14 @@ import game.data.util.Data;
 import game.data.util.Serializable;
 
 public class Item extends Serializable implements Data {
-  private static final int VERSION = 2;
+  private static final int VERSION = 3;
   
   private String _name, _note;
   private String _sprite;
   private int    _type;
   private int    _damage;
+  
+  private float  _weight;
   
   private int    _hpHeal, _mpHeal;
   
@@ -25,6 +27,7 @@ public class Item extends Serializable implements Data {
   public String getSprite() { return _sprite; }
   public int    getType()   { return _type; }
   public int    getDamage() { return _damage; }
+  public float  getWeight() { return _weight; }
   public int    getHPHeal() { return _hpHeal; }
   public int    getMPHeal() { return _mpHeal; }
   
@@ -36,6 +39,7 @@ public class Item extends Serializable implements Data {
     b.put(_sprite);
     b.put(_type);
     b.put(_damage);
+    b.put(_weight);
     b.put(_hpHeal);
     b.put(_mpHeal);
     return b;
@@ -45,6 +49,7 @@ public class Item extends Serializable implements Data {
     switch(b.getInt()) {
       case 1: deserialize01(b); break;
       case 2: deserialize02(b); break;
+      case 3: deserialize03(b); break;
     }
   }
   
@@ -66,6 +71,17 @@ public class Item extends Serializable implements Data {
     _mpHeal = b.getInt();
   }
   
+  private void deserialize03(Buffer b) {
+    _name   = b.getString();
+    _note   = b.getString();
+    _sprite = b.getString();
+    _type   = b.getInt();
+    _damage = b.getInt();
+    _weight = b.getFloat();
+    _hpHeal = b.getInt();
+    _mpHeal = b.getInt();
+  }
+  
   /*  0000 0000 0000 0000 0000 0000 0000 0000
    *  ^     ATTRIBS     ^ ^  SUB  ^ ^ TYPES ^
    */
@@ -83,7 +99,6 @@ public class Item extends Serializable implements Data {
   public static final int ITEM_TYPE_WEAPON              = 0x01;
   public static final int ITEM_TYPE_WEAPON_MELEE        = 0x00 * 0x10;
   public static final int ITEM_TYPE_WEAPON_BOW          = 0x01 * 0x10;
-  public static final int ITEM_TYPE_WEAPON_SHIELD       = 0x02 * 0x10;
   
   public static final int ITEM_TYPE_SHIELD              = 0x02;
   
