@@ -100,14 +100,14 @@ public class CharactersTable {
     _insert.setFloat(i++, p.getX());
     _insert.setFloat(i++, p.getY());
     _insert.setInt(i++, p.getZ());
-    _insert.setInt(i++, p.stats().vitalHP().val());
-    _insert.setInt(i++, p.stats().vitalMP().val());
-    _insert.setInt(i++, p.stats().statSTR().val);
-    _insert.setFloat(i++, p.stats().statSTR().exp);
-    _insert.setInt(i++, p.stats().statINT().val);
-    _insert.setFloat(i++, p.stats().statINT().exp);
-    _insert.setInt(i++, p.stats().statDEX().val);
-    _insert.setFloat(i++, p.stats().statDEX().exp);
+    _insert.setInt(i++, p.stats().HP);
+    _insert.setInt(i++, p.stats().MP);
+    _insert.setInt(i++, p.stats().STR);
+    _insert.setFloat(i++, p.stats().STREXP);
+    _insert.setInt(i++, p.stats().INT);
+    _insert.setFloat(i++, p.stats().INTEXP);
+    _insert.setInt(i++, p.stats().DEX);
+    _insert.setFloat(i++, p.stats().DEXEXP);
     _insert.setInt(i++, p.equip().hand1());
     _insert.setInt(i++, p.equip().hand1());
     
@@ -152,14 +152,14 @@ public class CharactersTable {
     _update.setFloat(i++, p.getX());
     _update.setFloat(i++, p.getY());
     _update.setInt(i++, p.getZ());
-    _update.setInt(i++, p.stats().vitalHP().val());
-    _update.setInt(i++, p.stats().vitalMP().val());
-    _update.setInt(i++, p.stats().statSTR().val);
-    _update.setFloat(i++, p.stats().statSTR().exp);
-    _update.setInt(i++, p.stats().statINT().val);
-    _update.setFloat(i++, p.stats().statINT().exp);
-    _update.setInt(i++, p.stats().statDEX().val);
-    _update.setFloat(i++, p.stats().statDEX().exp);
+    _update.setInt(i++, p.stats().HP);
+    _update.setInt(i++, p.stats().MP);
+    _update.setInt(i++, p.stats().STR);
+    _update.setFloat(i++, p.stats().STREXP);
+    _update.setInt(i++, p.stats().INT);
+    _update.setFloat(i++, p.stats().INTEXP);
+    _update.setInt(i++, p.stats().DEX);
+    _update.setFloat(i++, p.stats().DEXEXP);
     _update.setInt(i++, p.equip().hand1());
     _update.setInt(i++, p.equip().hand1());
     
@@ -214,14 +214,14 @@ public class CharactersTable {
       c.setX(r.getFloat(i++));
       c.setY(r.getFloat(i++));
       c.setZ(r.getInt(i++));
-      c.stats().vitalHP().val(r.getInt(i++));
-      c.stats().vitalMP().val(r.getInt(i++));
-      c.stats().statSTR().val = r.getInt(i++);
-      c.stats().statSTR().exp = r.getFloat(i++);
-      c.stats().statINT().val = r.getInt(i++);
-      c.stats().statINT().exp = r.getFloat(i++);
-      c.stats().statDEX().val = r.getInt(i++);
-      c.stats().statDEX().exp = r.getFloat(i++);
+      c.stats().HP = r.getInt(i++);
+      c.stats().MP = r.getInt(i++);
+      c.stats().STR = r.getInt(i++);
+      c.stats().STREXP = r.getFloat(i++);
+      c.stats().INT = r.getInt(i++);
+      c.stats().INTEXP = r.getFloat(i++);
+      c.stats().DEX = r.getInt(i++);
+      c.stats().DEXEXP = r.getFloat(i++);
       c.equip().hand1(r.getInt(i++));
       c.equip().hand2(r.getInt(i++));
       
