@@ -2,6 +2,7 @@ package game.data.account;
 
 import java.sql.SQLException;
 
+import game.data.Item;
 import game.settings.Settings;
 import game.sql.CharactersTable;
 import game.world.Entity;
@@ -16,12 +17,14 @@ public class Character {
   private int _z;
   private Stats _stats;
   private Inv[] _inv;
+  private Equip _equip;
   
   public Character(int id, Account account) {
     _id = id;
     _account = account;
     _stats = new Stats();
     _inv = new Inv[Settings.Player.Inventory.Size()];
+    _equip = new Equip();
     
     for(int i = 0; i < _inv.length; i++) {
       _inv[i] = new Inv();
@@ -39,6 +42,7 @@ public class Character {
   public Stats   stats()        { return _stats; }
   public Inv     inv(int index) { return _inv[index]; }
   public Inv[]   inv()          { return _inv; }
+  public Equip   equip()        { return _equip; }
   
   public void setID     (int id)             { _id = id; }
   public void setAccount(Account account)    { _account = account; }
@@ -95,5 +99,22 @@ public class Character {
     public   void id  (   int id)   { _id   = id; }
     public   void file(String file) { _file = file; }
     public   void val (   int val)  { _val  = val; }
+  }
+  
+  public class Equip {
+    private int   _hand1;
+    private int   _hand2;
+    private int[] _armour = new int[Item.ITEM_TYPE_ARMOUR_COUNT];
+    private int[] _bling  = new int[Item.ITEM_TYPE_BLING_COUNT];
+    
+    public int hand1()          { return _hand1; }
+    public int hand2()          { return _hand2; }
+    public int armour(int type) { return _armour[type]; }
+    public int bling (int type) { return _bling [type]; }
+    
+    public void hand1 (int inv)           { _hand1        = inv; }
+    public void hand2 (int inv)           { _hand2        = inv; }
+    public void armour(int type, int inv) { _armour[type] = inv; }
+    public void bling (int type, int inv) { _bling [type] = inv; }
   }
 }
