@@ -1,5 +1,6 @@
 package game.sql;
 
+import game.data.Item;
 import game.data.account.Account;
 import game.data.account.Character;
 import game.settings.Settings;
@@ -38,11 +39,11 @@ public class CharactersTable {
   
   public CharactersTable() {
     _sql = SQL.getInstance();
-    _create    = _sql.prepareStatement("CREATE TABLE characters (id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT, account_id INTEGER UNSIGNED NOT NULL, name VARCHAR(16) NOT NULL, sprite VARCHAR(40) NOT NULL, world VARCHAR(40) NOT NULL, x FLOAT NOT NULL, y FLOAT NOT NULL, z INTEGER UNSIGNED NOT NULL, hp INTEGER UNSIGNED NOT NULL, mp INTEGER UNSIGNED NOT NULL, str INTEGER UNSIGNED NOT NULL, str_exp FLOAT NOT NULL, `int` INTEGER UNSIGNED NOT NULL, int_exp FLOAT NOT NULL, dex INTEGER UNSIGNED NOT NULL, dex_exp FLOAT NOT NULL, PRIMARY KEY (id), UNIQUE KEY characters_name_unique (name), FOREIGN KEY (account_id) REFERENCES accounts(id))", Statement.RETURN_GENERATED_KEYS);
+    _create    = _sql.prepareStatement("CREATE TABLE characters (id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT, account_id INTEGER UNSIGNED NOT NULL, name VARCHAR(16) NOT NULL, sprite VARCHAR(40) NOT NULL, world VARCHAR(40) NOT NULL, x FLOAT NOT NULL, y FLOAT NOT NULL, z INTEGER UNSIGNED NOT NULL, hp INTEGER UNSIGNED NOT NULL, mp INTEGER UNSIGNED NOT NULL, str INTEGER UNSIGNED NOT NULL, str_exp FLOAT NOT NULL, `int` INTEGER UNSIGNED NOT NULL, int_exp FLOAT NOT NULL, dex INTEGER UNSIGNED NOT NULL, dex_exp FLOAT NOT NULL, equip_hand1 INTEGER UNSIGNED NOT NULL, equip_hand2 INTEGER UNSIGNED NOT NULL, equip_body INTEGER UNSIGNED NOT NULL, equip_head INTEGER UNSIGNED NOT NULL, equip_hand INTEGER UNSIGNED NOT NULL, equip_legs INTEGER UNSIGNED NOT NULL, equip_feet INTEGER UNSIGNED NOT NULL, equip_ring INTEGER UNSIGNED NOT NULL, equip_amulet INTEGER UNSIGNED NOT NULL, PRIMARY KEY (id), UNIQUE KEY characters_name_unique (name), FOREIGN KEY (account_id) REFERENCES accounts(id))", Statement.RETURN_GENERATED_KEYS);
     _drop      = _sql.prepareStatement("DROP TABLE characters");
-    _insert    = _sql.prepareStatement("INSERT INTO characters VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+    _insert    = _sql.prepareStatement("INSERT INTO characters VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
     _delete    = _sql.prepareStatement("DELETE FROM characters WHERE id=?");
-    _update    = _sql.prepareStatement("UPDATE characters SET world=?, x=?, y=?, z=?, hp=?, mp=?, str=?, str_exp=?, `int`=?, int_exp=?, dex=?, dex_exp=? WHERE id=?");
+    _update    = _sql.prepareStatement("UPDATE characters SET world=?, x=?, y=?, z=?, hp=?, mp=?, str=?, str_exp=?, `int`=?, int_exp=?, dex=?, dex_exp=?, equip_hand1=?, equip_hand2=?, equip_body=?, equip_head=?, equip_hand=?, equip_legs=?, equip_feet=?, equip_ring=?, equip_amulet=? WHERE id=?");
     
     _createInv = _sql.prepareStatement("CREATE TABLE character_invs (id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT, character_id INTEGER UNSIGNED NOT NULL, file VARCHAR(40), val INTEGER UNSIGNED NOT NULL, PRIMARY KEY (id), FOREIGN KEY (character_id) REFERENCES characters(id))", Statement.RETURN_GENERATED_KEYS);
     _dropInv   = _sql.prepareStatement("DROP TABLE characters_invs");
@@ -107,6 +108,17 @@ public class CharactersTable {
     _insert.setFloat(i++, p.stats().statINT().exp);
     _insert.setInt(i++, p.stats().statDEX().val);
     _insert.setFloat(i++, p.stats().statDEX().exp);
+    _insert.setInt(i++, p.equip().hand1());
+    _insert.setInt(i++, p.equip().hand1());
+    
+    for(int n = 0; n < Item.ITEM_TYPE_ARMOUR_COUNT; n++) {
+      _insert.setInt(i++, p.equip().armour(n));
+    }
+    
+    for(int n = 0; n < Item.ITEM_TYPE_BLING_COUNT; n++) {
+      _insert.setInt(i++, p.equip().bling(n));
+    }
+    
     _insert.executeUpdate();
     
     ResultSet r = _insert.getGeneratedKeys();
@@ -148,6 +160,17 @@ public class CharactersTable {
     _update.setFloat(i++, p.stats().statINT().exp);
     _update.setInt(i++, p.stats().statDEX().val);
     _update.setFloat(i++, p.stats().statDEX().exp);
+    _update.setInt(i++, p.equip().hand1());
+    _update.setInt(i++, p.equip().hand1());
+    
+    for(int n = 0; n < Item.ITEM_TYPE_ARMOUR_COUNT; n++) {
+      _update.setInt(i++, p.equip().armour(n));
+    }
+    
+    for(int n = 0; n < Item.ITEM_TYPE_BLING_COUNT; n++) {
+      _update.setInt(i++, p.equip().bling(n));
+    }
+    
     _update.setInt(i++, p.getID());
     _update.executeUpdate();
     
@@ -199,6 +222,16 @@ public class CharactersTable {
       c.stats().statINT().exp = r.getFloat(i++);
       c.stats().statDEX().val = r.getInt(i++);
       c.stats().statDEX().exp = r.getFloat(i++);
+      c.equip().hand1(r.getInt(i++));
+      c.equip().hand2(r.getInt(i++));
+      
+      for(int n = 0; n < Item.ITEM_TYPE_ARMOUR_COUNT; n++) {
+        c.equip().armour(n, r.getInt(i++));
+      }
+      
+      for(int n = 0; n < Item.ITEM_TYPE_BLING_COUNT; n++) {
+        c.equip().bling(n, r.getInt(i++));
+      }
       
       _selectInv.setInt(1, id);
       ResultSet inv = _selectInv.executeQuery();
