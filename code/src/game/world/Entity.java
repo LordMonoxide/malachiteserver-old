@@ -4,7 +4,6 @@ import network.packet.Packet;
 import game.Game;
 import game.data.Item;
 import game.data.Map;
-import game.data.account.Stats;
 import game.network.Connection;
 import game.network.packet.EntityMoveStop;
 import game.settings.Settings;
@@ -32,6 +31,7 @@ public class Entity extends Movable {
   
   private Stats _stats;
   private Inv[] _inv;
+  private Equip _equip;
   
   private Map.Data _source;
   
@@ -76,6 +76,20 @@ public class Entity extends Movable {
     
     _stats = source.getStats();
     _inv   = source.getInv();
+    
+    if(source.getEquip() != null) {
+      _equip = new Equip();
+      if(source.getEquip().getHand1() != -1) _equip._hand1 = _inv[source.getEquip().getHand1()];
+      if(source.getEquip().getHand2() != -1) _equip._hand2 = _inv[source.getEquip().getHand2()];
+      
+      for(int i = 0; i < _equip._armour.length; i++) {
+        if(source.getEquip().getArmour(i) != -1) _equip._armour[i] = _inv[source.getEquip().getArmour(i)];
+      }
+      
+      for(int i = 0; i < _equip._bling.length; i++) {
+        if(source.getEquip().getBling(i) != -1) _equip._bling[i] = _inv[source.getEquip().getBling(i)];
+      }
+    }
   }
   
   public Connection getConnection() {
@@ -207,6 +221,10 @@ public class Entity extends Movable {
     return _inv;
   }
   
+  public Equip equip() {
+    return _equip;
+  }
+  
   public void remove() {
     _world.removeEntity(this);
   }
@@ -257,6 +275,7 @@ public class Entity extends Movable {
   
   public static interface Source {
     public Map.Data getData();
+    public Type     getType();
     public String   getName();
     public String   getSprite();
     public float    getX();
@@ -264,11 +283,82 @@ public class Entity extends Movable {
     public int      getZ();
     public Stats    getStats();
     public Inv[]    getInv();
-    public Type     getType();
+    public Equip    getEquip();
+    
+    public interface Equip {
+      public int getHand1();
+      public int getHand2();
+      public int getArmour(int index);
+      public int getBling(int index);
+    }
   }
   
   public enum Type {
     Player, Sprite, Item;
+  }
+  
+  public static class Stats {
+    private Vital _hp, _mp;
+    private Stat  _str, _int, _dex;
+    
+    public Stats() {
+      _hp  = new Vital();
+      _mp  = new Vital();
+      _str = new Stat();
+      _int = new Stat();
+      _dex = new Stat();
+      
+      updateMaxVitals();
+      
+      _hp._val = _hp._max;
+      _mp._val = _mp._max;
+    }
+    
+    public Vital vitalHP() { return _hp; }
+    public Vital vitalMP() { return _mp; }
+    public Stat  statSTR() { return _str; }
+    public Stat  statINT() { return _int; }
+    public Stat  statDEX() { return _dex; }
+    
+    public void updateMaxVitals() {
+      _hp._max = Settings.calculateMaxHP(_str.val);
+      _mp._max = Settings.calculateMaxMP(_int.val);
+    }
+    
+    public Stats copy() {
+      Stats s = new Stats();
+      s._hp._val = _hp._val; s._hp._max = _hp._max;
+      s._mp._val = _mp._val; s._mp._max = _mp._max;
+      s._str.val = _str.val; s._str.exp = _str.exp;
+      s._int.val = _int.val; s._int.exp = _int.exp;
+      s._dex.val = _dex.val; s._dex.exp = _dex.exp;
+      return s;
+    }
+    
+    public class Vital {
+      private Vital() { }
+      
+      private int _val;
+      private int _max;
+      
+      public int val() { return _val; }
+      public int max() { return _max; }
+      public void val(int val) {
+        if(val <    0) val =    0;
+        if(val > _max) val = _max;
+        _val = val;
+      }
+      
+      public void heal(int heal) { val(_val + heal); }
+      public void restore() { _val = _max; }
+    }
+    
+    public class Stat {
+      private Stat() { }
+      
+      public int val;
+      public float exp;
+    }
   }
   
   public static class Inv {
