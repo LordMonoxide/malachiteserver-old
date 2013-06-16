@@ -59,10 +59,15 @@ public class InvUse extends Packet {
         
         e.stats().vitalHP().heal(hp);
         e.stats().vitalMP().heal(mp);
-        e.inv(_index, null);
+        
+        if(e.inv(_index).val() == 1) {
+          e.inv(_index, null);
+        } else {
+          e.inv(_index).val(e.inv(_index).val() - 1);
+        }
         
         e.getWorld().send(new EntityVitals(e));
-        e.send(new EntityInvUpdate(e, null, _index));
+        e.send(new EntityInvUpdate(e, e.inv(_index), _index));
         
         break;
     }
