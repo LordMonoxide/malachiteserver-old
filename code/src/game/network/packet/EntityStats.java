@@ -23,6 +23,7 @@ public class EntityStats extends Packet {
     b.writeInt(_entity.stats().statSTR().val);
     b.writeInt(_entity.stats().statINT().val);
     b.writeInt(_entity.stats().statDEX().val);
+    b.writeFloat(_entity.stats().weight());
     
     return b;
   }
