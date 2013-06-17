@@ -300,6 +300,7 @@ public class Entity extends Movable {
   public static class Stats {
     private Vital _hp, _mp;
     private Stat  _str, _int, _dex;
+    private float _weight;
     
     public Stats() {
       _hp  = new Vital();
@@ -308,7 +309,7 @@ public class Entity extends Movable {
       _int = new Stat();
       _dex = new Stat();
       
-      updateMaxVitals();
+      update();
       
       _hp._val = _hp._max;
       _mp._val = _mp._max;
@@ -319,10 +320,12 @@ public class Entity extends Movable {
     public Stat  statSTR() { return _str; }
     public Stat  statINT() { return _int; }
     public Stat  statDEX() { return _dex; }
+    public float weight () { return _weight; }
     
-    public void updateMaxVitals() {
+    public void update() {
       _hp._max = Settings.calculateMaxHP(_str.val);
       _mp._max = Settings.calculateMaxMP(_int.val);
+      _weight  = Settings.calculateMaxWeight(_str.val, _dex.val);
     }
     
     public Stats copy() {
