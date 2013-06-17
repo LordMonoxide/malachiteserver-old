@@ -3,6 +3,7 @@ package game.data;
 import java.io.File;
 import java.util.LinkedList;
 
+import game.Game;
 import game.data.util.Buffer;
 import game.data.util.Serializable;
 import game.settings.Settings;
@@ -56,11 +57,12 @@ public class Map extends Serializable {
     }
     
     for(final Item item : _item) {
+      final game.data.Item d = Game.getInstance().getItem(item._file);
       e[i] = new Entity(new Entity.Source() {
         public Data         getData()   { return item; }
         public Entity.Type  getType()   { return Entity.Type.Item; }
         public String       getName()   { return null; }
-        public String       getSprite() { return item._file; }
+        public String       getSprite() { return d != null ? d.getSprite() : Game.getInstance().getSprite()[0].getFile(); }
         public float        getX()      { return item._x + _x * Settings.Map.Size(); }
         public float        getY()      { return item._y + _y * Settings.Map.Size(); }
         public int          getZ()      { return item._z; }
@@ -288,6 +290,7 @@ public class Map extends Serializable {
   
   private void deserialize04(Buffer b) {
     _sprite.clear();
+    _item.clear();
     
     _x = b.getInt();
     _y = b.getInt();
