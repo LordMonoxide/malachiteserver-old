@@ -68,7 +68,7 @@ public class CharUse extends Packet {
           stats.statINT().exp = character.stats().INTEXP;
           stats.statDEX().val = character.stats().DEX;
           stats.statDEX().exp = character.stats().DEXEXP;
-          stats.updateMaxVitals();
+          stats.update();
           stats.vitalHP().val(character.stats().HP);
           stats.vitalMP().val(character.stats().MP);
           return stats;
