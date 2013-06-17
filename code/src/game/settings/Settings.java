@@ -27,6 +27,10 @@ public class Settings {
     return (int)(Math.pow(intelligence, 1.2) * 3 + 40);
   }
   
+  public static float calculateMaxWeight(int strength, int dexterity) {
+    return (float)(Math.log(strength + dexterity / 5 + 5) / Math.log(5) - Math.log(2));
+  }
+  
   public static void init() {
     if(!_file.exists()) {
       _settings.set("serverID", Settings.SQL.ID());
