@@ -6,6 +6,7 @@ import game.Game;
 import game.data.Map;
 import game.data.account.Character;
 import game.network.Connection;
+import game.network.packet.EntityEquip;
 import game.network.packet.EntityInv;
 import game.network.packet.EntityStats;
 import game.network.packet.EntityVitals;
@@ -108,6 +109,7 @@ public class CharUse extends Packet {
       c.send(new EntityVitals(c.getEntity()));
       c.send(new EntityStats (c.getEntity()));
       c.send(new EntityInv   (c.getEntity()));
+      c.send(new EntityEquip (c.getEntity()));
       
       return;
     } catch(SQLException e) {
