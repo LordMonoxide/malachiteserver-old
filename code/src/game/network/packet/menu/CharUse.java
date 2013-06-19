@@ -87,10 +87,10 @@ public class CharUse extends Packet {
         
         public Entity.Source.Equip getEquip() {
           Entity.Source.Equip equip = new Entity.Source.Equip() {
-            public int getHand1()           { return character.equip().hand1(); }
-            public int getHand2()           { return character.equip().hand2(); }
-            public int getArmour(int index) { return character.equip().armour(index); }
-            public int getBling (int index) { return character.equip().bling (index); }
+            public String getHand1()           { return character.equip().hand1(); }
+            public String getHand2()           { return character.equip().hand2(); }
+            public String getArmour(int index) { return character.equip().armour(index); }
+            public String getBling (int index) { return character.equip().bling (index); }
           };
           
           return equip;
