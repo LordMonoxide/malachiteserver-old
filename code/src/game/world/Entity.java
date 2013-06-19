@@ -40,7 +40,9 @@ public class Entity extends Movable {
   }
   
   public Entity(Source source, Connection connection) {
-    _id = Game.getInstance().getNextEntityID();
+    Game game = Game.getInstance();
+    
+    _id = game.getNextEntityID();
     
     _connection = connection;
     
@@ -79,15 +81,15 @@ public class Entity extends Movable {
     
     if(source.getEquip() != null) {
       _equip = new Equip();
-      if(source.getEquip().getHand1() != -1) _equip._hand1 = _inv[source.getEquip().getHand1()];
-      if(source.getEquip().getHand2() != -1) _equip._hand2 = _inv[source.getEquip().getHand2()];
+      if(source.getEquip().getHand1() != null) _equip._hand1 = game.getItem(source.getEquip().getHand1());
+      if(source.getEquip().getHand2() != null) _equip._hand2 = game.getItem(source.getEquip().getHand2());
       
       for(int i = 0; i < _equip._armour.length; i++) {
-        if(source.getEquip().getArmour(i) != -1) _equip._armour[i] = _inv[source.getEquip().getArmour(i)];
+        if(source.getEquip().getArmour(i) != null) _equip._armour[i] = game.getItem(source.getEquip().getArmour(i));
       }
       
       for(int i = 0; i < _equip._bling.length; i++) {
-        if(source.getEquip().getBling(i) != -1) _equip._bling[i] = _inv[source.getEquip().getBling(i)];
+        if(source.getEquip().getBling(i) != null) _equip._bling[i] = game.getItem(source.getEquip().getBling(i));
       }
     }
   }
@@ -286,10 +288,10 @@ public class Entity extends Movable {
     public Equip    getEquip();
     
     public interface Equip {
-      public int getHand1();
-      public int getHand2();
-      public int getArmour(int index);
-      public int getBling(int index);
+      public String getHand1();
+      public String getHand2();
+      public String getArmour(int index);
+      public String getBling(int index);
     }
   }
   
@@ -384,19 +386,19 @@ public class Entity extends Movable {
   }
   
   public static class Equip {
-    private Entity.Inv   _hand1;
-    private Entity.Inv   _hand2;
-    private Entity.Inv[] _armour = new Entity.Inv[Item.ITEM_TYPE_ARMOUR_COUNT];
-    private Entity.Inv[] _bling  = new Entity.Inv[Item.ITEM_TYPE_BLING_COUNT];
+    private Item   _hand1;
+    private Item   _hand2;
+    private Item[] _armour = new Item[Item.ITEM_TYPE_ARMOUR_COUNT];
+    private Item[] _bling  = new Item[Item.ITEM_TYPE_BLING_COUNT];
     
-    public Entity.Inv hand1()          { return _hand1; }
-    public Entity.Inv hand2()          { return _hand2; }
-    public Entity.Inv armour(int type) { return _armour[type]; }
-    public Entity.Inv bling (int type) { return _bling [type]; }
+    public Item hand1()          { return _hand1; }
+    public Item hand2()          { return _hand2; }
+    public Item armour(int type) { return _armour[type]; }
+    public Item bling (int type) { return _bling [type]; }
     
-    public void hand1 (Entity.Inv inv)           { _hand1        = inv; }
-    public void hand2 (Entity.Inv inv)           { _hand2        = inv; }
-    public void armour(int type, Entity.Inv inv) { _armour[type] = inv; }
-    public void bling (int type, Entity.Inv inv) { _bling [type] = inv; }
+    public void hand1 (Item item)           { _hand1        = item; }
+    public void hand2 (Item item)           { _hand2        = item; }
+    public void armour(int type, Item item) { _armour[type] = item; }
+    public void bling (int type, Item item) { _bling [type] = item; }
   }
 }
