@@ -39,6 +39,17 @@ public class InvUse extends Packet {
     
     Item item = inv.item();
     switch(item.getType() & Item.ITEM_TYPE_BITMASK) {
+      case Item.ITEM_TYPE_WEAPON:
+        if(e.equip().hand1() == null) {
+          e.equip().hand1(inv.item());
+          e.inv(_index, null);
+          c.send(new EntityInvUpdate(e, null, _index));
+          c.send(new EntityEquip(e));
+          return;
+        }
+        
+        break;
+        
       case Item.ITEM_TYPE_POTION:
         int hp = 0, mp = 0;
         
