@@ -22,15 +22,29 @@ public class EntityEquip extends Packet {
     
     b.writeInt(_entity.getID());
     
-    b.writeByte(_entity.equip().hand1() != null ? _entity.equip().hand1().index() : -1);
-    b.writeByte(_entity.equip().hand2() != null ? _entity.equip().hand2().index() : -1);
+    Entity.Equip e = _entity.equip();
+    if(e.hand1() != null) {
+      b.writeByte (e.hand1().getFile().length());
+      b.writeBytes(e.hand1().getFile().getBytes());
+    } else b.writeByte(0);
+    
+    if(e.hand2() != null) {
+      b.writeByte (e.hand2().getFile().length());
+      b.writeBytes(e.hand2().getFile().getBytes());
+    } else b.writeByte(0);
     
     for(int i = 0; i < Item.ITEM_TYPE_ARMOUR_COUNT; i++) {
-      b.writeByte(_entity.equip().armour(i) != null ? _entity.equip().armour(i).index() : -1);
+      if(e.armour(i) != null) {
+        b.writeByte (e.armour(i).getFile().length());
+        b.writeBytes(e.armour(i).getFile().getBytes());
+      } else b.writeByte(0);
     }
     
     for(int i = 0; i < Item.ITEM_TYPE_BLING_COUNT; i++) {
-      b.writeByte(_entity.equip().bling(i) != null ? _entity.equip().bling(i).index() : -1);
+      if(e.bling(i) != null) {
+        b.writeByte (e.bling(i).getFile().length());
+        b.writeBytes(e.bling(i).getFile().getBytes());
+      } else b.writeByte(0);
     }
     
     return b;
