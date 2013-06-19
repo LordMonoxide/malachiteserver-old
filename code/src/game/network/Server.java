@@ -12,6 +12,7 @@ import game.network.packet.EntityMoveStart;
 import game.network.packet.EntityMoveStop;
 import game.network.packet.EntityStats;
 import game.network.packet.EntityVitals;
+import game.network.packet.InvSwap;
 import game.network.packet.InvUse;
 import game.network.packet.editors.Save;
 import game.network.packet.menu.CharDel;
@@ -94,6 +95,7 @@ public class Server {
     Packets.add(EntityInteract.class);
     Packets.add(InvUse.class);
     Packets.add(EntityEquip.class);
+    Packets.add(InvSwap.class);
   }
   
   public void start() {
