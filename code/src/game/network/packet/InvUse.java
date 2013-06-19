@@ -9,6 +9,7 @@ import network.packet.Packet;
 
 public class InvUse extends Packet {
   private int _index;
+  private int _slot;
   
   public int getIndex() {
     return 28;
@@ -20,11 +21,20 @@ public class InvUse extends Packet {
   
   public void deserialize(ByteBuf data) throws NotEnoughDataException {
     _index = data.readInt();
+    
+    if(data.isReadable()) {
+      _slot = data.readByte();
+    }
   }
   
   public void process() {
     if(_index < 0 || _index >= Settings.Player.Inventory.Size()) {
       _connection.kick("Invalid inventory index");
+      return;
+    }
+    
+    if(_slot < 0 || _slot > 1) {
+      _connection.kick("Invalid slot");
       return;
     }
     
@@ -40,15 +50,45 @@ public class InvUse extends Packet {
     Item item = inv.item();
     switch(item.getType() & Item.ITEM_TYPE_BITMASK) {
       case Item.ITEM_TYPE_WEAPON:
-        if(e.equip().hand1() == null) {
-          e.equip().hand1(inv.item());
-          e.inv(_index, null);
-          c.send(new EntityInvUpdate(e, null, _index));
-          c.send(new EntityEquip(e));
-          return;
+      case Item.ITEM_TYPE_SHIELD:
+        if(_slot == 0) {
+          if(e.equip().hand1() == null) {
+            e.equip().hand1(inv.item());
+          } else return;
+        } else {
+          if(e.equip().hand2() == null) {
+            e.equip().hand2(inv.item());
+          } else return;
         }
         
-        break;
+        e.inv(_index, null);
+        c.send(new EntityInvUpdate(e, null, _index));
+        c.send(new EntityEquip(e));
+        return;
+        
+      case Item.ITEM_TYPE_ARMOUR:
+        int armourType = inv.item().getType() >> Item.ITEM_SUBTYPE_BITSHIFT;
+        
+        if(e.equip().armour(armourType) == null) {
+          e.equip().armour(armourType, inv.item());
+        } else return;
+        
+        e.inv(_index, null);
+        c.send(new EntityInvUpdate(e, null, _index));
+        c.send(new EntityEquip(e));
+        return;
+        
+      case Item.ITEM_TYPE_BLING:
+        int blingType = inv.item().getType() >> Item.ITEM_SUBTYPE_BITSHIFT;
+        
+        if(e.equip().bling(blingType) == null) {
+          e.equip().bling(blingType, inv.item());
+        } else return;
+        
+        e.inv(_index, null);
+        c.send(new EntityInvUpdate(e, null, _index));
+        c.send(new EntityEquip(e));
+        return;
         
       case Item.ITEM_TYPE_POTION:
         int hp = 0, mp = 0;
@@ -62,10 +102,11 @@ public class InvUse extends Packet {
               hp = (int)(e.stats().vitalHP().max() * ((float)item.getHPHeal() / 100));
               mp = (int)(e.stats().vitalMP().max() * ((float)item.getMPHeal() / 100));
             }
-            break;
+            
+            return;
             
           case Item.ITEM_TYPE_POTION_BUFF:
-            break;
+            return;
         }
         
         e.stats().vitalHP().heal(hp);
@@ -80,7 +121,7 @@ public class InvUse extends Packet {
         e.getWorld().send(new EntityVitals(e));
         e.send(new EntityInvUpdate(e, e.inv(_index), _index));
         
-        break;
+        return;
     }
   }
 }
