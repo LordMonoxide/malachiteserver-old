@@ -77,15 +77,15 @@ public class Character {
       }
     }
 
-    _equip._hand1 = entity.equip().hand1() != null ? entity.equip().hand1().index() : -1;
-    _equip._hand2 = entity.equip().hand2() != null ? entity.equip().hand2().index() : -1;
+    _equip._hand1 = entity.equip().hand1() != null ? entity.equip().hand1().getFile() : null;
+    _equip._hand2 = entity.equip().hand2() != null ? entity.equip().hand2().getFile() : null;
     
     for(int i = 0; i < _equip._armour.length; i++) {
-      _equip._armour[i] = entity.equip().armour(i) != null ? entity.equip().armour(i).index() : -1;
+      _equip._armour[i] = entity.equip().armour(i) != null ? entity.equip().armour(i).getFile() : null;
     }
     
     for(int i = 0; i < _equip._bling.length; i++) {
-      _equip._bling[i] = entity.equip().bling(i) != null ? entity.equip().bling(i).index() : -1;
+      _equip._bling[i] = entity.equip().bling(i) != null ? entity.equip().bling(i).getFile() : null;
     }
     
     try {
@@ -123,26 +123,18 @@ public class Character {
   }
   
   public class Equip {
-    private int   _hand1;
-    private int   _hand2;
-    private int[] _armour = new int[Item.ITEM_TYPE_ARMOUR_COUNT];
-    private int[] _bling  = new int[Item.ITEM_TYPE_BLING_COUNT];
+    private String   _hand1;
+    private String   _hand2;
+    private String[] _armour = new String[Item.ITEM_TYPE_ARMOUR_COUNT];
+    private String[] _bling  = new String[Item.ITEM_TYPE_BLING_COUNT];
     
-    public Equip() {
-      _hand1 = -1;
-      _hand2 = -1;
-      
-      for(int i = 0; i < _armour.length; i++) _armour[i] = -1;
-      for(int i = 0; i < _bling .length; i++) _bling [i] = -1;
-    }
-    
-    public int hand1()          { return _hand1; }
-    public int hand2()          { return _hand2; }
-    public int armour(int type) { return _armour[type]; }
-    public int bling (int type) { return _bling [type]; }
-    public void hand1 (int inv)           { _hand1        = inv; }
-    public void hand2 (int inv)           { _hand2        = inv; }
-    public void armour(int type, int inv) { _armour[type] = inv; }
-    public void bling (int type, int inv) { _bling [type] = inv; }
+    public String hand1()          { return _hand1; }
+    public String hand2()          { return _hand2; }
+    public String armour(int type) { return _armour[type]; }
+    public String bling (int type) { return _bling [type]; }
+    public void hand1 (String inv)           { _hand1        = inv; }
+    public void hand2 (String inv)           { _hand2        = inv; }
+    public void armour(int type, String inv) { _armour[type] = inv; }
+    public void bling (int type, String inv) { _bling [type] = inv; }
   }
 }
