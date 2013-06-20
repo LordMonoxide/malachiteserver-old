@@ -5,6 +5,7 @@ import java.io.File;
 import game.data.util.Buffer;
 import game.data.util.Data;
 import game.data.util.Serializable;
+import game.world.Entity;
 
 public class Item extends Serializable implements Data {
   private static final int VERSION = 3;
@@ -30,6 +31,22 @@ public class Item extends Serializable implements Data {
   public float  getWeight() { return _weight; }
   public int    getHPHeal() { return _hpHeal; }
   public int    getMPHeal() { return _mpHeal; }
+  
+  public Entity createEntity(final float x, final float y, final int z, final int val) {
+    return new Entity(new Entity.Source() {
+      public Entity.Type  getType()   { return Entity.Type.Item; }
+      public String       getName()   { return null; }
+      public String       getSprite() { return _sprite; }
+      public String       getFile()   { return _file.getName(); }
+      public int          getValue()  { return val; }
+      public float        getX()      { return x; }
+      public float        getY()      { return y; }
+      public int          getZ()      { return z; }
+      public Entity.Stats getStats()  { return null; }
+      public Entity.Inv[] getInv()    { return null; }
+      public Entity.Source.Equip getEquip() { return null; }
+    });
+  }
   
   public Buffer serialize() {
     Buffer b = new Buffer();
