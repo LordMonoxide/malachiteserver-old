@@ -3,7 +3,6 @@ package game.world;
 import network.packet.Packet;
 import game.Game;
 import game.data.Item;
-import game.data.Map;
 import game.network.Connection;
 import game.network.packet.EntityMoveStop;
 import game.settings.Settings;
@@ -33,7 +32,8 @@ public class Entity extends Movable {
   private Inv[] _inv;
   private Equip _equip;
   
-  private Map.Data _source;
+  private String _file;
+  private int _value;
   
   public Entity(Source source) {
     this(source, null);
@@ -50,10 +50,10 @@ public class Entity extends Movable {
     setDec(0.361f);
     setVelTerm(1.75f);
     
-    _source = source.getData();
-    
     _name = source.getName();
     _sprite = source.getSprite();
+    _file = source.getFile();
+    _value = source.getValue();
     _type = source.getType();
     
     _x = source.getX();
@@ -102,16 +102,20 @@ public class Entity extends Movable {
     return _id;
   }
   
-  public Map.Data getData() {
-    return _source;
-  }
-  
   public String getName() {
     return _name;
   }
   
   public String getSprite() {
     return _sprite;
+  }
+  
+  public String getFile() {
+    return _file;
+  }
+  
+  public int getValue() {
+    return _value;
   }
   
   public Type getType() {
@@ -276,16 +280,17 @@ public class Entity extends Movable {
   }
   
   public static interface Source {
-    public Map.Data getData();
-    public Type     getType();
-    public String   getName();
-    public String   getSprite();
-    public float    getX();
-    public float    getY();
-    public int      getZ();
-    public Stats    getStats();
-    public Inv[]    getInv();
-    public Equip    getEquip();
+    public Type   getType();
+    public String getName();
+    public String getSprite();
+    public String getFile();
+    public int    getValue();
+    public float  getX();
+    public float  getY();
+    public int    getZ();
+    public Stats  getStats();
+    public Inv[]  getInv();
+    public Equip  getEquip();
     
     public interface Equip {
       public String getHand1();
