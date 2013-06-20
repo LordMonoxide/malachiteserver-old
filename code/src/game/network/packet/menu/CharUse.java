@@ -3,7 +3,6 @@ package game.network.packet.menu;
 import java.sql.SQLException;
 
 import game.Game;
-import game.data.Map;
 import game.data.account.Character;
 import game.network.Connection;
 import game.network.packet.EntityEquip;
@@ -54,10 +53,11 @@ public class CharUse extends Packet {
       
       c.getAccount().setChar(character);
       c.setEntity(new Entity(new Entity.Source() {
-        public Map.Data     getData()   { return null; }
         public Entity.Type  getType()   { return Entity.Type.Player; }
         public String       getName()   { return character.getName(); }
         public String       getSprite() { return character.getSprite(); }
+        public String       getFile()   { return null; }
+        public int          getValue()  { return 0; }
         public float        getX()      { return character.getX(); }
         public float        getY()      { return character.getY(); }
         public int          getZ()      { return character.getZ(); }
