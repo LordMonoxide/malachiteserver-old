@@ -103,14 +103,14 @@ public class InvUse extends Packet {
               mp = (int)(e.stats().vitalMP().max() * ((float)item.getMPHeal() / 100));
             }
             
-            return;
+            e.stats().vitalHP().heal(hp);
+            e.stats().vitalMP().heal(mp);
+            e.getWorld().send(new EntityVitals(e));
+            break;
             
           case Item.ITEM_TYPE_POTION_BUFF:
             return;
         }
-        
-        e.stats().vitalHP().heal(hp);
-        e.stats().vitalMP().heal(mp);
         
         if(e.inv(_index).val() == 1) {
           e.inv(_index, null);
@@ -118,7 +118,6 @@ public class InvUse extends Packet {
           e.inv(_index).val(e.inv(_index).val() - 1);
         }
         
-        e.getWorld().send(new EntityVitals(e));
         e.send(new EntityInvUpdate(e, e.inv(_index), _index));
         
         return;
