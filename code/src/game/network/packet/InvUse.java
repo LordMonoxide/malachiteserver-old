@@ -78,8 +78,13 @@ public class InvUse extends Packet {
           e.equip().armour(armourType, inv.item());
         } else return;
         
-        e.inv(_index, null);
-        c.send(new EntityInvUpdate(e, null, _index));
+        if(e.inv(_index).val() == 1) {
+          e.inv(_index, null);
+        } else {
+          e.inv(_index).val(e.inv(_index).val() - 1);
+        }
+        
+        c.send(new EntityInvUpdate(e, e.inv(_index), _index));
         c.send(new EntityEquip(e));
         return;
         
@@ -90,8 +95,13 @@ public class InvUse extends Packet {
           e.equip().bling(blingType, inv.item());
         } else return;
         
-        e.inv(_index, null);
-        c.send(new EntityInvUpdate(e, null, _index));
+        if(e.inv(_index).val() == 1) {
+          e.inv(_index, null);
+        } else {
+          e.inv(_index).val(e.inv(_index).val() - 1);
+        }
+        
+        c.send(new EntityInvUpdate(e, e.inv(_index), _index));
         c.send(new EntityEquip(e));
         return;
         
