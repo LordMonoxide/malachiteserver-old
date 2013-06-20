@@ -1,6 +1,7 @@
 package game.network.packet;
 
 import game.Game;
+import game.data.Item;
 import game.network.Connection;
 import game.world.Entity;
 import io.netty.buffer.ByteBuf;
@@ -38,11 +39,19 @@ public class EntityInteract extends Packet {
     switch(e.getType()) {
       case Item:
         if(e.isCloseTo(c.getEntity())) {
-          Entity.Inv inv = c.getEntity().giveItem(Game.getInstance().getItem(e.getFile()), e.getValue());
+          Item item = Game.getInstance().getItem(e.getFile());
           
-          if(inv != null) {
+          if((item.getType() & Item.ITEM_TYPE_BITMASK) != Item.ITEM_TYPE_CURRENCY) {
+            Entity.Inv inv = c.getEntity().giveItem(item, e.getValue());
+            
+            if(inv != null) {
+              e.remove();
+              c.send(new EntityInvUpdate(c.getEntity(), inv, inv.index()));
+            }
+          } else {
+            c.getEntity().currency(c.getEntity().currency() + e.getValue());
+            c.send(new EntityCurrency(c.getEntity()));
             e.remove();
-            c.send(new EntityInvUpdate(c.getEntity(), inv, inv.index()));
           }
         } else {
           c.send(new Chat("Server", "You aren't close enough to pick that up."));
