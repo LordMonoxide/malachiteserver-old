@@ -18,6 +18,7 @@ public class Character {
   private Stats _stats;
   private Inv[] _inv;
   private Equip _equip;
+  private long _curr;
   
   public Character(int id, Account account) {
     _id = id;
@@ -43,6 +44,7 @@ public class Character {
   public Inv     inv(int index) { return _inv[index]; }
   public Inv[]   inv()          { return _inv; }
   public Equip   equip()        { return _equip; }
+  public long    currency()     { return _curr; }
   
   public void setID     (int id)             { _id = id; }
   public void setAccount(Account account)    { _account = account; }
@@ -53,6 +55,7 @@ public class Character {
   public void setY      (float y)            { _y = y; }
   public void setZ      (int z)              { _z = z; }
   public void inv       (int index, Inv inv) { _inv[index] = inv; }
+  public void currency  (long curr)          { _curr = curr; }
   
   public void save(Entity entity) {
     _name = entity.getName();
@@ -61,6 +64,7 @@ public class Character {
     _x = entity.getX();
     _y = entity.getY();
     _z = entity.getZ();
+    _curr = entity.currency();
     _stats.STR = entity.stats().statSTR().val;
     _stats.INT = entity.stats().statINT().val;
     _stats.DEX = entity.stats().statDEX().val;
