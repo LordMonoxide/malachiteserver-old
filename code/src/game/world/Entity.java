@@ -31,6 +31,7 @@ public class Entity extends Movable {
   private Stats _stats;
   private Inv[] _inv;
   private Equip _equip;
+  private long _curr;
   
   private String _file;
   private int _value;
@@ -78,6 +79,7 @@ public class Entity extends Movable {
     
     _stats = source.getStats();
     _inv   = source.getInv();
+    _curr  = source.getCurrency();
     
     if(source.getEquip() != null) {
       _equip = new Equip();
@@ -231,6 +233,14 @@ public class Entity extends Movable {
     return _equip;
   }
   
+  public long currency() {
+    return _curr;
+  }
+  
+  public void currency(long curr) {
+    _curr = curr;
+  }
+  
   public void remove() {
     _world.removeEntity(this);
   }
@@ -291,6 +301,7 @@ public class Entity extends Movable {
     public Stats  getStats();
     public Inv[]  getInv();
     public Equip  getEquip();
+    public long   getCurrency();
     
     public interface Equip {
       public String getHand1();
