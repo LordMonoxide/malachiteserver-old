@@ -54,6 +54,7 @@ public class Map extends Serializable {
         public Entity.Stats getStats()  { return null; }
         public Entity.Inv[] getInv()    { return null; }
         public Entity.Source.Equip getEquip() { return null; }
+        public long         getCurrency() { return 0; }
       });
     }
     

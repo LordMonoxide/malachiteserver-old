@@ -45,6 +45,7 @@ public class Item extends Serializable implements Data {
       public Entity.Stats getStats()  { return null; }
       public Entity.Inv[] getInv()    { return null; }
       public Entity.Source.Equip getEquip() { return null; }
+      public long         getCurrency() { return 0; }
     });
   }
   
@@ -138,4 +139,6 @@ public class Item extends Serializable implements Data {
   public static final int ITEM_TYPE_BLING_RING          = 0x00 * 0x10;
   public static final int ITEM_TYPE_BLING_AMULET        = 0x01 * 0x10;
   public static final int ITEM_TYPE_BLING_COUNT         = 2;
+  
+  public static final int ITEM_TYPE_CURRENCY            = 0x07;
 }
