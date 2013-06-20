@@ -39,12 +39,15 @@ public class Map extends Serializable {
     Entity[] e = new Entity[_sprite.size() + _item.size()];
     int i = 0;
     
+    Game game = Game.getInstance();
+    
     for(final Sprite sprite : _sprite) {
-      e[i] = new Entity(new Entity.Source() {
-        public Data         getData()   { return sprite; }
+      e[i++] = new Entity(new Entity.Source() {
         public Entity.Type  getType()   { return Entity.Type.Sprite; }
         public String       getName()   { return null; }
         public String       getSprite() { return sprite._file; }
+        public String       getFile()   { return null; }
+        public int          getValue()  { return 0; }
         public float        getX()      { return sprite._x + _x * Settings.Map.Size(); }
         public float        getY()      { return sprite._y + _y * Settings.Map.Size(); }
         public int          getZ()      { return sprite._z; }
@@ -52,26 +55,10 @@ public class Map extends Serializable {
         public Entity.Inv[] getInv()    { return null; }
         public Entity.Source.Equip getEquip() { return null; }
       });
-      
-      i++;
     }
     
     for(final Item item : _item) {
-      final game.data.Item d = Game.getInstance().getItem(item._file);
-      e[i] = new Entity(new Entity.Source() {
-        public Data         getData()   { return item; }
-        public Entity.Type  getType()   { return Entity.Type.Item; }
-        public String       getName()   { return null; }
-        public String       getSprite() { return d != null ? d.getSprite() : Game.getInstance().getSprite()[0].getFile(); }
-        public float        getX()      { return item._x + _x * Settings.Map.Size(); }
-        public float        getY()      { return item._y + _y * Settings.Map.Size(); }
-        public int          getZ()      { return item._z; }
-        public Entity.Stats getStats()  { return null; }
-        public Entity.Inv[] getInv()    { return null; }
-        public Entity.Source.Equip getEquip() { return null; }
-      });
-      
-      i++;
+      e[i++] = game.getItem(item._file).createEntity(item._x + _x * Settings.Map.Size(), item._y + _y * Settings.Map.Size(), item._z, item._val);
     }
     
     return e;
