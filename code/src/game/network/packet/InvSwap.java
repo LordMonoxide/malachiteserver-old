@@ -25,7 +25,7 @@ public class InvSwap extends Packet {
   }
   
   public void process() {
-    if(_inv1 < 0 || _inv2 < 0 || _inv2 >= Settings.Player.Inventory.Size() || _inv2 >= Settings.Player.Inventory.Size()) {
+    if(_inv1 < 0 || _inv2 < 0 || _inv1 >= Settings.Player.Inventory.Size() || _inv2 >= Settings.Player.Inventory.Size()) {
       _connection.kick("Invalid inv index");
       return;
     }
