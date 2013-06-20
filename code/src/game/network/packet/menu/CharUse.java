@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import game.Game;
 import game.data.account.Character;
 import game.network.Connection;
+import game.network.packet.EntityCurrency;
 import game.network.packet.EntityEquip;
 import game.network.packet.EntityInv;
 import game.network.packet.EntityStats;
@@ -61,6 +62,7 @@ public class CharUse extends Packet {
         public float        getX()      { return character.getX(); }
         public float        getY()      { return character.getY(); }
         public int          getZ()      { return character.getZ(); }
+        public long         getCurrency() { return character.currency(); }
         public Entity.Stats getStats()  {
           Entity.Stats stats = new Entity.Stats();
           stats.statSTR().val = character.stats().STR;
@@ -110,6 +112,7 @@ public class CharUse extends Packet {
       c.send(new EntityStats (c.getEntity()));
       c.send(new EntityInv   (c.getEntity()));
       c.send(new EntityEquip (c.getEntity()));
+      c.send(new EntityCurrency(c.getEntity()));
       
       return;
     } catch(SQLException e) {
