@@ -5,7 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public abstract class Serializable {
-  private File _file;
+  protected File _file;
   private int _crc;
   
   protected Serializable(File file) {
