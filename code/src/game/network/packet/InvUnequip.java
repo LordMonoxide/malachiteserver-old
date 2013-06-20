@@ -32,9 +32,6 @@ public class InvUnequip extends Packet {
       return;
     }
     
-    System.out.println(_type);
-    System.out.println(_slot);
-    
     Connection c = (Connection)_connection;
     Entity e = c.getEntity();
     Item item = null;
