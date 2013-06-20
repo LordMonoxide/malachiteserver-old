@@ -39,11 +39,11 @@ public class CharactersTable {
   
   public CharactersTable() {
     _sql = SQL.getInstance();
-    _create    = _sql.prepareStatement("CREATE TABLE characters (id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT, account_id INTEGER UNSIGNED NOT NULL, name VARCHAR(16) NOT NULL, sprite VARCHAR(40) NOT NULL, world VARCHAR(40) NOT NULL, x FLOAT NOT NULL, y FLOAT NOT NULL, z INTEGER UNSIGNED NOT NULL, hp INTEGER UNSIGNED NOT NULL, mp INTEGER UNSIGNED NOT NULL, str INTEGER UNSIGNED NOT NULL, str_exp FLOAT NOT NULL, `int` INTEGER UNSIGNED NOT NULL, int_exp FLOAT NOT NULL, dex INTEGER UNSIGNED NOT NULL, dex_exp FLOAT NOT NULL, equip_hand1 VARCHAR(40), equip_hand2 VARCHAR(40), equip_body VARCHAR(40), equip_head VARCHAR(40), equip_hand VARCHAR(40), equip_legs VARCHAR(40), equip_feet VARCHAR(40), equip_ring VARCHAR(40), equip_amulet VARCHAR(40), PRIMARY KEY (id), UNIQUE KEY characters_name_unique (name), FOREIGN KEY (account_id) REFERENCES accounts(id))", Statement.RETURN_GENERATED_KEYS);
+    _create    = _sql.prepareStatement("CREATE TABLE characters (id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT, account_id INTEGER UNSIGNED NOT NULL, name VARCHAR(16) NOT NULL, sprite VARCHAR(40) NOT NULL, world VARCHAR(40) NOT NULL, x FLOAT NOT NULL, y FLOAT NOT NULL, z INTEGER UNSIGNED NOT NULL, hp INTEGER UNSIGNED NOT NULL, mp INTEGER UNSIGNED NOT NULL, str INTEGER UNSIGNED NOT NULL, str_exp FLOAT NOT NULL, `int` INTEGER UNSIGNED NOT NULL, int_exp FLOAT NOT NULL, dex INTEGER UNSIGNED NOT NULL, dex_exp FLOAT NOT NULL, currency BIGINT UNSIGNED NOT NULL, equip_hand1 VARCHAR(40), equip_hand2 VARCHAR(40), equip_body VARCHAR(40), equip_head VARCHAR(40), equip_hand VARCHAR(40), equip_legs VARCHAR(40), equip_feet VARCHAR(40), equip_ring VARCHAR(40), equip_amulet VARCHAR(40), PRIMARY KEY (id), UNIQUE KEY characters_name_unique (name), FOREIGN KEY (account_id) REFERENCES accounts(id))", Statement.RETURN_GENERATED_KEYS);
     _drop      = _sql.prepareStatement("DROP TABLE characters");
-    _insert    = _sql.prepareStatement("INSERT INTO characters VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+    _insert    = _sql.prepareStatement("INSERT INTO characters VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
     _delete    = _sql.prepareStatement("DELETE FROM characters WHERE id=?");
-    _update    = _sql.prepareStatement("UPDATE characters SET world=?, x=?, y=?, z=?, hp=?, mp=?, str=?, str_exp=?, `int`=?, int_exp=?, dex=?, dex_exp=?, equip_hand1=?, equip_hand2=?, equip_body=?, equip_head=?, equip_hand=?, equip_legs=?, equip_feet=?, equip_ring=?, equip_amulet=? WHERE id=?");
+    _update    = _sql.prepareStatement("UPDATE characters SET world=?, x=?, y=?, z=?, hp=?, mp=?, str=?, str_exp=?, `int`=?, int_exp=?, dex=?, dex_exp=?, currency=?, equip_hand1=?, equip_hand2=?, equip_body=?, equip_head=?, equip_hand=?, equip_legs=?, equip_feet=?, equip_ring=?, equip_amulet=? WHERE id=?");
     
     _createInv = _sql.prepareStatement("CREATE TABLE character_invs (id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT, character_id INTEGER UNSIGNED NOT NULL, file VARCHAR(40), val INTEGER UNSIGNED NOT NULL, PRIMARY KEY (id), FOREIGN KEY (character_id) REFERENCES characters(id))", Statement.RETURN_GENERATED_KEYS);
     _dropInv   = _sql.prepareStatement("DROP TABLE characters_invs");
@@ -108,6 +108,7 @@ public class CharactersTable {
     _insert.setFloat(i++, p.stats().INTEXP);
     _insert.setInt(i++, p.stats().DEX);
     _insert.setFloat(i++, p.stats().DEXEXP);
+    _insert.setLong(i++, p.currency());
     _insert.setString(i++, p.equip().hand1());
     _insert.setString(i++, p.equip().hand2());
     
@@ -160,6 +161,7 @@ public class CharactersTable {
     _update.setFloat(i++, p.stats().INTEXP);
     _update.setInt(i++, p.stats().DEX);
     _update.setFloat(i++, p.stats().DEXEXP);
+    _update.setLong(i++, p.currency());
     _update.setString(i++, p.equip().hand1());
     _update.setString(i++, p.equip().hand2());
     
@@ -222,6 +224,7 @@ public class CharactersTable {
       c.stats().INTEXP = r.getFloat(i++);
       c.stats().DEX = r.getInt(i++);
       c.stats().DEXEXP = r.getFloat(i++);
+      c.currency(r.getLong(i++));
       c.equip().hand1(r.getString(i++));
       c.equip().hand2(r.getString(i++));
       
