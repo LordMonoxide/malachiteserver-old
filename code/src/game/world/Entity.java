@@ -1,5 +1,7 @@
 package game.world;
 
+import java.util.LinkedList;
+
 import network.packet.Packet;
 import game.Game;
 import game.data.Item;
@@ -316,6 +318,8 @@ public class Entity extends Movable {
   }
   
   public static class Stats {
+    private Buffs _buffs = new Buffs();
+    
     private Vital _hp, _mp;
     private Stat  _str, _int, _dex;
     private float _weight;
@@ -333,6 +337,7 @@ public class Entity extends Movable {
       _mp._val = _mp._max;
     }
     
+    public Buffs buffs  () { return _buffs; }
     public Vital vitalHP() { return _hp; }
     public Vital vitalMP() { return _mp; }
     public Stat  statSTR() { return _str; }
@@ -341,29 +346,33 @@ public class Entity extends Movable {
     public float weight () { return _weight; }
     
     public void update() {
-      _hp._max = Settings.calculateMaxHP(_str.val);
-      _mp._max = Settings.calculateMaxMP(_int.val);
-      _weight  = Settings.calculateMaxWeight(_str.val, _dex.val);
+      _hp._max = Settings.calculateMaxHP(_str._val);
+      _mp._max = Settings.calculateMaxMP(_int._val);
+      _weight  = Settings.calculateMaxWeight(_str._val, _dex._val);
     }
     
     public Stats copy() {
       Stats s = new Stats();
       s._hp._val = _hp._val; s._hp._max = _hp._max;
       s._mp._val = _mp._val; s._mp._max = _mp._max;
-      s._str.val = _str.val; s._str.exp = _str.exp;
-      s._int.val = _int.val; s._int.exp = _int.exp;
-      s._dex.val = _dex.val; s._dex.exp = _dex.exp;
+      s._str._val = _str._val; s._str._exp = _str._exp;
+      s._int._val = _int._val; s._int._exp = _int._exp;
+      s._dex._val = _dex._val; s._dex._exp = _dex._exp;
       return s;
     }
     
     public class Vital {
       private Vital() { }
       
+      private Buffs _buff = new Buffs();
+      
       private int _val;
       private int _max;
       
+      public Buffs buffs() { return _buff; }
       public int val() { return _val; }
-      public int max() { return _max; }
+      public int max(boolean withoutBuffs) { return withoutBuffs ? _max : max(); }
+      public int max() { return (int)(_max + _max * _buff._percent + _buff._fixed); }
       public void val(int val) {
         if(val <    0) val =    0;
         if(val > _max) val = _max;
@@ -377,8 +386,50 @@ public class Entity extends Movable {
     public class Stat {
       private Stat() { }
       
-      public int val;
-      public float exp;
+      private Buffs _buff = new Buffs();
+      
+      private int _val;
+      private float _exp;
+      
+      public Buffs buffs() { return _buff; }
+      public int val(boolean withoutBuffs) { return withoutBuffs ? _val : val(); }
+      public int val() { return (int)(_val + _val * _buff._percent + _buff._fixed); }
+      public void val(int val) { _val = val; }
+      public float exp() { return _exp; }
+      public void exp(float exp) { _exp = exp; }
+    }
+    
+    public class Buffs {
+      private LinkedList<Buff> _buff = new LinkedList<Buff>();
+      
+      private int _fixed;
+      private float _percent;
+      
+      public int fixed() { return _fixed; }
+      public float percent() { return _percent; }
+      
+      public int add(Buff buff) {
+        if(_buff.add(buff)) {
+          if(buff._percent) {
+            _percent += buff._val;
+          } else {
+            _fixed += buff._val;
+          }
+          
+          return _buff.size();
+        }
+        
+        return 0;
+      }
+      
+      public boolean remove(int buff) {
+        return _buff.remove(buff) != null;
+      }
+      
+      public class Buff {
+        private float _val;
+        private boolean _percent;
+      }
     }
   }
   
