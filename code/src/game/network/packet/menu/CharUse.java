@@ -65,12 +65,12 @@ public class CharUse extends Packet {
         public long         getCurrency() { return character.currency(); }
         public Entity.Stats getStats()  {
           Entity.Stats stats = new Entity.Stats();
-          stats.statSTR().val = character.stats().STR;
-          stats.statSTR().exp = character.stats().STREXP;
-          stats.statINT().val = character.stats().INT;
-          stats.statINT().exp = character.stats().INTEXP;
-          stats.statDEX().val = character.stats().DEX;
-          stats.statDEX().exp = character.stats().DEXEXP;
+          stats.statSTR().val(character.stats().STR);
+          stats.statSTR().exp(character.stats().STREXP);
+          stats.statINT().val(character.stats().INT);
+          stats.statINT().exp(character.stats().INTEXP);
+          stats.statDEX().val(character.stats().DEX);
+          stats.statDEX().exp(character.stats().DEXEXP);
           stats.update();
           stats.vitalHP().val(character.stats().HP);
           stats.vitalMP().val(character.stats().MP);
