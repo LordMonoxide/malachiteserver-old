@@ -65,9 +65,9 @@ public class Character {
     _y = entity.getY();
     _z = entity.getZ();
     _curr = entity.currency();
-    _stats.STR = entity.stats().statSTR().val;
-    _stats.INT = entity.stats().statINT().val;
-    _stats.DEX = entity.stats().statDEX().val;
+    _stats.STR = entity.stats().statSTR().val(true);
+    _stats.INT = entity.stats().statINT().val(true);
+    _stats.DEX = entity.stats().statDEX().val(true);
     _stats.HP = entity.stats().vitalHP().val();
     _stats.MP = entity.stats().vitalMP().val();
     
