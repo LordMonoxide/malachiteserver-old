@@ -371,13 +371,13 @@ public class Entity extends Movable {
       public int max(boolean withoutBuffs) { return withoutBuffs ? _max : max(); }
       public int max() { return (int)(_max + _max * _buff._percent + _buff._fixed); }
       public void val(int val) {
-        if(val <    0) val =    0;
-        if(val > _max) val = _max;
+        if(val <     0) val =     0;
+        if(val > max()) val = max();
         _val = val;
       }
       
       public void heal(int heal) { val(_val + heal); }
-      public void restore() { _val = _max; }
+      public void restore() { _val = max(); }
     }
     
     public class Stat {
