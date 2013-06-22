@@ -85,15 +85,15 @@ public class Entity extends Movable {
     
     if(source.getEquip() != null) {
       _equip = new Equip();
-      if(source.getEquip().getHand1() != null) _equip._hand1 = game.getItem(source.getEquip().getHand1());
-      if(source.getEquip().getHand2() != null) _equip._hand2 = game.getItem(source.getEquip().getHand2());
+      if(source.getEquip().getHand1() != null) _equip.hand1().item(game.getItem(source.getEquip().getHand1()));
+      if(source.getEquip().getHand2() != null) _equip.hand2().item(game.getItem(source.getEquip().getHand2()));
       
       for(int i = 0; i < _equip._armour.length; i++) {
-        if(source.getEquip().getArmour(i) != null) _equip._armour[i] = game.getItem(source.getEquip().getArmour(i));
+        if(source.getEquip().getArmour(i) != null) _equip.armour(i).item(game.getItem(source.getEquip().getArmour(i)));
       }
       
       for(int i = 0; i < _equip._bling.length; i++) {
-        if(source.getEquip().getBling(i) != null) _equip._bling[i] = game.getItem(source.getEquip().getBling(i));
+        if(source.getEquip().getBling(i) != null) _equip.bling(i).item(game.getItem(source.getEquip().getBling(i)));
       }
     }
   }
@@ -318,8 +318,6 @@ public class Entity extends Movable {
   }
   
   public static class Stats {
-    private Buffs _buffs = new Buffs();
-    
     private Vital _hp, _mp;
     private Stat  _str, _int, _dex;
     private float _weight;
@@ -337,7 +335,6 @@ public class Entity extends Movable {
       _mp._val = _mp._max;
     }
     
-    public Buffs buffs  () { return _buffs; }
     public Vital vitalHP() { return _hp; }
     public Vital vitalMP() { return _mp; }
     public Stat  statSTR() { return _str; }
@@ -399,7 +396,7 @@ public class Entity extends Movable {
       public void exp(float exp) { _exp = exp; }
     }
     
-    public class Buffs {
+    public static class Buffs {
       private LinkedList<Buff> _buff = new LinkedList<Buff>();
       
       private int _fixed;
@@ -408,27 +405,58 @@ public class Entity extends Movable {
       public int fixed() { return _fixed; }
       public float percent() { return _percent; }
       
-      public int add(Buff buff) {
+      public Buff add(float val, boolean percent) {
+        Buff buff = new Buff();
+        
         if(_buff.add(buff)) {
+          buff._val = val;
+          buff._percent = percent;
+          buff._buffs = this;
+          buff._index = _buff.size();
+          
           if(buff._percent) {
-            _percent += buff._val;
+            _percent += buff._val / 100;
           } else {
             _fixed += buff._val;
           }
           
-          return _buff.size();
+          return buff;
         }
         
-        return 0;
+        return null;
       }
       
-      public boolean remove(int buff) {
-        return _buff.remove(buff) != null;
+      public boolean remove(int index) {
+        Buff buff = _buff.remove(index - 1);
+        
+        if(buff != null) {
+          if(buff._percent) {
+            _percent -= buff._val / 100;
+          } else {
+            _fixed -= buff._val;
+          }
+          
+          return true;
+        }
+        
+        return false;
       }
       
-      public class Buff {
+      public static class Buff {
+        private Buffs _buffs;
+        private int _index;
+        
         private float _val;
         private boolean _percent;
+        
+        public float   val() { return _val; }
+        public void    val(float val) { _val = val; }
+        public boolean percent() { return _percent; }
+        public void    percent(boolean percent) { _percent = percent; }
+        
+        public void remove() {
+          _buffs.remove(_index);
+        }
       }
     }
   }
@@ -452,20 +480,45 @@ public class Entity extends Movable {
     public void val ( int val)  { _val  = val;  }
   }
   
-  public static class Equip {
-    private Item   _hand1;
-    private Item   _hand2;
-    private Item[] _armour = new Item[Item.ITEM_TYPE_ARMOUR_COUNT];
-    private Item[] _bling  = new Item[Item.ITEM_TYPE_BLING_COUNT];
+  public class Equip {
+    private EquipItem   _hand1 = new EquipItem();
+    private EquipItem   _hand2 = new EquipItem();
+    private EquipItem[] _armour = new EquipItem[Item.ITEM_TYPE_ARMOUR_COUNT];
+    private EquipItem[] _bling  = new EquipItem[Item.ITEM_TYPE_BLING_COUNT];
     
-    public Item hand1()          { return _hand1; }
-    public Item hand2()          { return _hand2; }
-    public Item armour(int type) { return _armour[type]; }
-    public Item bling (int type) { return _bling [type]; }
+    public Equip() {
+      for(int i = 0; i < _armour.length; i++) _armour[i] = new EquipItem();
+      for(int i = 0; i < _bling .length; i++) _bling [i] = new EquipItem();
+    }
     
-    public void hand1 (Item item)           { _hand1        = item; }
-    public void hand2 (Item item)           { _hand2        = item; }
-    public void armour(int type, Item item) { _armour[type] = item; }
-    public void bling (int type, Item item) { _bling [type] = item; }
+    public EquipItem hand1()          { return _hand1; }
+    public EquipItem hand2()          { return _hand2; }
+    public EquipItem armour(int type) { return _armour[type]; }
+    public EquipItem bling (int type) { return _bling [type]; }
+    
+    public class EquipItem {
+      private Item _item;
+      private LinkedList<Stats.Buffs.Buff> _buff = new LinkedList<Stats.Buffs.Buff>();
+      
+      public Item item() { return _item; }
+      public void item(Item item) {
+        for(Stats.Buffs.Buff buff : _buff) {
+          buff.remove();
+        }
+        
+        _buff.clear();
+        _item = item;
+        
+        if(_item != null) {
+          if(_item.buffHP().val() != 0) _buff.add(_stats._hp._buff.add(_item.buffHP()._val, _item.buffHP()._percent));
+          if(_item.buffMP().val() != 0) _buff.add(_stats._mp._buff.add(_item.buffMP()._val, _item.buffMP()._percent));
+          if(_item.buffSTR().val() != 0) _buff.add(_stats._str._buff.add(_item.buffSTR()._val, _item.buffSTR()._percent));
+          if(_item.buffDEX().val() != 0) _buff.add(_stats._dex._buff.add(_item.buffDEX()._val, _item.buffDEX()._percent));
+          if(_item.buffINT().val() != 0) _buff.add(_stats._int._buff.add(_item.buffINT()._val, _item.buffINT()._percent));
+        }
+        
+        _stats.update();
+      }
+    }
   }
 }
