@@ -138,7 +138,7 @@ public class Settings {
   public static class Net {
     private static Net _instance = new Net();
     
-    private double _version = 0.03;
+    private double _version = 0.04;
     private int _port = 4000;
     
     public static double Version() { return _instance._version; }
