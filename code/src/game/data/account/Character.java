@@ -80,16 +80,16 @@ public class Character {
         _inv[i]._val = 0;
       }
     }
-
-    _equip._hand1 = entity.equip().hand1() != null ? entity.equip().hand1().getFile() : null;
-    _equip._hand2 = entity.equip().hand2() != null ? entity.equip().hand2().getFile() : null;
+    
+    _equip._hand1 = entity.equip().hand1().item() != null ? entity.equip().hand1().item().getFile() : null;
+    _equip._hand2 = entity.equip().hand2().item() != null ? entity.equip().hand2().item().getFile() : null;
     
     for(int i = 0; i < _equip._armour.length; i++) {
-      _equip._armour[i] = entity.equip().armour(i) != null ? entity.equip().armour(i).getFile() : null;
+      _equip._armour[i] = entity.equip().armour(i).item() != null ? entity.equip().armour(i).item().getFile() : null;
     }
     
     for(int i = 0; i < _equip._bling.length; i++) {
-      _equip._bling[i] = entity.equip().bling(i) != null ? entity.equip().bling(i).getFile() : null;
+      _equip._bling[i] = entity.equip().bling(i).item() != null ? entity.equip().bling(i).item().getFile() : null;
     }
     
     try {
