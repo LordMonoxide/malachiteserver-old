@@ -52,12 +52,12 @@ public class InvUse extends Packet {
       case Item.ITEM_TYPE_WEAPON:
       case Item.ITEM_TYPE_SHIELD:
         if(_slot == 0) {
-          if(e.equip().hand1() == null) {
-            e.equip().hand1(inv.item());
+          if(e.equip().hand1().item() == null) {
+            e.equip().hand1().item(inv.item());
           } else return;
         } else {
-          if(e.equip().hand2() == null) {
-            e.equip().hand2(inv.item());
+          if(e.equip().hand2().item() == null) {
+            e.equip().hand2().item(inv.item());
           } else return;
         }
         
@@ -69,13 +69,15 @@ public class InvUse extends Packet {
         
         c.send(new EntityInvUpdate(e, e.inv(_index), _index));
         c.send(new EntityEquip(e));
+        c.send(new EntityVitals(e));
+        c.send(new EntityStats(e));
         return;
         
       case Item.ITEM_TYPE_ARMOUR:
         int armourType = inv.item().getType() >> Item.ITEM_SUBTYPE_BITSHIFT;
         
-        if(e.equip().armour(armourType) == null) {
-          e.equip().armour(armourType, inv.item());
+        if(e.equip().armour(armourType).item() == null) {
+          e.equip().armour(armourType).item(inv.item());
         } else return;
         
         if(e.inv(_index).val() == 1) {
@@ -86,13 +88,15 @@ public class InvUse extends Packet {
         
         c.send(new EntityInvUpdate(e, e.inv(_index), _index));
         c.send(new EntityEquip(e));
+        c.send(new EntityVitals(e));
+        c.send(new EntityStats(e));
         return;
         
       case Item.ITEM_TYPE_BLING:
         int blingType = inv.item().getType() >> Item.ITEM_SUBTYPE_BITSHIFT;
         
-        if(e.equip().bling(blingType) == null) {
-          e.equip().bling(blingType, inv.item());
+        if(e.equip().bling(blingType).item() == null) {
+          e.equip().bling(blingType).item(inv.item());
         } else return;
         
         if(e.inv(_index).val() == 1) {
@@ -103,6 +107,8 @@ public class InvUse extends Packet {
         
         c.send(new EntityInvUpdate(e, e.inv(_index), _index));
         c.send(new EntityEquip(e));
+        c.send(new EntityVitals(e));
+        c.send(new EntityStats(e));
         return;
         
       case Item.ITEM_TYPE_POTION:

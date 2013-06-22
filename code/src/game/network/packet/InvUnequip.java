@@ -40,13 +40,13 @@ public class InvUnequip extends Packet {
       case HAND:
         switch(_slot) {
           case 0:
-            item = e.equip().hand1();
-            e.equip().hand1(null);
+            item = e.equip().hand1().item();
+            e.equip().hand1().item(null);
             break;
             
           case 1:
-            item = e.equip().hand2();
-            e.equip().hand2(null);
+            item = e.equip().hand2().item();
+            e.equip().hand2().item(null);
             break;
             
           default:
@@ -62,8 +62,8 @@ public class InvUnequip extends Packet {
           return;
         }
         
-        item = e.equip().armour(_slot);
-        e.equip().armour(_slot, null);
+        item = e.equip().armour(_slot).item();
+        e.equip().armour(_slot).item(null);
         break;
         
       case BLING:
@@ -72,8 +72,8 @@ public class InvUnequip extends Packet {
           return;
         }
         
-        item = e.equip().bling(_slot);
-        e.equip().bling(_slot, null);
+        item = e.equip().bling(_slot).item();
+        e.equip().bling(_slot).item(null);
         break;
     }
     
@@ -85,5 +85,7 @@ public class InvUnequip extends Packet {
     Entity.Inv inv = e.giveItem(item, 1);
     e.send(new EntityInvUpdate(e, inv, inv.index()));
     e.send(new EntityEquip(e));
+    c.send(new EntityVitals(e));
+    c.send(new EntityStats(e));
   }
 }

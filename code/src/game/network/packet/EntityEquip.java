@@ -23,27 +23,27 @@ public class EntityEquip extends Packet {
     b.writeInt(_entity.getID());
     
     Entity.Equip e = _entity.equip();
-    if(e.hand1() != null) {
-      b.writeByte (e.hand1().getFile().length());
-      b.writeBytes(e.hand1().getFile().getBytes());
+    if(e.hand1().item() != null) {
+      b.writeByte (e.hand1().item().getFile().length());
+      b.writeBytes(e.hand1().item().getFile().getBytes());
     } else b.writeByte(0);
     
-    if(e.hand2() != null) {
-      b.writeByte (e.hand2().getFile().length());
-      b.writeBytes(e.hand2().getFile().getBytes());
+    if(e.hand2().item() != null) {
+      b.writeByte (e.hand2().item().getFile().length());
+      b.writeBytes(e.hand2().item().getFile().getBytes());
     } else b.writeByte(0);
     
     for(int i = 0; i < Item.ITEM_TYPE_ARMOUR_COUNT; i++) {
-      if(e.armour(i) != null) {
-        b.writeByte (e.armour(i).getFile().length());
-        b.writeBytes(e.armour(i).getFile().getBytes());
+      if(e.armour(i).item() != null) {
+        b.writeByte (e.armour(i).item().getFile().length());
+        b.writeBytes(e.armour(i).item().getFile().getBytes());
       } else b.writeByte(0);
     }
     
     for(int i = 0; i < Item.ITEM_TYPE_BLING_COUNT; i++) {
-      if(e.bling(i) != null) {
-        b.writeByte (e.bling(i).getFile().length());
-        b.writeBytes(e.bling(i).getFile().getBytes());
+      if(e.bling(i).item() != null) {
+        b.writeByte (e.bling(i).item().getFile().length());
+        b.writeBytes(e.bling(i).item().getFile().getBytes());
       } else b.writeByte(0);
     }
     
