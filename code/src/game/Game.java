@@ -15,6 +15,7 @@ import network.packet.Packet;
 import io.netty.util.internal.chmv8.ConcurrentHashMapV8;
 
 import game.data.Item;
+import game.data.NPC;
 import game.data.Sprite;
 import game.network.Server;
 import game.settings.Settings;
@@ -36,6 +37,7 @@ public class Game {
   private ConcurrentHashMapV8<String, World>  _world  = new ConcurrentHashMapV8<String, World>();
   private ConcurrentHashMapV8<String, Sprite> _sprite = new ConcurrentHashMapV8<String, Sprite>();
   private ConcurrentHashMapV8<String, Item>   _item   = new ConcurrentHashMapV8<String, Item>();
+  private ConcurrentHashMapV8<String, NPC>    _npc    = new ConcurrentHashMapV8<String, NPC>();
   
   private int _entityID;
   
@@ -48,11 +50,9 @@ public class Game {
     _sprite.clear();
     
     for(File f : dir.listFiles()) {
-      if(f.isFile()) {
-        Sprite s = new Sprite(f);
-        s.load();
-        _sprite.put(f.getName(), s);
-      }
+      Sprite s = new Sprite(f);
+      s.load();
+      _sprite.put(f.getName(), s);
     }
   }
   
@@ -65,11 +65,24 @@ public class Game {
     _item.clear();
     
     for(File f : dir.listFiles()) {
-      if(f.isFile()) {
-        Item i = new Item(f);
-        i.load();
-        _item.put(f.getName(), i);
-      }
+      Item i = new Item(f);
+      i.load();
+      _item.put(f.getName(), i);
+    }
+  }
+  
+  private void loadNPCs() {
+    System.out.println("Loading NPCs...");
+    
+    File dir = new File("../data/npcs");
+    if(!dir.exists()) dir.mkdirs();
+    
+    _npc.clear();
+    
+    for(File f : dir.listFiles()) {
+      NPC n = new NPC(f);
+      n.load();
+      _npc.put(f.getName(), n);
     }
   }
   
@@ -87,11 +100,13 @@ public class Game {
   
   public int getSpriteCount() { return _sprite.size(); }
   public int getItemCount()   { return _item  .size(); }
+  public int getNPCCount()    { return _npc   .size(); }
   
   public Sprite[] getSprite() { return _sprite.values().toArray(new Sprite[0]); }
   public Item  [] getItem()   { return _item  .values().toArray(new Item  [0]); }
+  public NPC   [] getNPC()    { return _npc   .values().toArray(new NPC   [0]); }
   
-  public Sprite getSprite(String file) { return getSprite(file, false); }
+  public Sprite getSprite(String file) { return _sprite.get(file); }
   public Sprite getSprite(String file, boolean create) {
     Sprite s = _sprite.get(file);
     if(s == null && create) {
@@ -101,7 +116,7 @@ public class Game {
     return s;
   }
   
-  public Item getItem(String file) { return getItem(file, false); }
+  public Item getItem(String file) { return _item.get(file); }
   public Item getItem(String file, boolean create) {
     Item i = _item.get(file);
     if(i == null && create) {
@@ -109,6 +124,16 @@ public class Game {
       _item.put(file, i);
     }
     return i;
+  }
+  
+  public NPC getNPC(String file) { return _npc.get(file); }
+  public NPC getNPC(String file, boolean create) {
+    NPC n = _npc.get(file);
+    if(n == null && create) {
+      n = new NPC(new File("../data/npcs/" + file));
+      _npc.put(file, n);
+    }
+    return n;
   }
   
   public int getNextEntityID() {
@@ -122,6 +147,7 @@ public class Game {
     
     loadSprites();
     loadItems();
+    loadNPCs();
     
     _net = new Server();
     _net.initPackets();
