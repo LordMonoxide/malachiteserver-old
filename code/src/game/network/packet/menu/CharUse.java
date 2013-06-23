@@ -13,7 +13,6 @@ import game.network.packet.EntityVitals;
 import game.settings.Settings;
 import game.sql.CharactersTable;
 import game.world.Entity;
-import game.world.Entity.Inv;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import network.packet.Packet;
@@ -78,10 +77,10 @@ public class CharUse extends Packet {
         }
         
         public Entity.Inv[] getInv()    {
-          Inv[] inv = new Inv[Settings.Player.Inventory.Size()];
+          Entity.Inv[] inv = new Entity.Inv[Settings.Player.Inventory.Size()];
           for(int i = 0; i < inv.length; i++) {
             if(character.inv(i).file() != null) {
-              inv[i] = new Inv(i, Game.getInstance().getItem(character.inv(i).file()), character.inv(i).val());
+              inv[i] = new Entity.Inv(i, Game.getInstance().getItem(character.inv(i).file()), character.inv(i).val());
             }
           }
           return inv;
