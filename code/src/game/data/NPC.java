@@ -4,15 +4,11 @@ import java.io.File;
 
 import game.Game;
 import game.data.util.Buffer;
-import game.data.util.Data;
-import game.data.util.Serializable;
+import game.data.util.GameData;
 import game.settings.Settings;
 import game.world.Entity;
 
-public class NPC extends Serializable implements Data {
-  private static final int VERSION = 1;
-  
-  private String _name, _note;
+public class NPC extends GameData {
   private String _sprite;
   
   private Stats _stats;
@@ -21,7 +17,7 @@ public class NPC extends Serializable implements Data {
   private long _curr;
   
   public NPC(File file) {
-    super(file);
+    super(1, file);
     
     _stats = new Stats();
     _inv = new Inv[Settings.Player.Inventory.Size()];
@@ -32,15 +28,14 @@ public class NPC extends Serializable implements Data {
     }
   }
   
-  public String getName() { return _name; }
-  public String getNote() { return _note; }
-  
   public Entity createEntity(final float x, final float y, final int z) {
+    final GameData data = this;
+    
     return new Entity(new Entity.Source() {
       public Entity.Type  getType()   { return Entity.Type.NPC; }
-      public String       getName()   { return _name; }
+      public String       getName()   { return data.getName(); }
       public String       getSprite() { return _sprite; }
-      public String       getFile()   { return _file.getName(); }
+      public String       getFile()   { return data.getName(); }
       public int          getValue()  { return 0; }
       public float        getX()      { return x; }
       public float        getY()      { return y; }
@@ -81,11 +76,7 @@ public class NPC extends Serializable implements Data {
     });
   }
   
-  public Buffer serialize() {
-    Buffer b = new Buffer();
-    b.put(VERSION);
-    b.put(_name);
-    b.put(_note);
+  protected void serializeInternal(Buffer b, boolean full) {
     b.put(_sprite);
     b.put(_stats.STR);
     b.put(_stats.DEX);
@@ -103,19 +94,15 @@ public class NPC extends Serializable implements Data {
     for(String bling  : _equip.bling ) b.put(bling );
     
     b.put(_curr);
-    
-    return b;
   }
   
-  public void deserialize(Buffer b) {
-    switch(b.getInt()) {
+  protected void deserializeInternal(Buffer b, boolean full) {
+    switch(getVersion()) {
       case 1: deserialize01(b); break;
     }
   }
   
   private void deserialize01(Buffer b) {
-    _name = b.getString();
-    _note = b.getString();
     _sprite = b.getString();
     _stats.STR = b.getInt();
     _stats.DEX = b.getInt();

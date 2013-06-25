@@ -3,14 +3,10 @@ package game.data;
 import java.io.File;
 
 import game.data.util.Buffer;
-import game.data.util.Data;
-import game.data.util.Serializable;
+import game.data.util.GameData;
 import game.world.Entity;
 
-public class Item extends Serializable implements Data {
-  private static final int VERSION = 4;
-  
-  private String _name, _note;
+public class Item extends GameData {
   private String _sprite;
   private int    _type;
   private int    _damage;
@@ -26,11 +22,9 @@ public class Item extends Serializable implements Data {
   private Entity.Stats.Buffs.Buff _buffINT = new Entity.Stats.Buffs.Buff();
   
   public Item(File file) {
-    super(file);
+    super(1, file);
   }
   
-  public String getName()   { return _name; }
-  public String getNote()   { return _note; }
   public String getSprite() { return _sprite; }
   public int    getType()   { return _type; }
   public int    getDamage() { return _damage; }
@@ -44,11 +38,13 @@ public class Item extends Serializable implements Data {
   public Entity.Stats.Buffs.Buff buffINT() { return _buffINT; }
   
   public Entity createEntity(final float x, final float y, final int z, final int val) {
+    final GameData data = this;
+    
     return new Entity(new Entity.Source() {
       public Entity.Type  getType()   { return Entity.Type.Item; }
       public String       getName()   { return null; }
       public String       getSprite() { return _sprite; }
-      public String       getFile()   { return _file.getName(); }
+      public String       getFile()   { return data.getFile(); }
       public int          getValue()  { return val; }
       public float        getX()      { return x; }
       public float        getY()      { return y; }
@@ -60,11 +56,7 @@ public class Item extends Serializable implements Data {
     });
   }
   
-  public Buffer serialize() {
-    Buffer b = new Buffer();
-    b.put(VERSION);
-    b.put(_name);
-    b.put(_note);
+  protected void serializeInternal(Buffer b, boolean full) {
     b.put(_sprite);
     b.put(_type);
     b.put(_damage);
@@ -81,50 +73,15 @@ public class Item extends Serializable implements Data {
     b.put(_buffDEX.percent());
     b.put(_buffINT.val());
     b.put(_buffINT.percent());
-    return b;
   }
   
-  public void deserialize(Buffer b) {
-    switch(b.getInt()) {
+  protected void deserializeInternal(Buffer b, boolean full) {
+    switch(getVersion()) {
       case 1: deserialize01(b); break;
-      case 2: deserialize02(b); break;
-      case 3: deserialize03(b); break;
-      case 4: deserialize04(b); break;
     }
   }
   
   private void deserialize01(Buffer b) {
-    _name   = b.getString();
-    _note   = b.getString();
-    _sprite = b.getString();
-    _type   = b.getInt();
-    _damage = b.getInt();
-  }
-  
-  private void deserialize02(Buffer b) {
-    _name   = b.getString();
-    _note   = b.getString();
-    _sprite = b.getString();
-    _type   = b.getInt();
-    _damage = b.getInt();
-    _hpHeal = b.getInt();
-    _mpHeal = b.getInt();
-  }
-  
-  private void deserialize03(Buffer b) {
-    _name   = b.getString();
-    _note   = b.getString();
-    _sprite = b.getString();
-    _type   = b.getInt();
-    _damage = b.getInt();
-    _weight = b.getFloat();
-    _hpHeal = b.getInt();
-    _mpHeal = b.getInt();
-  }
-  
-  private void deserialize04(Buffer b) {
-    _name   = b.getString();
-    _note   = b.getString();
     _sprite = b.getString();
     _type   = b.getInt();
     _damage = b.getInt();
