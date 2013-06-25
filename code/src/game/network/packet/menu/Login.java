@@ -3,11 +3,9 @@ package game.network.packet.menu;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import game.Game;
 import game.data.account.Account;
 import game.data.account.Character;
 import game.network.Connection;
-import game.network.packet.Data;
 import game.sql.AccountsTable;
 import game.sql.CharactersTable;
 import game.sql.PermissionsTable;
@@ -74,10 +72,6 @@ public class Login extends Packet {
           c.send(p);
           
           System.out.println(c.getChannel().remoteAddress() + " logged into " + a.getName());
-          
-          Game g = Game.getInstance();
-          if(g.getSpriteCount() != 0) c.send(new Data.Info(g.getSprite()));
-          if(g.getItemCount()   != 0) c.send(new Data.Info(g.getItem()));
         } else {
           response._response = Response.RESPONSE_NOT_AUTHD;
         }
