@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 import game.Game;
 import game.data.util.Buffer;
-import game.data.util.Serializable;
 import game.network.Connection;
+import game.network.packet.DataMap;
 import game.network.packet.Data;
 import game.world.World;
 import io.netty.buffer.ByteBuf;
@@ -68,17 +68,17 @@ public abstract class Save extends Packet {
       
       for(TempData data : _data) {
         map = world.getRegion(data.x, data.y).getMap();
-        map.deserialize(new Buffer(data.data));
+        map.deserialize(new Buffer(data.data), true);
         map.save();
         
-        world.send(new Data.MapResponse(map, true));
+        world.send(new DataMap.Response(map, true));
       }
     }
   }
   
   public static class Sprite extends Save {
     public int getIndex() {
-      return 21;
+      return 20;
     }
     
     public void process() {
@@ -89,11 +89,11 @@ public abstract class Save extends Packet {
       }
       
       Game game = Game.getInstance();
-      Serializable s;
+      game.data.Sprite s;
       
       for(TempData data : _data) {
         s = game.getSprite(data.file, true);
-        s.deserialize(new Buffer(data.data));
+        s.deserialize(new Buffer(data.data), true);
         s.save();
         
         game.send(new Data.Response(s));
@@ -103,7 +103,7 @@ public abstract class Save extends Packet {
   
   public static class Item extends Save {
     public int getIndex() {
-      return 24;
+      return 23;
     }
     
     public void process() {
@@ -114,14 +114,14 @@ public abstract class Save extends Packet {
       }
       
       Game game = Game.getInstance();
-      Serializable s;
+      game.data.Item s;
       
       for(TempData data :_data) {
         s = game.getItem(data.file, true);
-        s.deserialize(new Buffer(data.data));
+        s.deserialize(new Buffer(data.data), true);
         s.save();
         
-        game.send(new Data.Response(s));
+        //game.send(new DataSprite.Response(s));
       }
     }
   }
