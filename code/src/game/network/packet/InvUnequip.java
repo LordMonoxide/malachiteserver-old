@@ -14,7 +14,7 @@ public class InvUnequip extends Packet {
   private int _type, _slot;
   
   public int getIndex() {
-    return 32;
+    return 31;
   }
   
   public ByteBuf serialize() {

@@ -13,7 +13,7 @@ public class EntityVitals extends Packet {
   }
   
   public int getIndex() {
-    return 22;
+    return 21;
   }
   
   public ByteBuf serialize() {

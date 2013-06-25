@@ -11,7 +11,7 @@ public class EntityInteract extends Packet {
   private int _id;
   
   public int getIndex() {
-    return 27;
+    return 26;
   }
   
   public ByteBuf serialize() {

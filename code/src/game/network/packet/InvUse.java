@@ -12,7 +12,7 @@ public class InvUse extends Packet {
   private int _slot;
   
   public int getIndex() {
-    return 28;
+    return 27;
   }
   
   public ByteBuf serialize() {

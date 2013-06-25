@@ -14,7 +14,7 @@ public class EntityEquip extends Packet {
   }
   
   public int getIndex() {
-    return 29;
+    return 28;
   }
   
   public ByteBuf serialize() {

@@ -10,7 +10,7 @@ public class InvDrop extends Packet {
   private int _inv, _val;
   
   public int getIndex() {
-    return 31;
+    return 30;
   }
   
   public ByteBuf serialize() {

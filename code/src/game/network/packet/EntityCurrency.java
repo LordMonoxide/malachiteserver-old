@@ -13,7 +13,7 @@ public class EntityCurrency extends Packet {
   }
   
   public int getIndex() {
-    return 33;
+    return 32;
   }
   
   public ByteBuf serialize() {
