@@ -105,6 +105,7 @@ public class Server {
     Packets.add(EntityCurrency.class);
     Packets.add(EditorDataMap.Request.class);
     Packets.add(EditorDataMap.Response.class);
+    Packets.add(Save.NPC.class);
   }
   
   public void start() {
