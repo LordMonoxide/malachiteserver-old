@@ -25,6 +25,7 @@ public abstract class GameData {
   protected void setRev(int rev) { _rev = rev; }
   
   public void save() {
+    _rev++;
     Buffer b = serialize(true);
     
     try {
