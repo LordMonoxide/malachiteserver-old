@@ -118,7 +118,7 @@ public class Map extends GameData {
   }
   
   protected void deserializeInternal(Buffer b, boolean full) {
-    switch(b.getInt()) {
+    switch(getVersion()) {
       case 1: deserialize01(b, full); break;
     }
   }
