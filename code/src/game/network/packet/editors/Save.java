@@ -121,7 +121,32 @@ public abstract class Save extends Packet {
         s.deserialize(new Buffer(data.data), true);
         s.save();
         
-        //game.send(new DataSprite.Response(s));
+        game.send(new Data.Response(s));
+      }
+    }
+  }
+  
+  public static class NPC extends Save {
+    public int getIndex() {
+      return 35;
+    }
+    
+    public void process() {
+      Connection c = (Connection)_connection;
+      if(!c.getAccount().getPermissions().canEditNPCs()) {
+        c.kick("Not auth'd to edit NPCs");
+        return;
+      }
+      
+      Game game = Game.getInstance();
+      game.data.NPC s;
+      
+      for(TempData data :_data) {
+        s = game.getNPC(data.file, true);
+        s.deserialize(new Buffer(data.data), true);
+        s.save();
+        
+        game.send(new Data.Response(s));
       }
     }
   }
