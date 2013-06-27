@@ -16,6 +16,77 @@ public class EditorData {
   public static final byte DATA_TYPE_ITEM = 2;
   public static final byte DATA_TYPE_NPC = 3;
   
+  public static class List extends Packet {
+    private int _type;
+    private GameData[] _data;
+    
+    public int getIndex() {
+      return 38;
+    }
+    
+    public List() { }
+    public List(GameData[] data) {
+      _data = data;
+    }
+    
+    public ByteBuf serialize() {
+      ByteBuf b = Unpooled.buffer();
+      b.writeInt(_data.length);
+      for(GameData data : _data) {
+        b.writeByte (data.getFile().length());
+        b.writeBytes(data.getFile().getBytes());
+        b.writeByte (data.getName().length());
+        b.writeBytes(data.getName().getBytes());
+        b.writeShort(data.getNote().length());
+        b.writeBytes(data.getNote().getBytes());
+      }
+      return b;
+    }
+    
+    public void deserialize(ByteBuf data) throws NotEnoughDataException {
+      _type = data.readByte();
+    }
+    
+    public void process() {
+      Connection c = (Connection)_connection;
+      
+      switch(_type) {
+        case DATA_TYPE_SPRITE:
+          if(!c.getAccount().getPermissions().canEditSprites()) {
+            c.kick("Non-editor tried to get sprite list");
+            return;
+          }
+          
+          _data = Game.getInstance().getSprite();
+          break;
+          
+        case DATA_TYPE_ITEM:
+          if(!c.getAccount().getPermissions().canEditItems()) {
+            c.kick("Non-editor tried to get item list");
+            return;
+          }
+          
+          _data = Game.getInstance().getItem();
+          break;
+          
+        case DATA_TYPE_NPC:
+          if(!c.getAccount().getPermissions().canEditNPCs()) {
+            c.kick("Non-editor tried to get NPC list");
+            return;
+          }
+          
+          _data = Game.getInstance().getNPC();
+          break;
+          
+        default:
+          c.kick("Invalid type");
+          return;
+      }
+      
+      c.send(new List(_data));
+    }
+  }
+  
   public static class Request extends Packet {
     private byte _type;
     private String _file;
