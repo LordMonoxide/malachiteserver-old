@@ -11,10 +11,10 @@ import game.world.World;
 import io.netty.buffer.ByteBuf;
 import network.packet.Packet;
 
-public abstract class Save extends Packet {
+public abstract class EditorSave extends Packet {
   protected ArrayList<TempData> _data = new ArrayList<TempData>();
   
-  private Save() { }
+  private EditorSave() { }
   
   public ByteBuf serialize() {
     return null;
@@ -40,7 +40,7 @@ public abstract class Save extends Packet {
     private byte data[];
   }
   
-  public static class Map extends Save {
+  public static class Map extends EditorSave {
     public int getIndex() {
       return 17;
     }
@@ -76,7 +76,7 @@ public abstract class Save extends Packet {
     }
   }
   
-  public static class Sprite extends Save {
+  public static class Sprite extends EditorSave {
     public int getIndex() {
       return 20;
     }
@@ -101,7 +101,7 @@ public abstract class Save extends Packet {
     }
   }
   
-  public static class Item extends Save {
+  public static class Item extends EditorSave {
     public int getIndex() {
       return 23;
     }
@@ -126,7 +126,7 @@ public abstract class Save extends Packet {
     }
   }
   
-  public static class NPC extends Save {
+  public static class NPC extends EditorSave {
     public int getIndex() {
       return 35;
     }
