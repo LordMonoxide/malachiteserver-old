@@ -25,12 +25,14 @@ public class EditorData {
     }
     
     public List() { }
-    public List(GameData[] data) {
+    public List(int type, GameData[] data) {
+      _type = type;
       _data = data;
     }
     
     public ByteBuf serialize() {
       ByteBuf b = Unpooled.buffer();
+      b.writeByte(_type);
       b.writeInt(_data.length);
       for(GameData data : _data) {
         b.writeByte (data.getFile().length());
@@ -83,7 +85,7 @@ public class EditorData {
           return;
       }
       
-      c.send(new List(_data));
+      c.send(new List(_type, _data));
     }
   }
   
