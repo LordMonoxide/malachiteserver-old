@@ -29,7 +29,7 @@ public class Data {
     
     public void deserialize(ByteBuf data) throws NotEnoughDataException {
       _type = data.readByte();
-      int size = data.readShort();
+      int size = data.readByte();
       
       if(size > 0) {
         byte[] arr = new byte[size];
@@ -56,7 +56,7 @@ public class Data {
       }
       
       if(data == null) {
-        _connection.kick("Request for invalid data");
+        _connection.kick("Request for null data " + _file);
         return;
       }
       
