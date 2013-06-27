@@ -31,7 +31,7 @@ public class Data {
       _type = data.readByte();
       int size = data.readShort();
       
-      if(size != 0) {
+      if(size > 0) {
         byte[] arr = new byte[size];
         data.readBytes(arr);
         _file = new String(arr);
@@ -56,7 +56,7 @@ public class Data {
       }
       
       if(data == null) {
-        _connection.kick("Request for invalid sprite");
+        _connection.kick("Request for invalid data");
         return;
       }
       
