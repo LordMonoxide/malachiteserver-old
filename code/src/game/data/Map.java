@@ -206,6 +206,7 @@ public class Map extends GameData {
         n._x = b.getInt();
         n._y = b.getInt();
         n._z = b.getByte();
+        _npc.add(n);
       }
     }
   }
