@@ -52,8 +52,12 @@ public class Map extends GameData {
       });
     }
     
-    for(final Item item : _item) {
+    for(Item item : _item) {
       e[i++] = game.getItem(item._file).createEntity(item._x + _x * Settings.Map.Size(), item._y + _y * Settings.Map.Size(), item._z, item._val);
+    }
+    
+    for(NPC npc : _npc) {
+      e[i++] = game.getNPC(npc._file).createEntity(npc._x + _x * Settings.Map.Size(), npc._y + _y * Settings.Map.Size(), npc._z);
     }
     
     return e;
