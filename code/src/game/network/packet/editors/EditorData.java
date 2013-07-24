@@ -35,12 +35,20 @@ public class EditorData {
       b.writeByte(_type);
       b.writeInt(_data.length);
       for(GameData data : _data) {
-        b.writeByte (data.getFile().length());
-        b.writeBytes(data.getFile().getBytes());
-        b.writeByte (data.getName().length());
-        b.writeBytes(data.getName().getBytes());
-        b.writeShort(data.getNote().length());
-        b.writeBytes(data.getNote().getBytes());
+        if(data.getFile() != null) {
+          b.writeByte (data.getFile().length());
+          b.writeBytes(data.getFile().getBytes());
+        } else b.writeByte(0);
+        
+        if(data.getName() != null) {
+          b.writeByte (data.getName().length());
+          b.writeBytes(data.getName().getBytes());
+        } else b.writeByte(0);
+        
+        if(data.getNote() != null) {
+          b.writeShort(data.getNote().length());
+          b.writeBytes(data.getNote().getBytes());
+        } else b.writeShort(0);
       }
       return b;
     }
@@ -114,7 +122,7 @@ public class EditorData {
     
     public void process() {
       if(_file == null) {
-        _connection.kick("Null sprite file");
+        _connection.kick("Null file");
         return;
       }
       
