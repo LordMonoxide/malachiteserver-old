@@ -98,10 +98,6 @@ public class Game {
     return w;
   }
   
-  public int getSpriteCount() { return _sprite.size(); }
-  public int getItemCount()   { return _item  .size(); }
-  public int getNPCCount()    { return _npc   .size(); }
-  
   public Sprite[] getSprite() { return _sprite.values().toArray(new Sprite[0]); }
   public Item  [] getItem()   { return _item  .values().toArray(new Item  [0]); }
   public NPC   [] getNPC()    { return _npc   .values().toArray(new NPC   [0]); }
