@@ -78,48 +78,54 @@ public class NPC extends GameData {
   
   protected void serializeInternal(Buffer b, boolean full) {
     b.put(_sprite);
-    b.put(_stats.STR);
-    b.put(_stats.DEX);
-    b.put(_stats.INT);
     
-    for(Inv inv : _inv) {
-      b.put(inv.file);
-      b.put(inv.val);
+    if(full) {
+      b.put(_stats.STR);
+      b.put(_stats.DEX);
+      b.put(_stats.INT);
+      
+      for(Inv inv : _inv) {
+        b.put(inv.file);
+        b.put(inv.val);
+      }
+      
+      b.put(_equip.hand1);
+      b.put(_equip.hand2);
+      
+      for(String armour : _equip.armour) b.put(armour);
+      for(String bling  : _equip.bling ) b.put(bling );
+      
+      b.put(_curr);
     }
-    
-    b.put(_equip.hand1);
-    b.put(_equip.hand2);
-    
-    for(String armour : _equip.armour) b.put(armour);
-    for(String bling  : _equip.bling ) b.put(bling );
-    
-    b.put(_curr);
   }
   
   protected void deserializeInternal(Buffer b, boolean full) {
     switch(getVersion()) {
-      case 1: deserialize01(b); break;
+      case 1: deserialize01(b, full); break;
     }
   }
   
-  private void deserialize01(Buffer b) {
+  private void deserialize01(Buffer b, boolean full) {
     _sprite = b.getString();
-    _stats.STR = b.getInt();
-    _stats.DEX = b.getInt();
-    _stats.INT = b.getInt();
     
-    for(Inv inv : _inv) {
-      inv.file = b.getString();
-      inv.val = b.getInt();
+    if(full) {
+      _stats.STR = b.getInt();
+      _stats.DEX = b.getInt();
+      _stats.INT = b.getInt();
+      
+      for(Inv inv : _inv) {
+        inv.file = b.getString();
+        inv.val = b.getInt();
+      }
+      
+      _equip.hand1 = b.getString();
+      _equip.hand2 = b.getString();
+      
+      for(int i = 0; i < _equip.armour.length; i++) _equip.armour[i] = b.getString();
+      for(int i = 0; i < _equip.bling .length; i++) _equip.bling [i] = b.getString();
+      
+      _curr = b.getLong();
     }
-    
-    _equip.hand1 = b.getString();
-    _equip.hand2 = b.getString();
-    
-    for(int i = 0; i < _equip.armour.length; i++) _equip.armour[i] = b.getString();
-    for(int i = 0; i < _equip.bling .length; i++) _equip.bling [i] = b.getString();
-    
-    _curr = b.getLong();
   }
   
   private class Stats {
