@@ -30,7 +30,7 @@ public class Map extends GameData {
   public int getY() { return _y; }
   
   public Entity[] spawn() {
-    Entity[] e = new Entity[_sprite.size() + _item.size()];
+    Entity[] e = new Entity[_sprite.size() + _item.size() + _npc.size()];
     int i = 0;
     
     Game game = Game.getInstance();
