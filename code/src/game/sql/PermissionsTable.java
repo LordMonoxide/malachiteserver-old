@@ -33,18 +33,18 @@ public class PermissionsTable {
                                    "p_login BOOL NOT NULL, p_alter_chars BOOL NOT NULL, p_speak BOOL NOT NULL, p_whisper BOOL NOT NULL, p_shout BOOL NOT NULL," +
                                    "m_broadcast BOOL NOT NULL, m_warp_self BOOL NOT NULL, m_warp_others BOOL NOT NULL, m_kick BOOL NOT NULL, m_ban BOOL NOT NULL, m_view_info BOOL NOT NULL, m_view_chat_logs BOOL NOT NULL, m_mute BOOL NOT NULL," +
                                    "g_spawn_sprites BOOL NOT NULL, g_spawn_items BOOL NOT NULL, g_spawn_spells BOOL NOT NULL, g_spawn_npcs BOOL NOT NULL, g_spawn_effects BOOL NOT NULL, g_respawn_maps BOOL NOT NULL, g_alter_local_weather BOOL NOT NULL, g_alter_regional_weather BOOL NOT NULL, g_alter_global_weather BOOL NOT NULL, g_alter_time BOOL NOT NULL," +
-                                   "e_edit_maps BOOL NOT NULL, e_edit_sprites BOOL NOT NULL, e_edit_items BOOL NOT NULL, e_edit_spells BOOL NOT NULL, e_edit_npcs BOOL NOT NULL, e_edit_effects BOOL NOT NULL," +
+                                   "e_edit_maps BOOL NOT NULL, e_edit_sprites BOOL NOT NULL, e_edit_items BOOL NOT NULL, e_edit_projectiles BOOL NOT NULL, e_edit_spells BOOL NOT NULL, e_edit_npcs BOOL NOT NULL, e_edit_effects BOOL NOT NULL," +
                                    "a_grant_permissions BOOL NOT NULL, a_view_detailed_info BOOL NOT NULL, a_ban_permanently BOOL NOT NULL," +
                                    "PRIMARY KEY (id)" +
                                    ")");
     _drop   = _sql.prepareStatement("DROP TABLE permissions");
-    _insert = _sql.prepareStatement("INSERT INTO permissions VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    _insert = _sql.prepareStatement("INSERT INTO permissions VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
     _delete = _sql.prepareStatement("DELETE FROM permissions WHERE id=?");
     _update = _sql.prepareStatement("UPDATE characters SET " +
                                    "p_login=?,p_alter_chars=?,p_speak=?,p_whisper=?,p_shout=?," +
                                    "m_broadcast=?,m_warp_self=?,m_warp_others=?,m_kick=?,m_ban=?,m_view_info=?,m_view_chat_logs=?,m_mute=?" +
                                    "g_spawn_sprites=?,g_spawn_items=?,g_spawn_spells=?,g_spawn_npcs=?,g_spawn_effects=?,g_respawn_maps=?,g_alter_local_weather=?,g_alter_regional_weather=?,g_alter_global_weather=?,g_alter_time=?," +
-                                   "e_edit_maps=?,e_edit_sprites=?,e_edit_items=?,e_edit_spells=?,e_edit_npcs=?,e_edit_effects=?,a_grant_permissions=?,a_view_detailed_info=?,a_ban_permanently=?," +
+                                   "e_edit_maps=?,e_edit_sprites=?,e_edit_items=?,e_edit_projectiles=?,e_edit_spells=?,e_edit_npcs=?,e_edit_effects=?,a_grant_permissions=?,a_view_detailed_info=?,a_ban_permanently=?," +
                                    "WHERE id=?");
     _select = _sql.prepareStatement("SELECT * FROM permissions WHERE id=? LIMIT 1");
   }
@@ -130,6 +130,7 @@ public class PermissionsTable {
       _permissions.setEditMaps(r.getBoolean(i++));
       _permissions.setEditSprites(r.getBoolean(i++));
       _permissions.setEditItems(r.getBoolean(i++));
+      _permissions.setEditProjectiles(r.getBoolean(i++));
       _permissions.setEditSpells(r.getBoolean(i++));
       _permissions.setEditNPCs(r.getBoolean(i++));
       _permissions.setEditEffects(r.getBoolean(i++));
@@ -173,6 +174,7 @@ public class PermissionsTable {
     p.setBoolean(i++, _permissions.canEditMaps());
     p.setBoolean(i++, _permissions.canEditSprites());
     p.setBoolean(i++, _permissions.canEditItems());
+    p.setBoolean(i++, _permissions.canEditProjectiles());
     p.setBoolean(i++, _permissions.canEditSpells());
     p.setBoolean(i++, _permissions.canEditNPCs());
     p.setBoolean(i++, _permissions.canEditEffects());
