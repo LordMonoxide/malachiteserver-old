@@ -19,7 +19,7 @@ public class Projectile extends GameData {
   public float  getVel()    { return _vel; }
   public float  getDec()    { return _dec; }
   
-  protected Projectile(File file) {
+  public Projectile(File file) {
     super(1, file);
   }
   
