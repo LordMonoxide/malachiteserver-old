@@ -12,7 +12,7 @@ public class Item extends GameData {
   private int    _damage;
   private int    _speed;
   
-  private String _arrow;
+  private String _projectile;
   
   private float  _weight;
   
@@ -31,7 +31,7 @@ public class Item extends GameData {
   public String getSprite() { return _sprite; }
   public int    getType()   { return _type; }
   public int    getDamage() { return _damage; }
-  public String getArrow()  { return _arrow; }
+  public String getProjectile() { return _projectile; }
   public int    getSpeed()  { return _speed; }
   public float  getWeight() { return _weight; }
   public int    getHPHeal() { return _hpHeal; }
@@ -65,7 +65,7 @@ public class Item extends GameData {
     b.put(_sprite);
     b.put(_type);
     b.put(_damage);
-    b.put(_arrow);
+    b.put(_projectile);
     b.put(_speed);
     b.put(_weight);
     b.put(_hpHeal);
@@ -112,7 +112,7 @@ public class Item extends GameData {
     _sprite = b.getString();
     _type   = b.getInt();
     _damage = b.getInt();
-    _arrow  = b.getString();
+    _projectile = b.getString();
     _speed  = b.getInt();
     _weight = b.getFloat();
     _hpHeal = b.getInt();
