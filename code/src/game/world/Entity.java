@@ -314,7 +314,7 @@ public class Entity extends Movable {
   }
   
   public enum Type {
-    Player, Sprite, Item, NPC;
+    Player, Sprite, Item, NPC, Projectile;
   }
   
   public static class Stats {
