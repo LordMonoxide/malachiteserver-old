@@ -150,4 +150,29 @@ public abstract class EditorSave extends Packet {
       }
     }
   }
+  
+  public static class Projectile extends EditorSave {
+    public int getIndex() {
+      return 39;
+    }
+    
+    public void process() {
+      Connection c = (Connection)_connection;
+      if(!c.getAccount().getPermissions().canEditProjectiles()) {
+        c.kick("Not auth'd to edit projectiles");
+        return;
+      }
+      
+      Game game = Game.getInstance();
+      game.data.Projectile s;
+      
+      for(TempData data :_data) {
+        s = game.getProjectile(data.file, true);
+        s.deserialize(new Buffer(data.data), true);
+        s.save();
+        
+        game.send(new Data.Response(s));
+      }
+    }
+  }
 }
