@@ -3,6 +3,7 @@ package game.network.packet.editors;
 import game.Game;
 import game.data.Item;
 import game.data.NPC;
+import game.data.Projectile;
 import game.data.Sprite;
 import game.data.util.Buffer;
 import game.data.util.GameData;
@@ -15,6 +16,7 @@ public class EditorData {
   public static final byte DATA_TYPE_SPRITE = 1;
   public static final byte DATA_TYPE_ITEM = 2;
   public static final byte DATA_TYPE_NPC = 3;
+  public static final byte DATA_TYPE_PROJECTILE = 4;
   
   public static class List extends Packet {
     private int _type;
@@ -88,6 +90,15 @@ public class EditorData {
           _data = Game.getInstance().getNPC();
           break;
           
+        case DATA_TYPE_PROJECTILE:
+          if(!c.getAccount().getPermissions().canEditProjectiles()) {
+            c.kick("Non-editor tried to get projectile list");
+            return;
+          }
+          
+          _data = Game.getInstance().getProjectile();
+          break;
+          
         default:
           c.kick("Invalid type");
           return;
@@ -158,6 +169,15 @@ public class EditorData {
           data = Game.getInstance().getNPC(_file);
           break;
           
+        case DATA_TYPE_PROJECTILE:
+          if(!c.getAccount().getPermissions().canEditProjectiles()) {
+            c.kick("Non-admin tried to get full Projectile");
+            return;
+          }
+          
+          data = Game.getInstance().getProjectile(_file);
+          break;
+          
         default:
           _connection.kick("Invalid type");
           return;
@@ -179,9 +199,10 @@ public class EditorData {
     
     public Response() { }
     public Response(GameData data) {
-      if(data instanceof Sprite) _type = DATA_TYPE_SPRITE;
-      if(data instanceof Item)   _type = DATA_TYPE_ITEM;
-      if(data instanceof NPC)    _type = DATA_TYPE_NPC;
+      if(data instanceof Sprite)     _type = DATA_TYPE_SPRITE;
+      if(data instanceof Item)       _type = DATA_TYPE_ITEM;
+      if(data instanceof NPC)        _type = DATA_TYPE_NPC;
+      if(data instanceof Projectile) _type = DATA_TYPE_PROJECTILE;
       
       Buffer b = data.serialize(true);
       _file = data.getFile();
