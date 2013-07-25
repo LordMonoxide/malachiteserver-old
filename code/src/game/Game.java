@@ -16,6 +16,7 @@ import io.netty.util.internal.chmv8.ConcurrentHashMapV8;
 
 import game.data.Item;
 import game.data.NPC;
+import game.data.Projectile;
 import game.data.Sprite;
 import game.network.Server;
 import game.settings.Settings;
@@ -34,10 +35,11 @@ public class Game {
   
   private Server _net;
   
-  private ConcurrentHashMapV8<String, World>  _world  = new ConcurrentHashMapV8<String, World>();
-  private ConcurrentHashMapV8<String, Sprite> _sprite = new ConcurrentHashMapV8<String, Sprite>();
-  private ConcurrentHashMapV8<String, Item>   _item   = new ConcurrentHashMapV8<String, Item>();
-  private ConcurrentHashMapV8<String, NPC>    _npc    = new ConcurrentHashMapV8<String, NPC>();
+  private ConcurrentHashMapV8<String, World>      _world      = new ConcurrentHashMapV8<String, World>();
+  private ConcurrentHashMapV8<String, Sprite>     _sprite     = new ConcurrentHashMapV8<String, Sprite>();
+  private ConcurrentHashMapV8<String, Item>       _item       = new ConcurrentHashMapV8<String, Item>();
+  private ConcurrentHashMapV8<String, NPC>        _npc        = new ConcurrentHashMapV8<String, NPC>();
+  private ConcurrentHashMapV8<String, Projectile> _projectile = new ConcurrentHashMapV8<String, Projectile>();
   
   private int _entityID;
   
@@ -86,6 +88,21 @@ public class Game {
     }
   }
   
+  private void loadProjectiles() {
+    System.out.println("Loading Projectiles...");
+    
+    File dir = new File("../data/projectiles");
+    if(!dir.exists()) dir.mkdirs();
+    
+    _projectile.clear();
+    
+    for(File f : dir.listFiles()) {
+      Projectile p = new Projectile(f);
+      p.load();
+      _projectile.put(f.getName(), p);
+    }
+  }
+  
   public World getWorld(String file) {
     World w = _world.get(file);
     if(w == null) {
@@ -98,9 +115,10 @@ public class Game {
     return w;
   }
   
-  public Sprite[] getSprite() { return _sprite.values().toArray(new Sprite[0]); }
-  public Item  [] getItem()   { return _item  .values().toArray(new Item  [0]); }
-  public NPC   [] getNPC()    { return _npc   .values().toArray(new NPC   [0]); }
+  public Sprite    [] getSprite()     { return _sprite    .values().toArray(new Sprite    [0]); }
+  public Item      [] getItem()       { return _item      .values().toArray(new Item      [0]); }
+  public NPC       [] getNPC()        { return _npc       .values().toArray(new NPC       [0]); }
+  public Projectile[] getProjectile() { return _projectile.values().toArray(new Projectile[0]); }
   
   public Sprite getSprite(String file) { return _sprite.get(file); }
   public Sprite getSprite(String file, boolean create) {
@@ -132,6 +150,16 @@ public class Game {
     return n;
   }
   
+  public Projectile getProjectile(String file) { return _projectile.get(file); }
+  public Projectile getProjectile(String file, boolean create) {
+    Projectile p = _projectile.get(file);
+    if(p == null && create) {
+      p = new Projectile(new File("../data/projectile/" + file));
+      _projectile.put(file, p);
+    }
+    return p;
+  }
+  
   public int getNextEntityID() {
     return _entityID++;
   }
@@ -144,6 +172,7 @@ public class Game {
     loadSprites();
     loadItems();
     loadNPCs();
+    loadProjectiles();
     
     _net = new Server();
     _net.initPackets();
