@@ -43,22 +43,26 @@ public class Projectile extends GameData {
   }
   
   protected void serializeInternal(Buffer b, boolean full) {
-    b.put(_sprite);
-    b.put(_damage);
-    b.put(_vel);
-    b.put(_dec);
+    if(full) {
+      b.put(_sprite);
+      b.put(_damage);
+      b.put(_vel);
+      b.put(_dec);
+    }
   }
   
   protected void deserializeInternal(Buffer b, boolean full) {
     switch(getVersion()) {
-      case 1: deserialize01(b); break;
+      case 1: deserialize01(b, full); break;
     }
   }
   
-  private void deserialize01(Buffer b) {
-    _sprite = b.getString();
-    _damage = b.getInt();
-    _vel    = b.getFloat();
-    _dec    = b.getFloat();
+  private void deserialize01(Buffer b, boolean full) {
+    if(full) {
+      _sprite = b.getString();
+      _damage = b.getInt();
+      _vel    = b.getFloat();
+      _dec    = b.getFloat();
+    }
   }
 }
