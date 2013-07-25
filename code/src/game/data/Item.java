@@ -10,6 +10,9 @@ public class Item extends GameData {
   private String _sprite;
   private int    _type;
   private int    _damage;
+  private int    _speed;
+  
+  private String _arrow;
   
   private float  _weight;
   
@@ -22,12 +25,14 @@ public class Item extends GameData {
   private Entity.Stats.Buffs.Buff _buffINT = new Entity.Stats.Buffs.Buff();
   
   public Item(File file) {
-    super(1, file);
+    super(2, file);
   }
   
   public String getSprite() { return _sprite; }
   public int    getType()   { return _type; }
   public int    getDamage() { return _damage; }
+  public String getArrow()  { return _arrow; }
+  public int    getSpeed()  { return _speed; }
   public float  getWeight() { return _weight; }
   public int    getHPHeal() { return _hpHeal; }
   public int    getMPHeal() { return _mpHeal; }
@@ -60,6 +65,8 @@ public class Item extends GameData {
     b.put(_sprite);
     b.put(_type);
     b.put(_damage);
+    b.put(_arrow);
+    b.put(_speed);
     b.put(_weight);
     b.put(_hpHeal);
     b.put(_mpHeal);
@@ -78,6 +85,7 @@ public class Item extends GameData {
   protected void deserializeInternal(Buffer b, boolean full) {
     switch(getVersion()) {
       case 1: deserialize01(b); break;
+      case 2: deserialize02(b); break;
     }
   }
   
@@ -85,6 +93,27 @@ public class Item extends GameData {
     _sprite = b.getString();
     _type   = b.getInt();
     _damage = b.getInt();
+    _weight = b.getFloat();
+    _hpHeal = b.getInt();
+    _mpHeal = b.getInt();
+    _buffHP.val(b.getFloat());
+    _buffHP.percent(b.getBool());
+    _buffMP.val(b.getFloat());
+    _buffMP.percent(b.getBool());
+    _buffSTR.val(b.getFloat());
+    _buffSTR.percent(b.getBool());
+    _buffDEX.val(b.getFloat());
+    _buffDEX.percent(b.getBool());
+    _buffINT.val(b.getFloat());
+    _buffINT.percent(b.getBool());
+  }
+  
+  private void deserialize02(Buffer b) {
+    _sprite = b.getString();
+    _type   = b.getInt();
+    _damage = b.getInt();
+    _arrow  = b.getString();
+    _speed  = b.getInt();
     _weight = b.getFloat();
     _hpHeal = b.getInt();
     _mpHeal = b.getInt();
