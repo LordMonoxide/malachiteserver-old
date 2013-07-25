@@ -100,8 +100,8 @@ public class Item extends GameData {
     _buffINT.percent(b.getBool());
   }
   
-  /*  0000 0000 0000 0000 0000 0000 0000 0000
-   *  ^     ATTRIBS     ^ ^  SUB  ^ ^ TYPES ^
+  /*  AAAA AAAA AAAA AAAA AAAA AAAA SSSS TTTT
+   *  A = attribute, S = sub-type, T = type
    */
   public static final int ITEM_TYPE_BITMASK             = 0x0000000F;
   public static final int ITEM_TYPE_BITSHIFT            = 0;
