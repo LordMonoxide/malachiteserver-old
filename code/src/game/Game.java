@@ -154,7 +154,7 @@ public class Game {
   public Projectile getProjectile(String file, boolean create) {
     Projectile p = _projectile.get(file);
     if(p == null && create) {
-      p = new Projectile(new File("../data/projectile/" + file));
+      p = new Projectile(new File("../data/projectiles/" + file));
       _projectile.put(file, p);
     }
     return p;
