@@ -3,7 +3,6 @@ package game.network.packet;
 import game.Game;
 import game.data.Item;
 import game.data.NPC;
-import game.data.Projectile;
 import game.data.Sprite;
 import game.data.util.Buffer;
 import game.data.util.GameData;
@@ -15,7 +14,6 @@ public class Data {
   public static final byte DATA_TYPE_SPRITE = 1;
   public static final byte DATA_TYPE_ITEM = 2;
   public static final byte DATA_TYPE_NPC = 3;
-  public static final byte DATA_TYPE_PROJECTILE = 4;
   
   public static class Request extends Packet {
     private byte _type;
@@ -52,7 +50,6 @@ public class Data {
         case DATA_TYPE_SPRITE:     data = Game.getInstance().getSprite(_file);     break;
         case DATA_TYPE_ITEM:       data = Game.getInstance().getItem(_file);       break;
         case DATA_TYPE_NPC:        data = Game.getInstance().getNPC(_file);        break;
-        case DATA_TYPE_PROJECTILE: data = Game.getInstance().getProjectile(_file); break;
         default:
           _connection.kick("Invalid type");
           return;
@@ -77,7 +74,6 @@ public class Data {
       if(data instanceof Sprite)     _type = DATA_TYPE_SPRITE;
       if(data instanceof Item)       _type = DATA_TYPE_ITEM;
       if(data instanceof NPC)        _type = DATA_TYPE_NPC;
-      if(data instanceof Projectile) _type = DATA_TYPE_PROJECTILE;
       
       Buffer b = data.serialize(false);
       _file = data.getFile();
