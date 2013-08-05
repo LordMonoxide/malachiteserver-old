@@ -17,6 +17,10 @@ public class Region {
     return _world.getRegion(_map.getX() + x, _map.getY() + y);
   }
   
+  public boolean isBlocked(int x, int y, int z) {
+    return _map.isBlocked(x, y, z);
+  }
+  
   public Map getMap() {
     return _map;
   }
