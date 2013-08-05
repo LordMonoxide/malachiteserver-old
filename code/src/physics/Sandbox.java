@@ -19,11 +19,11 @@ public class Sandbox implements Runnable {
   
   public int getFPS() { return _fps; }
   
-  protected void addToSandbox(Movable m) {
+  public void addToSandbox(Movable m) {
     _obj.add(m);
   }
   
-  protected void removeFromSandbox(Movable m) {
+  public void removeFromSandbox(Movable m) {
     _obj.remove(m);
   }
   
@@ -79,14 +79,14 @@ public class Sandbox implements Runnable {
     }
   }
   
-  protected void startSandbox() {
+  public void startSandbox() {
     if(_thread != null) return;
     _running = true;
     _thread = new Thread(this);
     _thread.start();
   }
   
-  protected void stopSandbox() {
+  public void stopSandbox() {
     _running = false;
   }
 }
