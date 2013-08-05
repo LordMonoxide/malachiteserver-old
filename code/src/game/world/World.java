@@ -4,25 +4,33 @@ import game.data.Map;
 import game.network.Connection;
 import game.network.packet.EntityCreate;
 import game.network.packet.EntityDestroy;
+import game.network.packet.EntityVitals;
+import game.pathfinding.AStar;
+import game.settings.Settings;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 import network.packet.Packet;
 
 import physics.Sandbox;
 
-public class World extends Sandbox {
+public class World implements Runnable {
   public String toString() {
     return "world '" + _name + "'";
   }
   
+  private boolean _running;
+  private Thread _thread;
+  private Sandbox _sandbox;
+  private AStar _pathfinder;
+  
   private HashMap<String, Region> _region = new HashMap<String, Region>();
   private HashMap<String, Map> _map = new HashMap<String, Map>();
   
-  private LinkedList<Entity> _entity = new LinkedList<Entity>();
-  private LinkedList<Connection> _connection = new LinkedList<Connection>();
+  private ConcurrentLinkedDeque<Entity> _entity = new ConcurrentLinkedDeque<Entity>();
+  private ConcurrentLinkedDeque<Connection> _connection = new ConcurrentLinkedDeque<Connection>();
   
   private String _name;
   
@@ -32,15 +40,35 @@ public class World extends Sandbox {
     File d = new File("../data/worlds/" + _name + "/");
     d.mkdirs();
     
-    startSandbox();
+    _sandbox = new Sandbox();
+    _sandbox.startSandbox();
+    
+    _running = true;
+    _thread = new Thread(this);
+    _thread.start();
+    
+    _pathfinder = new AStar();
   }
   
   public void destroy() {
-    stopSandbox();
+    _running = false;
+    _sandbox.stopSandbox();
   }
   
   public String getName() { 
     return _name;
+  }
+  
+  public boolean isBlocked(float x, float y, int z) {
+    int rx = (int)(x % Settings.Map.Size());
+    int ry = (int)(y % Settings.Map.Size());
+    if(rx < 0) rx += Settings.Map.Size();
+    if(ry < 0) ry += Settings.Map.Size();
+    int mx = (int)x / Settings.Map.Size();
+    int my = (int)y / Settings.Map.Size();
+    if(x < 0) mx -= 1;
+    if(y < 0) my -= 1;
+    return getRegion(mx, my).isBlocked(rx / Settings.Map.Attrib.Size(), ry / Settings.Map.Attrib.Size(), z);
   }
   
   public Region getRegion(int x, int y) {
@@ -94,7 +122,7 @@ public class World extends Sandbox {
     }
     
     _entity.add(e);
-    addToSandbox(e);
+    _sandbox.addToSandbox(e);
     
     sendEntityToAll(e);
     
@@ -116,7 +144,7 @@ public class World extends Sandbox {
     }
     
     sendEntityDestroyToAll(e);
-    removeFromSandbox(e);
+    _sandbox.removeFromSandbox(e);
     _entity.remove(e);
     e.setWorld(null);
   }
@@ -145,6 +173,31 @@ public class World extends Sandbox {
     }
   }
   
+  public void entityAttack(Entity attacker, double angle) {
+    int damage = attacker.calculateDamage();
+    
+    for(Entity defender : _entity) {
+      if(defender.stats() != null && defender != attacker) {
+        //TODO: range needs to depend on item stat
+        if(attacker.isCloseTo(defender, 60)) {
+          double x = attacker.getX() - defender.getX();
+          double y = attacker.getY() - defender.getY();
+          double entityAngle = Math.atan2(y, x);
+          //TODO: min/max angle needs to depend on item stat
+          double lowerAngle = angle - Math.PI / 6;
+          double upperAngle = angle + Math.PI / 6;
+          
+          if(entityAngle > lowerAngle && entityAngle < upperAngle) {
+            System.out.println(defender.stats().vitalHP().val());
+            System.out.println(damage);
+            defender.stats().vitalHP().hurt(damage);
+            send(new EntityVitals(defender));
+          }
+        }
+      }
+    }
+  }
+  
   public void sendEntityToAll(Entity e) {
     send(new EntityCreate(e));
   }
@@ -156,6 +209,18 @@ public class World extends Sandbox {
   public void sendEntitiesTo(Connection c) {
     for(Entity e : _entity) {
       c.send(new EntityCreate(e));
+    }
+  }
+  
+  public AStar.Node[] findPath(Entity e, float x, float y) {
+    return _pathfinder.find(e, x, y);
+  }
+  
+  public void run() {
+    while(_running) {
+      for(Entity e : _entity) {
+        e.checkMovement();
+      }
     }
   }
 }
