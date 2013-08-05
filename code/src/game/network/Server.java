@@ -3,6 +3,7 @@ package game.network;
 import game.network.packet.Chat;
 import game.network.packet.DataMap;
 import game.network.packet.Data;
+import game.network.packet.EntityAttack;
 import game.network.packet.EntityCreate;
 import game.network.packet.EntityCurrency;
 import game.network.packet.EntityDestroy;
@@ -110,6 +111,7 @@ public class Server {
     Packets.add(EditorData.Request.class);
     Packets.add(EditorData.Response.class);
     Packets.add(EditorData.List.class);
+    Packets.add(EntityAttack.class);
   }
   
   public void start() {
