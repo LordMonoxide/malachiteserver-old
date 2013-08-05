@@ -29,6 +29,10 @@ public class Map extends GameData {
   public int getX() { return _x; }
   public int getY() { return _y; }
   
+  public boolean isBlocked(int x, int y, int z) {
+    return (_layer[z]._attrib[x][y]._type & Attrib.Type.BLOCKED._val) != 0;
+  }
+  
   public Entity[] spawn() {
     Entity[] e = new Entity[_sprite.size() + _item.size() + _npc.size()];
     int i = 0;
