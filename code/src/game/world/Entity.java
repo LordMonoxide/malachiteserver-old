@@ -1,16 +1,21 @@
 package game.world;
 
 import java.util.LinkedList;
+import java.util.Random;
 
 import network.packet.Packet;
 import game.Game;
 import game.data.Item;
+import game.data.util.Time;
 import game.network.Connection;
 import game.network.packet.EntityMoveStop;
+import game.pathfinding.AStar;
 import game.settings.Settings;
 import physics.Movable;
 
 public class Entity extends Movable {
+  private static Random _rand = new Random();
+  
   public String toString() {
     return "Entity '" + _name + "' on " + _world + " at (" + _x + ", " + _y + ", " + _z + ")";
   }
@@ -37,6 +42,11 @@ public class Entity extends Movable {
   
   private String _file;
   private int _value;
+  
+  private double _nextMove;
+  private double _nextMove2;
+  private AStar.Node[] _nodes;
+  private int _node;
   
   public Entity(Source source) {
     this(source, null);
@@ -282,12 +292,68 @@ public class Entity extends Movable {
   }
   
   public boolean isCloseTo(Entity e) {
-    return Math.sqrt(Math.pow(_x - e._x, 2) + Math.pow(_y - e._y, 2)) <= Settings.Player.Reach();
+    return isCloseTo(e, Settings.Player.Reach());
+  }
+  
+  public boolean isCloseTo(Entity e, float distance) {
+    return Math.sqrt(Math.pow(_x - e._x, 2) + Math.pow(_y - e._y, 2)) <= distance;
   }
   
   public void send(Packet packet) {
     if(_connection != null) {
       _connection.send(packet);
+    }
+  }
+  
+  public void attack(double angle) {
+    //TODO: attack speed needs to be checked on the server
+    _world.entityAttack(this, angle);
+  }
+  
+  public int calculateDamage() {
+    int damage = (int)Math.ceil((Math.pow(_stats._str.val() * 2 + 1, 1.25) + 5) / 1.1);
+    
+    if(_equip._hand1._item != null) {
+      if((_equip._hand1._item.getType() & Item.ITEM_TYPE_BITMASK) == Item.ITEM_TYPE_WEAPON << Item.ITEM_TYPE_BITSHIFT) {
+        damage += _equip._hand1._item.getDamage();
+      }
+    }
+    
+    if(_equip._hand2._item != null) {
+      if((_equip._hand2._item.getType() & Item.ITEM_TYPE_BITMASK) == Item.ITEM_TYPE_WEAPON << Item.ITEM_TYPE_BITSHIFT) {
+        damage += _equip._hand2._item.getDamage();
+      }
+    }
+    
+    return damage;
+  }
+  
+  public void checkMovement() {
+    if(_type == Type.NPC) {
+      if(_nodes != null) {
+        if(_nextMove2 < Time.getTime()) {
+          _node++;
+          if(_node <= _nodes.length - 1) {
+            System.out.println("Moving to " + _nodes[_node].getWorldX() + ", " + _nodes[_node].getWorldY());
+            _x = _nodes[_node].getWorldX();
+            _y = _nodes[_node].getWorldY();
+            _world.send(new EntityMoveStop(this));
+          } else {
+            _nodes = null;
+            _nextMove = Time.getTime() + _rand.nextDouble() * 5000 + 5000;
+          }
+          
+          _nextMove2 = Time.getTime() + 500;
+        }
+      } else {
+        if(_nextMove < Time.getTime()) {
+          float x = _x + _rand.nextFloat() * 400 - 200;
+          float y = _y + _rand.nextFloat() * 400 - 200;
+          System.out.println(x + "\t" + y);
+          _nodes = _world.findPath(this, x, y);
+          _node = -1;
+        }
+      }
     }
   }
   
@@ -375,8 +441,9 @@ public class Entity extends Movable {
         if(val > max()) val = max();
         _val = val;
       }
-      
+
       public void heal(int heal) { val(_val + heal); }
+      public void hurt(int hurt) { val(_val - hurt); }
       public void restore() { _val = max(); }
     }
     
