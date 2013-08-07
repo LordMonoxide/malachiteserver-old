@@ -8,12 +8,8 @@ import java.sql.SQLException;
 public abstract class SQL {
   private static SQL _instance;
   
-  public static void create(Class<? extends SQL> sql) {
-    try {
-      _instance = sql.newInstance();
-    } catch(InstantiationException | IllegalAccessException e) {
-      e.printStackTrace();
-    }
+  public static void create(Class<? extends SQL> sql) throws InstantiationException, IllegalAccessException {
+    _instance = sql.newInstance();
   }
   
   public static SQL getInstance() {
