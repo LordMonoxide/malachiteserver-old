@@ -10,6 +10,8 @@ import java.sql.SQLException;
 
 import javax.swing.ImageIcon;
 
+import sql.SQL;
+
 import network.packet.Packet;
 
 import io.netty.util.internal.chmv8.ConcurrentHashMapV8;
@@ -137,17 +139,17 @@ public class Game {
   }
   
   public void start() {
-    addToSystemTray();
-    
-    Settings.init();
-    
-    loadSprites();
-    loadItems();
-    loadNPCs();
-    
-    _net = new Server();
-    _net.initPackets();
-    _net.start();
+    if(Settings.init()) {
+      addToSystemTray();
+      
+      loadSprites();
+      loadItems();
+      loadNPCs();
+      
+      _net = new Server();
+      _net.initPackets();
+      _net.start();
+    }
   }
   
   public void destroy() {
@@ -156,10 +158,10 @@ public class Game {
     //TODO: Close sockets
     //TODO: Stop handler threads
     
-    try { CharactersTable .getInstance().close(); } catch(SQLException e) { }
-    try { AccountsTable   .getInstance().close(); } catch(SQLException e) { }
-    try { PermissionsTable.getInstance().close(); } catch(SQLException e) { }
-    try { SettingsTable   .getInstance().close(); } catch(SQLException e) { }
+    try { CharactersTable .getInstance().close(); } catch(Exception e) { }
+    try { AccountsTable   .getInstance().close(); } catch(Exception e) { }
+    try { PermissionsTable.getInstance().close(); } catch(Exception e) { }
+    try { SettingsTable   .getInstance().close(); } catch(Exception e) { }
     
     removeFromSystemTray();
     
