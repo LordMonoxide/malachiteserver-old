@@ -31,7 +31,7 @@ public class Settings {
     return (float)(Math.log(strength + dexterity / 5 + 5) / Math.log(5) - Math.log(2));
   }
   
-  public static void init() {
+  public static boolean init() {
     if(!_file.exists()) {
       _settings.set("serverID", Settings.SQL.ID());
       _settings.set("host",     Settings.SQL.Host());
@@ -44,6 +44,7 @@ public class Settings {
         _settings.store(new FileOutputStream(_file), null);
       } catch(IOException e) {
         e.printStackTrace();
+        return false;
       }
     }
     
@@ -53,15 +54,25 @@ public class Settings {
         SQL._instance._id = _settings.getInt("serverID");
       } catch(InvalidDataException e) {
         e.printStackTrace();
+        return false;
       }
       
       SQL._instance._host = _settings.getString("host");
       SQL._instance._db   = _settings.getString("db");
       SQL._instance._user = _settings.getString("user");
       SQL._instance._pass = _settings.getString("pass");
+    } catch(IOException e) {
+      e.printStackTrace();
+    }
+    
+    try {
       sql.SQL.create(MySQL.class);
-      sql.SQL.getInstance().connect(Settings.SQL.Host(), Settings.SQL.DB(), Settings.SQL.User(), Settings.SQL.Pass());
-      
+    } catch(InstantiationException | IllegalAccessException e) {
+      e.printStackTrace();
+      return false;
+    }
+    
+    if(sql.SQL.getInstance().connect(Settings.SQL.Host(), Settings.SQL.DB(), Settings.SQL.User(), Settings.SQL.Pass())) {
       SettingsTable settingsTable = SettingsTable.getInstance();
       PermissionsTable permissionsTable = PermissionsTable.getInstance();
       AccountsTable accountTable = AccountsTable.getInstance();
@@ -88,12 +99,15 @@ public class Settings {
         charTable.create();
       } catch(SQLException e) {
         e.printStackTrace();
+        return false;
       }
-    } catch(IOException e) {
-      e.printStackTrace();
+    } else {
+      return false;
     }
     
     load();
+    
+    return true;
   }
   
   public static void load() {
