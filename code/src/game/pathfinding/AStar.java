@@ -55,20 +55,20 @@ public class AStar {
       closed.add(current);
       
       for(Node neighbour : neighbours(current)) {
-        e.getWorld().isBlocked(neighbour._xWorld, neighbour._yWorld, e.getZ());
-        
-        double g = current.g + distance(current, neighbour);
-        if(closed.contains(neighbour) && g >= neighbour.g) {
-          continue;
-        }
-        
-        if(!open.contains(neighbour) || g < neighbour.g) {
-          neighbour.prev = current;
-          neighbour.g = g;
-          neighbour.f = neighbour.g + heuristicDistance(neighbour, goal);
+        if(!e.getWorld().isBlocked(neighbour._xWorld, neighbour._yWorld, e.getZ())) {
+          double g = current.g + distance(current, neighbour);
+          if(closed.contains(neighbour) && g >= neighbour.g) {
+            continue;
+          }
           
-          if(!open.contains(neighbour)) {
-            open.add(neighbour);
+          if(!open.contains(neighbour) || g < neighbour.g) {
+            neighbour.prev = current;
+            neighbour.g = g;
+            neighbour.f = neighbour.g + heuristicDistance(neighbour, goal);
+            
+            if(!open.contains(neighbour)) {
+              open.add(neighbour);
+            }
           }
         }
       }
