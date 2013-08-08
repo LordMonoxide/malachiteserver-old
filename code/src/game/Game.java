@@ -6,11 +6,8 @@ import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.sql.SQLException;
 
 import javax.swing.ImageIcon;
-
-import sql.SQL;
 
 import network.packet.Packet;
 
