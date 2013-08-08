@@ -2,6 +2,7 @@ package game.world;
 
 import game.data.Map;
 import game.network.Connection;
+import game.network.packet.EntityAttack;
 import game.network.packet.EntityCreate;
 import game.network.packet.EntityDestroy;
 import game.network.packet.EntityVitals;
@@ -175,6 +176,7 @@ public class World implements Runnable {
   
   public void entityAttack(Entity attacker, double angle) {
     int damage = attacker.calculateDamage();
+    boolean attacked = false;
     
     for(Entity defender : _entity) {
       if(defender.stats() != null && defender != attacker) {
@@ -192,9 +194,15 @@ public class World implements Runnable {
             System.out.println(damage);
             defender.stats().vitalHP().hurt(damage);
             send(new EntityVitals(defender));
+            send(new EntityAttack(attacker, defender, damage));
+            attacked = true;
           }
         }
       }
+    }
+    
+    if(!attacked) {
+      send(new EntityAttack(attacker, null, 0));
     }
   }
   
