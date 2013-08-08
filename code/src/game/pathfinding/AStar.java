@@ -28,18 +28,13 @@ public class AStar {
     while(!open.isEmpty()) {
       Node current = lowestF();
       
-      //System.out.println(current);
-      
       if(current == goal) {
-        System.out.println("DONE NIGGA");
         int count = 0;
         Node old = current;
         while(current.prev != null) {
-          System.out.println(current);
           current = current.prev;
           count++;
         }
-        System.out.println(current);
         current = old;
         
         Node[] node = new Node[count];
@@ -74,7 +69,6 @@ public class AStar {
       }
     }
     
-    System.out.println("FAIL");
     return null;
   }
   
