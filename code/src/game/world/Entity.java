@@ -335,8 +335,8 @@ public class Entity extends Movable {
           _node++;
           if(_node <= _nodes.length - 1) {
             System.out.println("Moving to " + _nodes[_node].getWorldX() + ", " + _nodes[_node].getWorldY());
-            _x = _nodes[_node].getWorldX();
-            _y = _nodes[_node].getWorldY();
+            _x = _nodes[_node].getWorldX() + 8;
+            _y = _nodes[_node].getWorldY() + 8;
             _world.send(new EntityMoveStop(this));
           } else {
             _nodes = null;
