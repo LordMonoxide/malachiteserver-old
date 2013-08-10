@@ -134,6 +134,8 @@ public class Server {
   
   private void disconnect(Connection connection) {
     if(connection.isInGame()) {
+      //TODO: Localise
+      connection.getEntity().getWorld().send(new Chat(null, connection.getEntity().getName() + " has left the game."));
       System.out.println(connection.getAccount().getName() + "/" + connection.getEntity().getName() + " (" + connection.getChannel().remoteAddress() + ") lost connection");
       connection.getAccount().getChar().save(connection.getEntity());
       connection.getEntity().remove();

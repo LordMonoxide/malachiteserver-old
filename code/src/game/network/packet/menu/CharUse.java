@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import game.Game;
 import game.data.account.Character;
 import game.network.Connection;
+import game.network.packet.Chat;
 import game.network.packet.EntityCurrency;
 import game.network.packet.EntityEquip;
 import game.network.packet.EntityInv;
@@ -13,6 +14,7 @@ import game.network.packet.EntityVitals;
 import game.settings.Settings;
 import game.sql.CharactersTable;
 import game.world.Entity;
+import game.world.World;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import network.packet.Packet;
@@ -105,13 +107,17 @@ public class CharUse extends Packet {
       
       System.out.println(c.getAccount().getName() + " (" + c.getChannel().remoteAddress() + ") is using character " + character.getName());
       
-      Game.getInstance().getWorld(character.getWorld()).addEntity(c.getEntity());
+      World w = Game.getInstance().getWorld(character.getWorld());
+      w.addEntity(c.getEntity());
       
       c.send(new EntityVitals(c.getEntity()));
       c.send(new EntityStats (c.getEntity()));
       c.send(new EntityInv   (c.getEntity()));
       c.send(new EntityEquip (c.getEntity()));
       c.send(new EntityCurrency(c.getEntity()));
+      
+      //TODO: Localise
+      w.send(new Chat(null, character.getName() + " has joined the game!"));
       
       return;
     } catch(SQLException e) {
