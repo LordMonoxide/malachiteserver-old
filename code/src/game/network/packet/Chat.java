@@ -26,23 +26,38 @@ public class Chat extends Packet {
   
   public ByteBuf serialize() {
     ByteBuf b = Unpooled.buffer();
-    b.writeShort(_name.length());
-    b.writeBytes(_name.getBytes());
-    b.writeShort(_text.length());
-    b.writeBytes(_text.getBytes());
+    
+    if(_name != null) {
+      b.writeShort(_name.length());
+      b.writeBytes(_name.getBytes());
+    } else b.writeShort(0);
+    
+    if(_text != null) {
+      b.writeShort(_text.length());
+      b.writeBytes(_text.getBytes());
+    } else b.writeShort(0);
+    
     return b;
   }
   
   public void deserialize(ByteBuf data) throws NotEnoughDataException {
-    byte[] arr = new byte[data.readShort()];
-    data.readBytes(arr);
-    _text = new String(arr);
+    int length = data.readShort();
+    if(length != 0) {
+      byte[] arr = new byte[length];
+      data.readBytes(arr);
+      _text = new String(arr);
+    }
   }
   
   public void process() {
     //TODO: Localise the asshole out of this motherfucker
     
     Connection c = (Connection)_connection;
+    
+    if(_text == null) {
+      c.kick("Null text");
+      return;
+    }
     
     Permissions permission = c.getAccount().getPermissions();
     World world = c.getEntity().getWorld();
@@ -53,7 +68,7 @@ public class Chat extends Packet {
       if(permission.canSpeak()) {
         world.send(new Chat(c.getEntity().getName(), _text));
       } else {
-        c.send(new Chat("Server", "You are muted"));
+        c.send(new Chat(null, "You are muted"));
       }
     } else {
       String[] text = _text.split(" ");
@@ -65,18 +80,18 @@ public class Chat extends Packet {
           if(text.length < 3) return;
           
           if((e = world.findEntity(text[1])) == null) {
-            c.send(new Chat("Server", "That entity doesn't exist"));
+            c.send(new Chat(null, "That entity doesn't exist"));
             return;
           }
           
           if(e == c.getEntity()) {
             if(!permission.canWarpSelf()) {
-              c.send(new Chat("Server", "You are not authorised to warp yourself"));
+              c.send(new Chat(null, "You are not authorised to warp yourself"));
               return;
             }
           } else {
             if(!permission.canWarpOthers()) {
-              c.send(new Chat("Server", "You are not authorised to warp others"));
+              c.send(new Chat(null, "You are not authorised to warp others"));
               return;
             }
           }
@@ -84,7 +99,7 @@ public class Chat extends Packet {
           if(text.length == 3) {
             Entity e1 = world.findEntity(text[2]);
             if(e1 == null) {
-              c.send(new Chat("Server", "That target entity doesn't exist"));
+              c.send(new Chat(null, "That target entity doesn't exist"));
               return;
             }
             x = e1.getX();
@@ -94,11 +109,11 @@ public class Chat extends Packet {
               x = Float.parseFloat(text[2]);
               y = Float.parseFloat(text[3]);
             } catch(Exception ex) {
-              c.send(new Chat("Server", "Usage: /warp entity (x y|entity)"));
+              c.send(new Chat(null, "Usage: /warp entity (x y|entity)"));
               return;
             }
           } else {
-            c.send(new Chat("Server", "Usage: /warp entity (x y|entity)"));
+            c.send(new Chat(null, "Usage: /warp entity (x y|entity)"));
             return;
           }
           
@@ -111,7 +126,7 @@ public class Chat extends Packet {
           if(text.length == 2) {
             item = game.getItem(text[1]);
             if(item == null) {
-              c.send(new Chat("Server", "That item doesn't exist"));
+              c.send(new Chat(null, "That item doesn't exist"));
               return;
             }
             
@@ -119,17 +134,17 @@ public class Chat extends Packet {
           } else if(text.length == 3) {
             e = world.findEntity(text[1]);
             if(e == null) {
-              c.send(new Chat("Server", "That entity doesn't exist"));
+              c.send(new Chat(null, "That entity doesn't exist"));
               return;
             }
             
             item = game.getItem(text[2]);
             if(item == null) {
-              c.send(new Chat("Server", "That item doesn't exist"));
+              c.send(new Chat(null, "That item doesn't exist"));
               return;
             }
           } else {
-            c.send(new Chat("Server", "Usage: /give [entity] item"));
+            c.send(new Chat(null, "Usage: /give [entity] item"));
             return;
           }
           
@@ -137,7 +152,7 @@ public class Chat extends Packet {
           if(inv != null) {
             e.send(new EntityInvUpdate(e, inv, inv.index()));
           } else {
-            c.send(new Chat("Server", e.getName() + "'s inventory is full"));
+            c.send(new Chat(null, e.getName() + "'s inventory is full"));
             return;
           }
           
@@ -172,7 +187,7 @@ public class Chat extends Packet {
               break;
               
             default:
-              c.send(new Chat("Server", "Usage: /vital [entity] [hp/mp] [+/-]value"));
+              c.send(new Chat(null, "Usage: /vital [entity] [hp/mp] [+/-]value"));
               return;
           }
           
@@ -181,7 +196,7 @@ public class Chat extends Packet {
           } else {
             e = world.findEntity(text[entityIndex]);
             if(e == null) {
-              c.send(new Chat("Server", "That entity doesn't exist"));
+              c.send(new Chat(null, "That entity doesn't exist"));
               return;
             }
           }
@@ -203,7 +218,7 @@ public class Chat extends Packet {
           try {
             heal = Integer.parseInt(text[valIndex]);
           } catch(Exception ex) {
-            c.send(new Chat("Server", "Usage: /vital [entity] [vital] [+/-]value"));
+            c.send(new Chat(null, "Usage: /vital [entity] [vital] [+/-]value"));
             return;
           }
           
