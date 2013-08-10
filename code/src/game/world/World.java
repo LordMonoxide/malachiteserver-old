@@ -190,8 +190,6 @@ public class World implements Runnable {
           double upperAngle = angle + Math.PI / 6;
           
           if(entityAngle > lowerAngle && entityAngle < upperAngle) {
-            System.out.println(defender.stats().vitalHP().val());
-            System.out.println(damage);
             defender.stats().vitalHP().hurt(damage);
             send(new EntityVitals(defender));
             send(new EntityAttack(attacker, defender, damage));
