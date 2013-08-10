@@ -334,7 +334,6 @@ public class Entity extends Movable {
         if(_nextMove2 < Time.getTime()) {
           _node++;
           if(_node <= _nodes.length - 1) {
-            System.out.println("Moving to " + _nodes[_node].getWorldX() + ", " + _nodes[_node].getWorldY());
             _x = _nodes[_node].getWorldX() + 8;
             _y = _nodes[_node].getWorldY() + 8;
             _world.send(new EntityMoveStop(this));
@@ -349,7 +348,6 @@ public class Entity extends Movable {
         if(_nextMove < Time.getTime()) {
           float x = _x + _rand.nextFloat() * 400 - 200;
           float y = _y + _rand.nextFloat() * 400 - 200;
-          System.out.println(x + "\t" + y);
           _nodes = _world.findPath(this, x, y);
           _node = -1;
         }
