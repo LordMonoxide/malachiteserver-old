@@ -41,8 +41,7 @@ public class Map extends GameData {
     
     for(final Sprite sprite : _sprite) {
       e[i] = new Entity(sprite._file);
-      e[i].xy(sprite._x + _x * Settings.Map.Size(), sprite._y + _y * Settings.Map.Size());
-      e[i].z(sprite._z);
+      e[i].xyz(sprite._x + _x * Settings.Map.Size(), sprite._y + _y * Settings.Map.Size(), sprite._z);
       i++;
     }
     

@@ -44,8 +44,7 @@ public class Item extends GameData {
   
   public EntityItem createEntity(final float x, final float y, final int z, final int val) {
     EntityItem e = new EntityItem(_sprite, getFile(), val);
-    e.xy(x, y);
-    e.z(z);
+    e.xyz(x, y, z);
     return e;
   }
   

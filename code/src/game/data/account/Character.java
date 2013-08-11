@@ -244,8 +244,7 @@ public class Character implements Entity.Source {
     
     EntityPlayer e = new EntityPlayer(_name, _sprite, account.connection);
     
-    e.xy(_x, _y);
-    e.z(_z);
+    e.xyz(_x, _y, _z);
     
     for(int i = 0; i < e.inv.length; i++) {
       if(inv[i]._file != null) {

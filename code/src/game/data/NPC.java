@@ -32,8 +32,7 @@ public class NPC extends GameData {
     Game game = Game.getInstance();
     
     EntityAI e = new EntityAI(getName(), _sprite);
-    e.xy(x, y);
-    e.z(z);
+    e.xyz(x, y, z);
     
     for(int i = 0; i < e.inv.length; i++) {
       if(inv[i].file != null) {
