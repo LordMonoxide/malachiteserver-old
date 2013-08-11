@@ -6,11 +6,6 @@ import game.Game;
 import game.data.account.Account;
 import game.network.Connection;
 import game.network.packet.Chat;
-import game.network.packet.EntityCurrency;
-import game.network.packet.EntityEquip;
-import game.network.packet.EntityInv;
-import game.network.packet.EntityStats;
-import game.network.packet.EntityVitals;
 import game.world.EntityPlayer;
 import game.world.World;
 import io.netty.buffer.ByteBuf;
@@ -65,12 +60,6 @@ public class CharUse extends Packet {
       //TODO: Localise
       world.addEntity(entity);
       world.send(new Chat(null, entity.name() + " has joined the game!"));
-      
-      c.send(new EntityVitals  (entity));
-      c.send(new EntityStats   (entity));
-      c.send(new EntityInv     (entity));
-      c.send(new EntityEquip   (entity));
-      c.send(new EntityCurrency(entity));
       
       return;
     } catch(SQLException e) {

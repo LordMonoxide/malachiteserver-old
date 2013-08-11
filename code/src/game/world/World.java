@@ -5,7 +5,6 @@ import game.network.Connection;
 import game.network.packet.EntityAttack;
 import game.network.packet.EntityCreate;
 import game.network.packet.EntityDestroy;
-import game.network.packet.EntityPhysics;
 import game.network.packet.EntityVitals;
 import game.pathfinding.AStar;
 import game.settings.Settings;
@@ -125,17 +124,14 @@ public class World implements Runnable {
     
     _entity.add(e);
     
-    sendEntityToAll(e);
-    
-    if(e instanceof EntityPlayer) {
-      Connection c = ((EntityPlayer)e).connection;
-      _connection.add(c);
-      sendEntitiesTo(c);
-    }
+    e.sendCreate();
     
     if(e instanceof EntityLiving) {
+      if(e instanceof EntityPlayer) {
+        _connection.add(((EntityPlayer)e).connection);
+      }
+      
       _sandbox.addToSandbox((EntityLiving)e);
-      send(new EntityPhysics((EntityLiving)e));
     }
   }
   
@@ -222,10 +218,6 @@ public class World implements Runnable {
     if(!attacked) {
       send(new EntityAttack(attacker, null, 0));
     }
-  }
-  
-  public void sendEntityToAll(Entity e) {
-    send(new EntityCreate(e));
   }
   
   public void sendEntityDestroyToAll(Entity e) {

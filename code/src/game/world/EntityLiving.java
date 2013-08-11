@@ -2,6 +2,7 @@ package game.world;
 
 import physics.Movable;
 import game.data.Item;
+import game.network.packet.EntityPhysics;
 import game.settings.Settings;
 
 public class EntityLiving extends EntityInv implements Movable {
@@ -68,6 +69,11 @@ public class EntityLiving extends EntityInv implements Movable {
     }
     
     return damage;
+  }
+  
+  public void sendCreate() {
+    super.sendCreate();
+    world().send(new EntityPhysics(this));
   }
   
   public static class Stats {

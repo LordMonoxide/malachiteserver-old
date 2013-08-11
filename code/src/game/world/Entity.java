@@ -1,6 +1,7 @@
 package game.world;
 
 import game.Game;
+import game.network.packet.EntityCreate;
 import game.network.packet.EntityMoveStop;
 import game.settings.Settings;
 
@@ -120,6 +121,10 @@ public class Entity {
   
   public boolean isCloseTo(Entity e, float distance) {
     return Math.sqrt(Math.pow(_x - e._x, 2) + Math.pow(_y - e._y, 2)) <= distance;
+  }
+  
+  public void sendCreate() {
+    _world.send(new EntityCreate(this));
   }
   
   public static interface Source {
