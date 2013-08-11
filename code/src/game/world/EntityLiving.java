@@ -21,6 +21,9 @@ public class EntityLiving extends EntityInv implements Movable {
     super(name, sprite);
     stats = new Stats();
     equip = new Equip();
+    acc(0.148f);
+    dec(0.361f);
+    velTerm(1.75f);
   }
   
   public float acc() { return _acc; }
