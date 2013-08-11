@@ -47,6 +47,11 @@ public class Entity {
     _region = r;
   }
   
+  public void xyz(float x, float y, int z) {
+    xy(x, y);
+    z(z);
+  }
+  
   public void xy(float x, float y) {
     _x = x;
     _y = y;
