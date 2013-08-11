@@ -51,5 +51,6 @@ public class Account {
   public void useChar(int index) throws SQLException {
     _char = charNames.get(index);
     _char.get();
+    charNames = null;
   }
 }
