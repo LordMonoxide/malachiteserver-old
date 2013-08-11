@@ -62,7 +62,7 @@ public class EditorData {
       
       switch(_type) {
         case DATA_TYPE_SPRITE:
-          if(!c.getAccount().getPermissions().canEditSprites()) {
+          if(!c.account().permissions().canEditSprites()) {
             c.kick("Non-editor tried to get sprite list");
             return;
           }
@@ -71,7 +71,7 @@ public class EditorData {
           break;
           
         case DATA_TYPE_ITEM:
-          if(!c.getAccount().getPermissions().canEditItems()) {
+          if(!c.account().permissions().canEditItems()) {
             c.kick("Non-editor tried to get item list");
             return;
           }
@@ -80,7 +80,7 @@ public class EditorData {
           break;
           
         case DATA_TYPE_NPC:
-          if(!c.getAccount().getPermissions().canEditNPCs()) {
+          if(!c.account().permissions().canEditNPCs()) {
             c.kick("Non-editor tried to get NPC list");
             return;
           }
@@ -132,7 +132,7 @@ public class EditorData {
       
       switch(_type) {
         case DATA_TYPE_SPRITE:
-          if(!c.getAccount().getPermissions().canEditSprites()) {
+          if(!c.account().permissions().canEditSprites()) {
             c.kick("Non-admin tried to get full sprite");
             return;
           }
@@ -141,7 +141,7 @@ public class EditorData {
           break;
           
         case DATA_TYPE_ITEM:
-          if(!c.getAccount().getPermissions().canEditItems()) {
+          if(!c.account().permissions().canEditItems()) {
             c.kick("Non-admin tried to get full item");
             return;
           }
@@ -150,7 +150,7 @@ public class EditorData {
           break;
           
         case DATA_TYPE_NPC:
-          if(!c.getAccount().getPermissions().canEditNPCs()) {
+          if(!c.account().permissions().canEditNPCs()) {
             c.kick("Non-admin tried to get full NPC");
             return;
           }

@@ -10,8 +10,8 @@ public class Sprite extends GameData {
   protected String _texture;
   protected int _w, _h;
   protected int _default;
-  protected ArrayList<Frame> _frame = new ArrayList<Frame>();
-  protected ArrayList<Anim> _anim = new ArrayList<Anim>();
+  protected ArrayList<Frame> _frame = new ArrayList<>();
+  protected ArrayList<Anim> _anim = new ArrayList<>();
   protected String _script;
   
   public Sprite(File file) {
@@ -135,7 +135,7 @@ public class Sprite extends GameData {
   public static class Anim {
     public String _name;
     public int _default;
-    public ArrayList<List> _list = new ArrayList<List>();
+    public ArrayList<List> _list = new ArrayList<>();
     
     public Anim() { }
     public Anim(Anim anim) {

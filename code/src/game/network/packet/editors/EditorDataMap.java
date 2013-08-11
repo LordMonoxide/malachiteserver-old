@@ -26,12 +26,12 @@ public class EditorDataMap {
     public void process() {
       Connection c = (Connection)_connection;
       
-      if(!c.getAccount().getPermissions().canEditMaps()) {
+      if(!c.account().permissions().canEditMaps()) {
         c.kick("Non-admin tried to get MapEditorMap");
         return;
       }
       
-      Map m = ((Connection)_connection).getEntity().getWorld().getRegion(_x, _y).getMap();
+      Map m = ((Connection)_connection).entity().world().getRegion(_x, _y).getMap();
       _connection.send(new Response(m));
     }
   }

@@ -19,24 +19,18 @@ public class EntityCreate extends Packet {
   public ByteBuf serialize() {
     ByteBuf b = Unpooled.buffer();
     
-    b.writeInt(_entity.getID());
+    b.writeInt(_entity.id);
     
-    if(_entity.getName() != null) {
-      b.writeShort(_entity.getName().length());
-      b.writeBytes(_entity.getName().getBytes());
-    } else {
-      b.writeShort(0);
-    }
+    if(_entity.name() != null) {
+      b.writeShort(_entity.name().length());
+      b.writeBytes(_entity.name().getBytes());
+    } else b.writeShort(0);
     
-    b.writeShort(_entity.getSprite().length());
-    b.writeBytes(_entity.getSprite().getBytes());
-    b.writeInt  (_entity.getType().ordinal());
-    b.writeFloat(_entity.getAcc());
-    b.writeFloat(_entity.getDec());
-    b.writeFloat(_entity.getVelTerm());
-    b.writeFloat(_entity.getX());
-    b.writeFloat(_entity.getY());
-    b.writeByte (_entity.getZ());
+    b.writeShort(_entity.sprite().length());
+    b.writeBytes(_entity.sprite().getBytes());
+    b.writeFloat(_entity.x());
+    b.writeFloat(_entity.y());
+    b.writeByte (_entity.z());
     
     return b;
   }

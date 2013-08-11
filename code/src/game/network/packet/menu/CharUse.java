@@ -3,7 +3,7 @@ package game.network.packet.menu;
 import java.sql.SQLException;
 
 import game.Game;
-import game.data.account.Character;
+import game.data.account.Account;
 import game.network.Connection;
 import game.network.packet.Chat;
 import game.network.packet.EntityCurrency;
@@ -11,9 +11,7 @@ import game.network.packet.EntityEquip;
 import game.network.packet.EntityInv;
 import game.network.packet.EntityStats;
 import game.network.packet.EntityVitals;
-import game.settings.Settings;
-import game.sql.CharactersTable;
-import game.world.Entity;
+import game.world.EntityPlayer;
 import game.world.World;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -41,83 +39,38 @@ public class CharUse extends Packet {
       return;
     }
     
-    if(_index < 0 || _index >= c.getCharacter().size()) {
+    if(_index < 0 || _index >= c.account().charNames.size()) {
       c.kick("Invalid char index " + _index);
       return;
     }
     
     Response response = new Response();
     
-    CharactersTable table = CharactersTable.getInstance();
-    
     try {
-      final Character character = table.selectFromAccount(c.getAccount(), c.getCharacter(_index).getID());
+      Game game = Game.getInstance();
       
-      c.getAccount().setChar(character);
-      c.setEntity(new Entity(new Entity.Source() {
-        public Entity.Type  getType()   { return Entity.Type.Player; }
-        public String       getName()   { return character.getName(); }
-        public String       getSprite() { return character.getSprite(); }
-        public String       getFile()   { return null; }
-        public int          getValue()  { return 0; }
-        public float        getX()      { return character.getX(); }
-        public float        getY()      { return character.getY(); }
-        public int          getZ()      { return character.getZ(); }
-        public long         getCurrency() { return character.currency(); }
-        public Entity.Stats getStats()  {
-          Entity.Stats stats = new Entity.Stats();
-          stats.statSTR().val(character.stats().STR);
-          stats.statSTR().exp(character.stats().STREXP);
-          stats.statINT().val(character.stats().INT);
-          stats.statINT().exp(character.stats().INTEXP);
-          stats.statDEX().val(character.stats().DEX);
-          stats.statDEX().exp(character.stats().DEXEXP);
-          stats.update();
-          stats.vitalHP().val(character.stats().HP);
-          stats.vitalMP().val(character.stats().MP);
-          return stats;
-        }
-        
-        public Entity.Inv[] getInv()    {
-          Entity.Inv[] inv = new Entity.Inv[Settings.Player.Inventory.Size()];
-          for(int i = 0; i < inv.length; i++) {
-            if(character.inv(i).file() != null) {
-              inv[i] = new Entity.Inv(i, Game.getInstance().getItem(character.inv(i).file()), character.inv(i).val());
-            }
-          }
-          return inv;
-        }
-        
-        public Entity.Source.Equip getEquip() {
-          Entity.Source.Equip equip = new Entity.Source.Equip() {
-            public String getHand1()           { return character.equip().hand1(); }
-            public String getHand2()           { return character.equip().hand2(); }
-            public String getArmour(int index) { return character.equip().armour(index); }
-            public String getBling (int index) { return character.equip().bling (index); }
-          };
-          
-          return equip;
-        }
-      }, c));
+      Account account = c.account();
+      account.useChar(_index);
+      EntityPlayer entity = account.character().entityCreate();
+      World world = game.getWorld(account.character().world());
+      c.entity(entity);
       
       response._response = Response.RESPONSE_OKAY;
-      response._world = character.getWorld();
-      response._id = c.getEntity().getID();
+      response._world = world.getName();
+      response._id = entity.id;
       c.send(response);
       
-      System.out.println(c.getAccount().getName() + " (" + c.getChannel().remoteAddress() + ") is using character " + character.getName());
-      
-      World w = Game.getInstance().getWorld(character.getWorld());
-      w.addEntity(c.getEntity());
-      
-      c.send(new EntityVitals(c.getEntity()));
-      c.send(new EntityStats (c.getEntity()));
-      c.send(new EntityInv   (c.getEntity()));
-      c.send(new EntityEquip (c.getEntity()));
-      c.send(new EntityCurrency(c.getEntity()));
+      System.out.println(c.account().name() + " (" + c.getChannel().remoteAddress() + ") is using character " + entity.name());
       
       //TODO: Localise
-      w.send(new Chat(null, character.getName() + " has joined the game!"));
+      world.addEntity(entity);
+      world.send(new Chat(null, entity.name() + " has joined the game!"));
+      
+      c.send(new EntityVitals  (entity));
+      c.send(new EntityStats   (entity));
+      c.send(new EntityInv     (entity));
+      c.send(new EntityEquip   (entity));
+      c.send(new EntityCurrency(entity));
       
       return;
     } catch(SQLException e) {

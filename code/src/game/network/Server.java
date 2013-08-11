@@ -13,6 +13,7 @@ import game.network.packet.EntityInv;
 import game.network.packet.EntityInvUpdate;
 import game.network.packet.EntityMoveStart;
 import game.network.packet.EntityMoveStop;
+import game.network.packet.EntityPhysics;
 import game.network.packet.EntityStats;
 import game.network.packet.EntityVitals;
 import game.network.packet.InvDrop;
@@ -65,8 +66,7 @@ public class Server {
     
     _server.events().onPacket(new network.Server.Events.Packet() {
       public void event(Packet p) {
-        Connection c = (Connection)p.getConnection();
-        c.getHandler().postPacket(p);
+        ((Connection)p.getConnection()).handle(p);
       }
     });
   }
@@ -112,6 +112,7 @@ public class Server {
     Packets.add(EditorData.Response.class);
     Packets.add(EditorData.List.class);
     Packets.add(EntityAttack.class);
+    Packets.add(EntityPhysics.class);
   }
   
   public void start() {
@@ -129,19 +130,19 @@ public class Server {
   
   private void connect(Connection connection) {
     System.out.println("Got connection from " + connection.getChannel().remoteAddress());
-    connection.setHandler(_connect);
+    connection.handler(_connect);
   }
   
   private void disconnect(Connection connection) {
     if(connection.isInGame()) {
       //TODO: Localise
-      connection.getEntity().getWorld().send(new Chat(null, connection.getEntity().getName() + " has left the game."));
-      System.out.println(connection.getAccount().getName() + "/" + connection.getEntity().getName() + " (" + connection.getChannel().remoteAddress() + ") lost connection");
-      connection.getAccount().getChar().save(connection.getEntity());
-      connection.getEntity().remove();
+      connection.entity().world().send(new Chat(null, connection.entity().name() + " has left the game."));
+      System.out.println(connection.account().name() + "/" + connection.entity().name() + " (" + connection.getChannel().remoteAddress() + ") lost connection");
+      connection.account().character().save(connection.entity());
+      connection.entity().remove();
     } else {
       if(connection.isInMenu()) {
-        System.out.println(connection.getAccount().getName() + " (" + connection.getChannel().remoteAddress() + ") lost connection");
+        System.out.println(connection.account().name() + " (" + connection.getChannel().remoteAddress() + ") lost connection");
       } else {
         System.out.println(connection.getChannel().remoteAddress() + " lost connection");
       }

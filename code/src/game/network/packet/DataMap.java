@@ -26,7 +26,7 @@ public class DataMap {
     }
     
     public void process() {
-      Map m = ((Connection)_connection).getEntity().getWorld().getRegion(_x, _y).getMap();
+      Map m = ((Connection)_connection).entity().world().getRegion(_x, _y).getMap();
       _connection.send(new Response(m, m.getRev() != _crc));
     }
   }

@@ -32,7 +32,7 @@ public class Connect extends Packet {
     if(_version != Settings.Net.Version()) {
       _connection.kick("Invalid version");
     } else {
-      ((Connection)_connection).setHandler(Server.getMenuHandler());
+      ((Connection)_connection).handler(Server.getMenuHandler());
       _connection.send(new Connect());
     }
   }

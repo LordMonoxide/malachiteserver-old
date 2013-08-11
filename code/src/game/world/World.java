@@ -5,6 +5,7 @@ import game.network.Connection;
 import game.network.packet.EntityAttack;
 import game.network.packet.EntityCreate;
 import game.network.packet.EntityDestroy;
+import game.network.packet.EntityPhysics;
 import game.network.packet.EntityVitals;
 import game.pathfinding.AStar;
 import game.settings.Settings;
@@ -27,11 +28,11 @@ public class World implements Runnable {
   private Sandbox _sandbox;
   private AStar _pathfinder;
   
-  private HashMap<String, Region> _region = new HashMap<String, Region>();
-  private HashMap<String, Map> _map = new HashMap<String, Map>();
+  private HashMap<String, Region> _region = new HashMap<>();
+  private HashMap<String, Map> _map = new HashMap<>();
   
-  private ConcurrentLinkedDeque<Entity> _entity = new ConcurrentLinkedDeque<Entity>();
-  private ConcurrentLinkedDeque<Connection> _connection = new ConcurrentLinkedDeque<Connection>();
+  private ConcurrentLinkedDeque<Entity> _entity = new ConcurrentLinkedDeque<>();
+  private ConcurrentLinkedDeque<Connection> _connection = new ConcurrentLinkedDeque<>();
   
   private String _name;
   
@@ -115,21 +116,26 @@ public class World implements Runnable {
   }
   
   public void addEntity(Entity e) {
-    e.setWorld(this);
-    e.setRegion(getRegion(e.getMX(), e.getMY()));
+    e.world(this);
+    e.region(getRegion(e.mx(), e.my()));
     
-    if(e.getConnection() != null) {
-      loadRegions(e.getMX(), e.getMY(), 6);
+    if(e instanceof EntityPlayer) {
+      loadRegions(e.mx(), e.my(), 6);
     }
     
     _entity.add(e);
-    _sandbox.addToSandbox(e);
     
     sendEntityToAll(e);
     
-    if(e.getConnection() != null) {
-      _connection.add(e.getConnection());
-      sendEntitiesTo(e.getConnection());
+    if(e instanceof EntityPlayer) {
+      Connection c = ((EntityPlayer)e).connection;
+      _connection.add(c);
+      sendEntitiesTo(c);
+    }
+    
+    if(e instanceof EntityLiving) {
+      _sandbox.addToSandbox((EntityLiving)e);
+      send(new EntityPhysics((EntityLiving)e));
     }
   }
   
@@ -140,19 +146,23 @@ public class World implements Runnable {
   }
   
   public void removeEntity(Entity e) {
-    if(e.getConnection() != null) {
-      _connection.remove(e.getConnection());
+    if(e instanceof EntityPlayer) {
+      _connection.remove(((EntityPlayer)e).connection);
     }
     
     sendEntityDestroyToAll(e);
-    _sandbox.removeFromSandbox(e);
+    
+    if(e instanceof EntityLiving) {
+      _sandbox.removeFromSandbox((EntityLiving)e);
+    }
+    
     _entity.remove(e);
-    e.setWorld(null);
+    e.world(null);
   }
   
   public Entity getEntity(int id) {
     for(Entity e : _entity) {
-      if(e.getID() == id) return e;
+      if(e.id == id) return e;
     }
     
     return null;
@@ -160,7 +170,7 @@ public class World implements Runnable {
   
   public Entity findEntity(String name) {
     for(Entity e : _entity) {
-      if(e.getName() != null && e.getName().equalsIgnoreCase(name)) {
+      if(e.name() != null && e.name().equalsIgnoreCase(name)) {
         return e;
       }
     }
@@ -174,26 +184,36 @@ public class World implements Runnable {
     }
   }
   
-  public void entityAttack(Entity attacker, double angle) {
+  public void entityAttack(EntityLiving attacker, double angle) {
     int damage = attacker.calculateDamage();
     boolean attacked = false;
     
-    for(Entity defender : _entity) {
-      if(defender.stats() != null && defender != attacker) {
-        //TODO: range needs to depend on item stat
-        if(attacker.isCloseTo(defender, 60)) {
-          double x = attacker.getX() - defender.getX();
-          double y = attacker.getY() - defender.getY();
-          double entityAngle = Math.atan2(y, x);
-          //TODO: min/max angle needs to depend on item stat
-          double lowerAngle = angle - Math.PI / 6;
-          double upperAngle = angle + Math.PI / 6;
-          
-          if(entityAngle > lowerAngle && entityAngle < upperAngle) {
-            defender.stats().vitalHP().hurt(damage);
-            send(new EntityVitals(defender));
-            send(new EntityAttack(attacker, defender, damage));
-            attacked = true;
+    for(Entity e : _entity) {
+      if(e instanceof EntityLiving) {
+        EntityLiving defender = (EntityLiving)e;
+        
+        if(defender.stats != null && defender != attacker) {
+          //TODO: range needs to depend on item stat
+          if(attacker.isCloseTo(defender, 60)) {
+            double x = attacker.x() - defender.x();
+            double y = attacker.x() - defender.x();
+            double entityAngle = Math.atan2(y, x);
+            //TODO: min/max angle needs to depend on item stat
+            double lowerAngle = angle - Math.PI / 6;
+            double upperAngle = angle + Math.PI / 6;
+            
+            if(entityAngle > lowerAngle && entityAngle < upperAngle) {
+              defender.stats.HP.hurt(damage);
+              send(new EntityAttack(attacker, defender, damage));
+              
+              if(defender.stats.HP.val() <= 0) {
+                send(new EntityVitals(defender));
+              } else {
+                
+              }
+              
+              attacked = true;
+            }
           }
         }
       }
@@ -225,7 +245,9 @@ public class World implements Runnable {
   public void run() {
     while(_running) {
       for(Entity e : _entity) {
-        e.checkMovement();
+        if(e instanceof EntityAI) {
+          ((EntityAI)e).checkMovement();
+        }
       }
     }
   }

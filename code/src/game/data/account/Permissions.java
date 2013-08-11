@@ -1,6 +1,62 @@
 package game.data.account;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import sql.SQL;
+
 public class Permissions {
+  private static SQL _sql = SQL.getInstance();
+  private static PreparedStatement _select = _sql.prepareStatement("SELECT * FROM permissions WHERE id=? LIMIT 1");
+  
+  public static Permissions get(int id) throws SQLException {
+    int i = 1;
+    
+    _select.setInt(i++, id);
+    try(ResultSet r = _select.executeQuery()) {
+      if(r.next()) {
+        Permissions permissions = new Permissions();
+        permissions.setLogin(r.getBoolean(i++));
+        permissions.setAlterChars(r.getBoolean(i++));
+        permissions.setSpeak(r.getBoolean(i++));
+        permissions.setWhisper(r.getBoolean(i++));
+        permissions.setShout(r.getBoolean(i++));
+        permissions.setBroadcast(r.getBoolean(i++));
+        permissions.setWarpSelf(r.getBoolean(i++));
+        permissions.setWarpOthers(r.getBoolean(i++));
+        permissions.setKick(r.getBoolean(i++));
+        permissions.setBan(r.getBoolean(i++));
+        permissions.setViewInfo(r.getBoolean(i++));
+        permissions.setViewChatLogs(r.getBoolean(i++));
+        permissions.setMute(r.getBoolean(i++));
+        permissions.setSpawnSprites(r.getBoolean(i++));
+        permissions.setSpawnItems(r.getBoolean(i++));
+        permissions.setSpawnSpells(r.getBoolean(i++));
+        permissions.setSpawnNPCs(r.getBoolean(i++));
+        permissions.setSpawnEffects(r.getBoolean(i++));
+        permissions.setRespawnMaps(r.getBoolean(i++));
+        permissions.setAlterLocalWeather(r.getBoolean(i++));
+        permissions.setAlterRegionalWeather(r.getBoolean(i++));
+        permissions.setAlterGlobalWeather(r.getBoolean(i++));
+        permissions.setAlterTime(r.getBoolean(i++));
+        permissions.setEditMaps(r.getBoolean(i++));
+        permissions.setEditSprites(r.getBoolean(i++));
+        permissions.setEditItems(r.getBoolean(i++));
+        permissions.setEditProjectiles(r.getBoolean(i++));
+        permissions.setEditSpells(r.getBoolean(i++));
+        permissions.setEditNPCs(r.getBoolean(i++));
+        permissions.setEditEffects(r.getBoolean(i++));
+        permissions.setGrantPermissions(r.getBoolean(i++));
+        permissions.setViewDetailedInfo(r.getBoolean(i++));
+        permissions.setBanPermanently(r.getBoolean(i++));
+        return permissions;
+      }
+    }
+    
+    return null;
+  }
+  
   public static Permissions getDefaultPermissions() {
     Permissions p = new Permissions();
     p._login = true;

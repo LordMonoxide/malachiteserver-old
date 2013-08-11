@@ -1,17 +1,13 @@
 package game.network;
 
-import java.util.ArrayList;
-
 import game.data.account.Account;
-import game.data.account.Character;
-import game.world.Entity;
+import game.world.EntityPlayer;
 import network.packet.Packet;
 
 public class Connection extends network.Connection {
   private Handler _handler;
   private Account _account;
-  private Entity  _entity;
-  private ArrayList<Character> _player;
+  private EntityPlayer _entity;
   
   public boolean isInMenu() {
     return _account != null;
@@ -21,39 +17,27 @@ public class Connection extends network.Connection {
     return _entity != null;
   }
   
-  public Account getAccount() {
+  public Account account() {
     return _account;
   }
   
-  public void setAccount(Account account) {
+  public void account(Account account) {
     _account = account;
   }
   
-  public Entity getEntity() {
+  public EntityPlayer entity() {
     return _entity;
   }
   
-  public void setEntity(Entity entity) {
+  public void entity(EntityPlayer entity) {
     _entity = entity;
   }
   
-  public Character getCharacter(int index) {
-    return _player.get(index);
-  }
-  
-  public ArrayList<Character> getCharacter() {
-    return _player;
-  }
-  
-  public void setPlayer(ArrayList<Character> player) {
-    _player = player;
-  }
-  
-  public Handler getHandler() {
+  public Handler handler() {
     return _handler;
   }
   
-  public void setHandler(Handler handler) {
+  public void handler(Handler handler) {
     _handler = handler;
   }
   

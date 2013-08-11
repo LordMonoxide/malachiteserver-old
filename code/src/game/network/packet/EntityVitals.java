@@ -1,14 +1,14 @@
 package game.network.packet;
 
-import game.world.Entity;
+import game.world.EntityLiving;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import network.packet.Packet;
 
 public class EntityVitals extends Packet {
-  private Entity _entity;
+  private EntityLiving _entity;
   
-  public EntityVitals(Entity entity) {
+  public EntityVitals(EntityLiving entity) {
     _entity = entity;
   }
   
@@ -19,11 +19,11 @@ public class EntityVitals extends Packet {
   public ByteBuf serialize() {
     ByteBuf b = Unpooled.buffer();
     
-    b.writeInt(_entity.getID());
-    b.writeInt(_entity.stats().vitalHP().max());
-    b.writeInt(_entity.stats().vitalHP().val());
-    b.writeInt(_entity.stats().vitalMP().max());
-    b.writeInt(_entity.stats().vitalMP().val());
+    b.writeInt(_entity.id);
+    b.writeInt(_entity.stats.HP.max());
+    b.writeInt(_entity.stats.HP.val());
+    b.writeInt(_entity.stats.MP.max());
+    b.writeInt(_entity.stats.MP.val());
     
     return b;
   }

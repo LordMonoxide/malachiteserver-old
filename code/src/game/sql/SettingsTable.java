@@ -119,22 +119,20 @@ public class SettingsTable {
   
   public void select() throws SQLException {
     _select.setInt(1, _id);
-    ResultSet r = _select.executeQuery();
     
-    if(r.next()) {
-      int i = 2;
-      _version = r.getDouble(i++);
-      _mapSize = r.getInt(i++);
-      _mapDepth = r.getInt(i++);
-      _mapTileSize = r.getInt(i++);
-      _mapAttribSize = r.getInt(i++);
-      _playerReach = r.getInt(i++);
-      _playerInventorySize = r.getInt(i++);
-    } else {
-      r.close();
-      throw new SQLException("Could not find Settings entry with ID " + _id);
+    try(ResultSet r = _select.executeQuery()) {
+      if(r.next()) {
+        int i = 2;
+        _version = r.getDouble(i++);
+        _mapSize = r.getInt(i++);
+        _mapDepth = r.getInt(i++);
+        _mapTileSize = r.getInt(i++);
+        _mapAttribSize = r.getInt(i++);
+        _playerReach = r.getInt(i++);
+        _playerInventorySize = r.getInt(i++);
+      } else {
+        throw new SQLException("Could not find Settings entry with ID " + _id);
+      }
     }
-    
-    r.close();
   }
 }

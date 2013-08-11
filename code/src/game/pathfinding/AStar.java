@@ -16,7 +16,7 @@ public class AStar {
     open.clear();
     all.clear();
     
-    Node start = new Node((int)(e.getX() / Settings.Map.Attrib.Size()), (int)(e.getY() / Settings.Map.Attrib.Size()));
+    Node start = new Node((int)(e.x() / Settings.Map.Attrib.Size()), (int)(e.y() / Settings.Map.Attrib.Size()));
     Node goal  = new Node((int)(x / Settings.Map.Attrib.Size()), (int)(y / Settings.Map.Attrib.Size()));
     
     open.add(start);
@@ -50,7 +50,7 @@ public class AStar {
       closed.add(current);
       
       for(Node neighbour : neighbours(current)) {
-        if(!e.getWorld().isBlocked(neighbour._xWorld, neighbour._yWorld, e.getZ())) {
+        if(!e.world().isBlocked(neighbour._xWorld, neighbour._yWorld, e.z())) {
           double g = current.g + distance(current, neighbour);
           if(closed.contains(neighbour) && g >= neighbour.g) {
             continue;

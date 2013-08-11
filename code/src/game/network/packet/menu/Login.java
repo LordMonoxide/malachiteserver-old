@@ -6,9 +6,6 @@ import java.util.ArrayList;
 import game.data.account.Account;
 import game.data.account.Character;
 import game.network.Connection;
-import game.sql.AccountsTable;
-import game.sql.CharactersTable;
-import game.sql.PermissionsTable;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import network.packet.Packet;
@@ -43,35 +40,20 @@ public class Login extends Packet {
       return;
     }
     
-    AccountsTable tableAccount = AccountsTable.getInstance();
-    PermissionsTable tablePermission = PermissionsTable.getInstance();
-    CharactersTable tableChar = CharactersTable.getInstance();
-    
     Response response = new Response();
     
     try {
-      tableAccount.setName(_name);
-      tableAccount.select();
+      Account account = Account.get(_name, _pass, c);
       
-      if(_pass.equals(tableAccount.getPass())) {
-        tablePermission.setID(tableAccount.getPermissions());
-        tablePermission.select();
-        
-        if(tablePermission.getPermissions().canLogin()) {
-          Account a = new Account(tableAccount.getID());
-          c.setPlayer(tableChar.selectFromAccount(a));
-          c.setAccount(a);
-          a.setName(tableAccount.getName());
-          a.setPermissions(tablePermission.getPermissions());
-          
+      if(account != null) {
+        if(account.permissions().canLogin()) {
           response._response = Response.RESPONSE_OKAY;
-          response._player = c.getCharacter();
+          response._character = account.charNames;
           
-          Permissions p = new Permissions();
-          p.setPermissions(a.getPermissions());
-          c.send(p);
+          c.account(account);
+          c.send(new Permissions(account.permissions()));
           
-          System.out.println(c.getChannel().remoteAddress() + " logged into " + a.getName());
+          System.out.println(c.getChannel().remoteAddress() + " logged into " + account.name());
         } else {
           response._response = Response.RESPONSE_NOT_AUTHD;
         }
@@ -93,7 +75,7 @@ public class Login extends Packet {
     public static final byte RESPONSE_SQL_EXCEPTION = 3;
     
     private byte _response;
-    private ArrayList<Character> _player;
+    private ArrayList<Character> _character;
     
     public int getIndex() {
       return 2;
@@ -103,12 +85,12 @@ public class Login extends Packet {
       ByteBuf b = Unpooled.buffer(4);
       b.writeByte(_response);
       
-      if(_player != null) {
-        b.writeInt(_player.size());
+      if(_character != null) {
+        b.writeInt(_character.size());
         
-        for(Character p : _player) {
-          b.writeShort(p.getName().length());
-          b.writeBytes(p.getName().getBytes());
+        for(Character c : _character) {
+          b.writeShort(c.name().length());
+          b.writeBytes(c.name().getBytes());
         }
       }
       

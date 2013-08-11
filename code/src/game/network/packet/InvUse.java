@@ -3,7 +3,7 @@ package game.network.packet;
 import game.data.Item;
 import game.network.Connection;
 import game.settings.Settings;
-import game.world.Entity;
+import game.world.EntityPlayer;
 import io.netty.buffer.ByteBuf;
 import network.packet.Packet;
 
@@ -39,8 +39,8 @@ public class InvUse extends Packet {
     }
     
     Connection c = (Connection)_connection;
-    Entity e = c.getEntity();
-    Entity.Inv inv = e.inv(_index);
+    EntityPlayer e = c.entity();
+    game.world.EntityInv.Inv inv = e.inv[_index];
     
     if(inv == null) {
       _connection.kick("Tried to use null inv");
@@ -52,22 +52,22 @@ public class InvUse extends Packet {
       case Item.ITEM_TYPE_WEAPON:
       case Item.ITEM_TYPE_SHIELD:
         if(_slot == 0) {
-          if(e.equip().hand1().item() == null) {
-            e.equip().hand1().item(inv.item());
+          if(e.equip.hand1 == null) {
+            e.equip.hand1 = inv.item();
           } else return;
         } else {
-          if(e.equip().hand2().item() == null) {
-            e.equip().hand2().item(inv.item());
+          if(e.equip.hand2 == null) {
+            e.equip.hand2 = inv.item();
           } else return;
         }
         
-        if(e.inv(_index).val() == 1) {
-          e.inv(_index, null);
+        if(e.inv[_index].val() == 1) {
+          e.inv[_index] = null;
         } else {
-          e.inv(_index).val(e.inv(_index).val() - 1);
+          e.inv[_index].val(e.inv[_index].val() - 1);
         }
         
-        c.send(new EntityInvUpdate(e, e.inv(_index), _index));
+        c.send(new EntityInvUpdate(e, e.inv[_index], _index));
         c.send(new EntityEquip(e));
         c.send(new EntityVitals(e));
         c.send(new EntityStats(e));
@@ -76,17 +76,17 @@ public class InvUse extends Packet {
       case Item.ITEM_TYPE_ARMOUR:
         int armourType = inv.item().getType() >> Item.ITEM_SUBTYPE_BITSHIFT;
         
-        if(e.equip().armour(armourType).item() == null) {
-          e.equip().armour(armourType).item(inv.item());
+        if(e.equip.armour[armourType] == null) {
+          e.equip.armour[armourType] = inv.item();
         } else return;
         
-        if(e.inv(_index).val() == 1) {
-          e.inv(_index, null);
+        if(e.inv[_index].val() == 1) {
+          e.inv[_index] = null;
         } else {
-          e.inv(_index).val(e.inv(_index).val() - 1);
+          e.inv[_index].val(e.inv[_index].val() - 1);
         }
         
-        c.send(new EntityInvUpdate(e, e.inv(_index), _index));
+        c.send(new EntityInvUpdate(e, e.inv[_index], _index));
         c.send(new EntityEquip(e));
         c.send(new EntityVitals(e));
         c.send(new EntityStats(e));
@@ -95,17 +95,17 @@ public class InvUse extends Packet {
       case Item.ITEM_TYPE_BLING:
         int blingType = inv.item().getType() >> Item.ITEM_SUBTYPE_BITSHIFT;
         
-        if(e.equip().bling(blingType).item() == null) {
-          e.equip().bling(blingType).item(inv.item());
+        if(e.equip.bling[blingType] == null) {
+          e.equip.bling[blingType] = inv.item();
         } else return;
         
-        if(e.inv(_index).val() == 1) {
-          e.inv(_index, null);
+        if(e.inv[_index].val() == 1) {
+          e.inv[_index] = null;
         } else {
-          e.inv(_index).val(e.inv(_index).val() - 1);
+          e.inv[_index].val(e.inv[_index].val() - 1);
         }
         
-        c.send(new EntityInvUpdate(e, e.inv(_index), _index));
+        c.send(new EntityInvUpdate(e, e.inv[_index], _index));
         c.send(new EntityEquip(e));
         c.send(new EntityVitals(e));
         c.send(new EntityStats(e));
@@ -120,26 +120,26 @@ public class InvUse extends Packet {
               hp = item.getHPHeal();
               mp = item.getMPHeal();
             } else {
-              hp = (int)(e.stats().vitalHP().max() * ((float)item.getHPHeal() / 100));
-              mp = (int)(e.stats().vitalMP().max() * ((float)item.getMPHeal() / 100));
+              hp = (int)(e.stats.HP.max() * ((float)item.getHPHeal() / 100));
+              mp = (int)(e.stats.MP.max() * ((float)item.getMPHeal() / 100));
             }
             
-            e.stats().vitalHP().heal(hp);
-            e.stats().vitalMP().heal(mp);
-            e.getWorld().send(new EntityVitals(e));
+            e.stats.HP.heal(hp);
+            e.stats.MP.heal(mp);
+            e.world().send(new EntityVitals(e));
             break;
             
           case Item.ITEM_TYPE_POTION_BUFF:
             return;
         }
         
-        if(e.inv(_index).val() == 1) {
-          e.inv(_index, null);
+        if(e.inv[_index].val() == 1) {
+          e.inv[_index] = null;
         } else {
-          e.inv(_index).val(e.inv(_index).val() - 1);
+          e.inv[_index].val(e.inv[_index].val() - 1);
         }
         
-        e.send(new EntityInvUpdate(e, e.inv(_index), _index));
+        e.send(new EntityInvUpdate(e, e.inv[_index], _index));
         
         return;
     }

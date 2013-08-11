@@ -5,7 +5,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import network.packet.Packet;
 
 public class Handler implements Runnable {
-  private ConcurrentLinkedQueue<Packet> _packet = new ConcurrentLinkedQueue<Packet>();
+  private ConcurrentLinkedQueue<Packet> _packet = new ConcurrentLinkedQueue<>();
   
   private Thread _thread;
   private boolean _running;

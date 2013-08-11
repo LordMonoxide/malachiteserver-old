@@ -2,7 +2,7 @@ package game.network.packet;
 
 import game.data.Item;
 import game.network.Connection;
-import game.world.Entity;
+import game.world.EntityPlayer;
 import io.netty.buffer.ByteBuf;
 import network.packet.Packet;
 
@@ -33,20 +33,20 @@ public class InvUnequip extends Packet {
     }
     
     Connection c = (Connection)_connection;
-    Entity e = c.getEntity();
+    EntityPlayer e = c.entity();
     Item item = null;
     
     switch(_type) {
       case HAND:
         switch(_slot) {
           case 0:
-            item = e.equip().hand1().item();
-            e.equip().hand1().item(null);
+            item = e.equip.hand1;
+            e.equip.hand1 = null;
             break;
             
           case 1:
-            item = e.equip().hand2().item();
-            e.equip().hand2().item(null);
+            item = e.equip.hand2;
+            e.equip.hand2 = null;
             break;
             
           default:
@@ -62,8 +62,8 @@ public class InvUnequip extends Packet {
           return;
         }
         
-        item = e.equip().armour(_slot).item();
-        e.equip().armour(_slot).item(null);
+        item = e.equip.armour[_slot];
+        e.equip.armour[_slot] = null;
         break;
         
       case BLING:
@@ -72,8 +72,8 @@ public class InvUnequip extends Packet {
           return;
         }
         
-        item = e.equip().bling(_slot).item();
-        e.equip().bling(_slot).item(null);
+        item = e.equip.bling[_slot];
+        e.equip.bling[_slot] = null;
         break;
     }
     
@@ -82,7 +82,7 @@ public class InvUnequip extends Packet {
       return;
     }
     
-    Entity.Inv inv = e.giveItem(item, 1);
+    game.world.EntityInv.Inv inv = e.giveItem(item, 1);
     e.send(new EntityInvUpdate(e, inv, inv.index()));
     e.send(new EntityEquip(e));
     c.send(new EntityVitals(e));

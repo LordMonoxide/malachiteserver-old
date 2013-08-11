@@ -6,94 +6,82 @@ import game.Game;
 import game.data.util.Buffer;
 import game.data.util.GameData;
 import game.settings.Settings;
-import game.world.Entity;
+import game.world.EntityAI;
 
 public class NPC extends GameData {
   private String _sprite;
   
-  private Stats _stats;
-  private Inv[] _inv;
-  private Equip _equip;
+  public final Stats stats;
+  public final Inv[] inv;
+  public final Equip equip;
   private long _curr;
   
   public NPC(File file) {
     super(1, file);
     
-    _stats = new Stats();
-    _inv = new Inv[Settings.Player.Inventory.Size()];
-    _equip = new Equip();
+    stats = new Stats();
+    inv = new Inv[Settings.Player.Inventory.Size()];
+    equip = new Equip();
     
-    for(int i = 0; i < _inv.length; i++) {
-      _inv[i] = new Inv();
+    for(int i = 0; i < inv.length; i++) {
+      inv[i] = new Inv();
     }
   }
   
-  public Entity createEntity(final float x, final float y, final int z) {
-    final GameData data = this;
+  public EntityAI createEntity(final float x, final float y, final int z) {
+    Game game = Game.getInstance();
     
-    return new Entity(new Entity.Source() {
-      public Entity.Type  getType()   { return Entity.Type.NPC; }
-      public String       getName()   { return data.getName(); }
-      public String       getSprite() { return _sprite; }
-      public String       getFile()   { return data.getName(); }
-      public int          getValue()  { return 0; }
-      public float        getX()      { return x; }
-      public float        getY()      { return y; }
-      public int          getZ()      { return z; }
-      public Entity.Stats getStats()  {
-        Entity.Stats stats = new Entity.Stats();
-        stats.statSTR().val(_stats.STR);
-        stats.statINT().val(_stats.INT);
-        stats.statDEX().val(_stats.DEX);
-        stats.update();
-        stats.vitalHP().restore();
-        stats.vitalMP().restore();
-        return stats;
+    EntityAI e = new EntityAI(getName(), _sprite);
+    e.xy(x, y);
+    e.z(z);
+    
+    for(int i = 0; i < e.inv.length; i++) {
+      if(inv[i].file != null) {
+        e.inv[i] = new game.world.EntityInv.Inv(i, game.getItem(inv[i].file), inv[i].val);
       }
-      
-      public Entity.Inv[] getInv()    {
-        Entity.Inv[] inv = new Entity.Inv[Settings.Player.Inventory.Size()];
-        for(int i = 0; i < inv.length; i++) {
-          if(_inv[i].file != null) {
-            inv[i] = new Entity.Inv(i, Game.getInstance().getItem(_inv[i].file), _inv[i].val);
-          }
-        }
-        return inv;
-      }
-      
-      public Entity.Source.Equip getEquip() {
-        Entity.Source.Equip equip = new Entity.Source.Equip() {
-          public String getHand1()           { return _equip.hand1; }
-          public String getHand2()           { return _equip.hand2; }
-          public String getArmour(int index) { return _equip.armour[index]; }
-          public String getBling (int index) { return _equip.bling [index]; }
-        };
-        
-        return equip;
-      }
-      
-      public long getCurrency() { return _curr; }
-    });
+    }
+    
+    e.stats.STR.val(stats.STR);
+    e.stats.INT.val(stats.INT);
+    e.stats.DEX.val(stats.DEX);
+    e.stats.update();
+    e.stats.HP.restore();
+    e.stats.MP.restore();
+    
+    e.equip.hand1 = equip.hand1 != null ? game.getItem(equip.hand1) : null;
+    e.equip.hand2 = equip.hand2 != null ? game.getItem(equip.hand2) : null;
+    
+    for(int i = 0; i < Item.ITEM_TYPE_ARMOUR_COUNT; i++) {
+      e.equip.armour[i] = equip.armour[i] != null ? game.getItem(equip.armour[i]): null; 
+    }
+    
+    for(int i = 0; i < Item.ITEM_TYPE_BLING_COUNT; i++) {
+      e.equip.bling[i] = equip.bling[i] != null ? game.getItem(equip.bling[i]): null; 
+    }
+    
+    e.curr = _curr;
+    
+    return e;
   }
   
   protected void serializeInternal(Buffer b, boolean full) {
     b.put(_sprite);
     
     if(full) {
-      b.put(_stats.STR);
-      b.put(_stats.DEX);
-      b.put(_stats.INT);
+      b.put(stats.STR);
+      b.put(stats.DEX);
+      b.put(stats.INT);
       
-      for(Inv inv : _inv) {
-        b.put(inv.file);
-        b.put(inv.val);
+      for(Inv i : inv) {
+        b.put(i.file);
+        b.put(i.val);
       }
       
-      b.put(_equip.hand1);
-      b.put(_equip.hand2);
+      b.put(equip.hand1);
+      b.put(equip.hand2);
       
-      for(String armour : _equip.armour) b.put(armour);
-      for(String bling  : _equip.bling ) b.put(bling );
+      for(String armour : equip.armour) b.put(armour);
+      for(String bling  : equip.bling ) b.put(bling );
       
       b.put(_curr);
     }
@@ -109,20 +97,20 @@ public class NPC extends GameData {
     _sprite = b.getString();
     
     if(full) {
-      _stats.STR = b.getInt();
-      _stats.DEX = b.getInt();
-      _stats.INT = b.getInt();
+      stats.STR = b.getInt();
+      stats.DEX = b.getInt();
+      stats.INT = b.getInt();
       
-      for(Inv inv : _inv) {
-        inv.file = b.getString();
-        inv.val = b.getInt();
+      for(Inv i : inv) {
+        i.file = b.getString();
+        i.val = b.getInt();
       }
       
-      _equip.hand1 = b.getString();
-      _equip.hand2 = b.getString();
+      equip.hand1 = b.getString();
+      equip.hand2 = b.getString();
       
-      for(int i = 0; i < _equip.armour.length; i++) _equip.armour[i] = b.getString();
-      for(int i = 0; i < _equip.bling .length; i++) _equip.bling [i] = b.getString();
+      for(int i = 0; i < equip.armour.length; i++) equip.armour[i] = b.getString();
+      for(int i = 0; i < equip.bling .length; i++) equip.bling [i] = b.getString();
       
       _curr = b.getLong();
     }

@@ -4,7 +4,7 @@ import java.io.File;
 
 import game.data.util.Buffer;
 import game.data.util.GameData;
-import game.world.Entity;
+import game.world.EntityItem;
 
 public class Item extends GameData {
   private String _sprite;
@@ -18,11 +18,11 @@ public class Item extends GameData {
   
   private int    _hpHeal, _mpHeal;
   
-  private Entity.Stats.Buffs.Buff _buffHP = new Entity.Stats.Buffs.Buff();
-  private Entity.Stats.Buffs.Buff _buffMP = new Entity.Stats.Buffs.Buff();
-  private Entity.Stats.Buffs.Buff _buffSTR = new Entity.Stats.Buffs.Buff();
-  private Entity.Stats.Buffs.Buff _buffDEX = new Entity.Stats.Buffs.Buff();
-  private Entity.Stats.Buffs.Buff _buffINT = new Entity.Stats.Buffs.Buff();
+  private Buff _buffHP  = new Buff();
+  private Buff _buffMP  = new Buff();
+  private Buff _buffSTR = new Buff();
+  private Buff _buffDEX = new Buff();
+  private Buff _buffINT = new Buff();
   
   public Item(File file) {
     super(2, file);
@@ -36,29 +36,17 @@ public class Item extends GameData {
   public float  getWeight() { return _weight; }
   public int    getHPHeal() { return _hpHeal; }
   public int    getMPHeal() { return _mpHeal; }
-  public Entity.Stats.Buffs.Buff buffHP() { return _buffHP; }
-  public Entity.Stats.Buffs.Buff buffMP() { return _buffMP; }
-  public Entity.Stats.Buffs.Buff buffSTR() { return _buffSTR; }
-  public Entity.Stats.Buffs.Buff buffDEX() { return _buffDEX; }
-  public Entity.Stats.Buffs.Buff buffINT() { return _buffINT; }
+  public Buff buffHP()  { return _buffHP; }
+  public Buff buffMP()  { return _buffMP; }
+  public Buff buffSTR() { return _buffSTR; }
+  public Buff buffDEX() { return _buffDEX; }
+  public Buff buffINT() { return _buffINT; }
   
-  public Entity createEntity(final float x, final float y, final int z, final int val) {
-    final GameData data = this;
-    
-    return new Entity(new Entity.Source() {
-      public Entity.Type  getType()   { return Entity.Type.Item; }
-      public String       getName()   { return null; }
-      public String       getSprite() { return _sprite; }
-      public String       getFile()   { return data.getFile(); }
-      public int          getValue()  { return val; }
-      public float        getX()      { return x; }
-      public float        getY()      { return y; }
-      public int          getZ()      { return z; }
-      public Entity.Stats getStats()  { return null; }
-      public Entity.Inv[] getInv()    { return null; }
-      public Entity.Source.Equip getEquip() { return null; }
-      public long         getCurrency() { return 0; }
-    });
+  public EntityItem createEntity(final float x, final float y, final int z, final int val) {
+    EntityItem e = new EntityItem(_sprite, getFile(), val);
+    e.xy(x, y);
+    e.z(z);
+    return e;
   }
   
   protected void serializeInternal(Buffer b, boolean full) {

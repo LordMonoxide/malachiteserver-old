@@ -7,16 +7,12 @@ import network.packet.Packet;
 public class Permissions extends Packet {
   private game.data.account.Permissions _permissions;
   
+  public Permissions(game.data.account.Permissions permissions) {
+    _permissions = permissions;
+  }
+  
   public int getIndex() {
     return 3;
-  }
-  
-  public game.data.account.Permissions getPermissions() {
-    return _permissions;
-  }
-  
-  public void setPermissions(game.data.account.Permissions permissions) {
-    _permissions = permissions;
   }
   
   public ByteBuf serialize() {

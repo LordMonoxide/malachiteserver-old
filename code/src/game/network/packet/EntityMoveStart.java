@@ -1,7 +1,7 @@
 package game.network.packet;
 
 import game.network.Connection;
-import game.world.Entity;
+import game.world.EntityLiving;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import network.packet.Packet;
@@ -12,11 +12,11 @@ public class EntityMoveStart extends Packet {
   private float _bear;
   
   public EntityMoveStart() { }
-  public EntityMoveStart(Entity e) {
-    _id   = e.getID();
-    _x    = e.getX();
-    _y    = e.getY();
-    _bear = e.getBear();
+  public EntityMoveStart(EntityLiving e) {
+    _id   = e.id;
+    _x    = e.x();
+    _y    = e.y();
+    _bear = e.bear();
   }
   
   public int getIndex() {
@@ -40,11 +40,11 @@ public class EntityMoveStart extends Packet {
   
   public void process() {
     Connection c = (Connection)_connection;
-    Entity e = c.getEntity();
-    e.setX(_x);
-    e.setY(_y);
-    e.setBear(_bear);
+    EntityLiving e = c.entity();
+    e.x(_x);
+    e.y(_y);
+    e.bear(_bear);
     e.startMoving();
-    e.getWorld().send(new EntityMoveStart(e));
+    e.world().send(new EntityMoveStart(e));
   }
 }

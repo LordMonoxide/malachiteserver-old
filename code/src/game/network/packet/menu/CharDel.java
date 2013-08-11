@@ -3,7 +3,6 @@ package game.network.packet.menu;
 import java.sql.SQLException;
 
 import game.network.Connection;
-import game.sql.CharactersTable;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import network.packet.Packet;
@@ -30,28 +29,26 @@ public class CharDel extends Packet {
       return;
     }
     
-    if(_id < 0 || _id >= c.getCharacter().size()) {
+    if(_id < 0 || _id >= c.account().charNames.size()) {
       c.kick("Invalid char index " + _id);
       return;
     }
     
-    if(!c.getAccount().getPermissions().canAlterChars()) {
+    if(!c.account().permissions().canAlterChars()) {
       c.kick("Not auth'd to alter chars");
       return;
     }
     
-    String name = c.getCharacter(_id).getName();
+    String name = c.account().charNames.get(_id).name();
     
     Response response = new Response();
     
-    CharactersTable table = CharactersTable.getInstance();
-    
     try {
-      table.delete(c.getCharacter().get(_id));
-      c.getCharacter().remove(_id);
+      c.account().charNames.get(_id).delete();
+      c.account().charNames.remove(_id);
       response._response = Response.RESPONSE_OKAY;
       
-      System.out.println(c.getAccount().getName() + " (" + c.getChannel().remoteAddress() + ") deleted character " + name);
+      System.out.println(c.account().name() + " (" + c.getChannel().remoteAddress() + ") deleted character " + name);
     } catch(SQLException e) {
       response._response = Response.RESPONSE_SQL_EXCEPTION;
       e.printStackTrace();

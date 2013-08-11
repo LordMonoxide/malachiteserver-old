@@ -2,7 +2,6 @@ package game.network.packet;
 
 import game.network.Connection;
 import game.settings.Settings;
-import game.world.Entity;
 import io.netty.buffer.ByteBuf;
 import network.packet.Packet;
 
@@ -31,9 +30,9 @@ public class InvSwap extends Packet {
     }
     
     Connection c = (Connection)_connection;
-    Entity e = c.getEntity();
-    Entity.Inv inv1 = e.inv(_inv1);
-    Entity.Inv inv2 = e.inv(_inv2);
+    game.world.EntityInv e = c.entity();
+    game.world.EntityInv.Inv inv1 = e.inv[_inv1];
+    game.world.EntityInv.Inv inv2 = e.inv[_inv2];
     
     if(inv1 == null) {
       _connection.kick("Null inv item");
@@ -51,19 +50,19 @@ public class InvSwap extends Packet {
     }
     
     if(inv1.val() == _val) {
-      e.inv(_inv1, null);
+      e.inv[_inv1] = null;
     } else {
       inv1.val(inv1.val() - _val);
     }
     
     if(inv2 == null) {
-      inv2 = new Entity.Inv(_inv2, inv1.item(), _val);
-      e.inv(_inv2, inv2);
+      inv2 = new game.world.EntityInv.Inv(_inv2, inv1.item(), _val);
+      e.inv[_inv2] = inv2;
     } else {
       inv2.val(inv2.val() + _val);
     }
     
-    c.send(new EntityInvUpdate(e, e.inv(_inv1), _inv1));
-    c.send(new EntityInvUpdate(e, e.inv(_inv2), _inv2));
+    c.send(new EntityInvUpdate(e, e.inv[_inv1], _inv1));
+    c.send(new EntityInvUpdate(e, e.inv[_inv2], _inv2));
   }
 }

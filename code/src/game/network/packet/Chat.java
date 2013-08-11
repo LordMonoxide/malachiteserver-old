@@ -5,6 +5,8 @@ import game.data.Item;
 import game.data.account.Permissions;
 import game.network.Connection;
 import game.world.Entity;
+import game.world.EntityLiving;
+import game.world.EntityPlayer;
 import game.world.World;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -59,14 +61,14 @@ public class Chat extends Packet {
       return;
     }
     
-    Permissions permission = c.getAccount().getPermissions();
-    World world = c.getEntity().getWorld();
+    Permissions permission = c.account().permissions();
+    World world = c.entity().world();
     Game game = Game.getInstance();
     Entity e = null;
     
     if(!_text.startsWith("/")) {
       if(permission.canSpeak()) {
-        world.send(new Chat(c.getEntity().getName(), _text));
+        world.send(new Chat(c.entity().name(), _text));
       } else {
         c.send(new Chat(null, "You are muted"));
       }
@@ -84,7 +86,7 @@ public class Chat extends Packet {
             return;
           }
           
-          if(e == c.getEntity()) {
+          if(e == c.entity()) {
             if(!permission.canWarpSelf()) {
               c.send(new Chat(null, "You are not authorised to warp yourself"));
               return;
@@ -102,8 +104,8 @@ public class Chat extends Packet {
               c.send(new Chat(null, "That target entity doesn't exist"));
               return;
             }
-            x = e1.getX();
-            y = e1.getY();
+            x = e1.x();
+            y = e1.y();
           } else if(text.length == 4) {
             try {
               x = Float.parseFloat(text[2]);
@@ -130,7 +132,7 @@ public class Chat extends Packet {
               return;
             }
             
-            e = c.getEntity();
+            e = c.entity();
           } else if(text.length == 3) {
             e = world.findEntity(text[1]);
             if(e == null) {
@@ -148,18 +150,25 @@ public class Chat extends Packet {
             return;
           }
           
-          Entity.Inv inv = e.giveItem(item, 1);
-          if(inv != null) {
-            e.send(new EntityInvUpdate(e, inv, inv.index()));
+          if(e instanceof game.world.EntityInv) {
+            game.world.EntityInv.Inv inv = ((game.world.EntityInv)e).giveItem(item, 1);
+            if(inv != null) {
+              if(e instanceof EntityPlayer) {
+                ((EntityPlayer)e).send(new EntityInvUpdate((EntityPlayer)e, inv, inv.index()));
+              }
+            } else {
+              c.send(new Chat(null, e.name() + "'s inventory is full"));
+              return;
+            }
           } else {
-            c.send(new Chat(null, e.getName() + "'s inventory is full"));
+            c.send(new Chat(null, "That entity doesn't have an inventory"));
             return;
           }
           
           break;
           
         case "/vital":
-          Entity.Stats.Vital vital = null;
+          EntityLiving.Stats.Vital vital = null;
           boolean relative = false;
           int heal;
           
@@ -192,7 +201,7 @@ public class Chat extends Packet {
           }
           
           if(entityIndex == 0) {
-            e = c.getEntity();
+            e = c.entity();
           } else {
             e = world.findEntity(text[entityIndex]);
             if(e == null) {
@@ -201,13 +210,19 @@ public class Chat extends Packet {
             }
           }
           
+          if(!(e instanceof EntityLiving)) {
+            c.send(new Chat(null, "That entity isn't alive"));
+            return;
+          }
+          
+          EntityLiving entity = (EntityLiving)e;
           if(vitalIndex == 0) {
-            vital = e.stats().vitalHP();
+            vital = entity.stats.HP;
           } else {
             if(text[vitalIndex].equals("hp")) {
-              vital = e.stats().vitalHP();
+              vital = entity.stats.HP;
             } else if(text[vitalIndex].equals("mp")) {
-              vital = e.stats().vitalMP();
+              vital = entity.stats.MP;
             }
           }
           
@@ -228,7 +243,7 @@ public class Chat extends Packet {
             vital.val(heal);
           }
           
-          e.getWorld().send(new EntityVitals(e));
+          e.world().send(new EntityVitals(entity));
           
           break;
       }

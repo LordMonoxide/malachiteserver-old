@@ -2,6 +2,7 @@ package game.network.packet;
 
 import game.network.Connection;
 import game.world.Entity;
+import game.world.EntityLiving;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import network.packet.Packet;
@@ -12,9 +13,9 @@ public class EntityMoveStop extends Packet {
   
   public EntityMoveStop() { }
   public EntityMoveStop(Entity e) {
-    _id = e.getID();
-    _x  = e.getX();
-    _y  = e.getY();
+    _id = e.id;
+    _x  = e.x();
+    _y  = e.y();
   }
   
   public int getIndex() {
@@ -36,10 +37,10 @@ public class EntityMoveStop extends Packet {
   
   public void process() {
     Connection c = (Connection)_connection;
-    Entity e = c.getEntity();
-    e.setX(_x);
-    e.setY(_y);
+    EntityLiving e = c.entity();
+    e.x(_x);
+    e.y(_y);
     e.stopMoving();
-    e.getWorld().send(new EntityMoveStop(e));
+    e.world().send(new EntityMoveStop(e));
   }
 }

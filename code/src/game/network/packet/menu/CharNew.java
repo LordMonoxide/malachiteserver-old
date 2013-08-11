@@ -4,7 +4,6 @@ import java.sql.SQLException;
 
 import game.data.account.Character;
 import game.network.Connection;
-import game.sql.CharactersTable;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import network.packet.Packet;
@@ -41,24 +40,12 @@ public class CharNew extends Packet {
     
     Response response = new Response();
     
-    CharactersTable table = CharactersTable.getInstance();
-    
     try {
-      int index = table.find(_name);
-      
-      if(index == -1) {
-        Character character = new Character(0, c.getAccount());
-        character.setName(_name);
-        character.setSprite(_sprite);
-        character.setWorld("default");
-        character.setX(256);
-        character.setY(256);
-        character.setZ(2);
-        table.insert(character);
-        c.getCharacter().add(character);
+      if(Character.find(_name) == -1) {
+        Character character = new Character(c.account(), _name, _sprite, "default", 256, 256, 2);
         response._response = Response.RESPONSE_OKAY;
         
-        System.out.println(c.getAccount().getName() + " (" + c.getChannel().remoteAddress() + ") created character " + character.getName());
+        System.out.println(c.account().name() + " (" + c.getChannel().remoteAddress() + ") created character " + character.name());
       } else {
         response._response = Response.RESPONSE_EXISTS;
       }

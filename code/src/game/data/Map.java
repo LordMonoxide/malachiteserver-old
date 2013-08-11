@@ -12,9 +12,9 @@ import game.world.Entity;
 public class Map extends GameData {
   protected int _x, _y;
   protected Layer[]            _layer  = new Layer[Settings.Map.Depth()];
-  protected LinkedList<Sprite> _sprite = new LinkedList<Sprite>();
-  protected LinkedList<Item>   _item   = new LinkedList<Item>();
-  protected LinkedList<NPC>    _npc    = new LinkedList<NPC>();
+  protected LinkedList<Sprite> _sprite = new LinkedList<>();
+  protected LinkedList<Item>   _item   = new LinkedList<>();
+  protected LinkedList<NPC>    _npc    = new LinkedList<>();
   
   public Map(String world, int x, int y) {
     super(1, new File("../data/worlds/" + world + "/" + x + "x" + y));
@@ -40,20 +40,10 @@ public class Map extends GameData {
     Game game = Game.getInstance();
     
     for(final Sprite sprite : _sprite) {
-      e[i++] = new Entity(new Entity.Source() {
-        public Entity.Type  getType()   { return Entity.Type.Sprite; }
-        public String       getName()   { return null; }
-        public String       getSprite() { return sprite._file; }
-        public String       getFile()   { return null; }
-        public int          getValue()  { return 0; }
-        public float        getX()      { return sprite._x + _x * Settings.Map.Size(); }
-        public float        getY()      { return sprite._y + _y * Settings.Map.Size(); }
-        public int          getZ()      { return sprite._z; }
-        public Entity.Stats getStats()  { return null; }
-        public Entity.Inv[] getInv()    { return null; }
-        public Entity.Source.Equip getEquip() { return null; }
-        public long         getCurrency() { return 0; }
-      });
+      e[i] = new Entity(sprite._file);
+      e[i].xy(sprite._x + _x * Settings.Map.Size(), sprite._y + _y * Settings.Map.Size());
+      e[i].z(sprite._z);
+      i++;
     }
     
     for(Item item : _item) {

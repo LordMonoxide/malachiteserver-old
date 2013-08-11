@@ -15,7 +15,7 @@ public class Sandbox implements Runnable {
   private int _fpsCount;
   private int _fps;
   
-  private ConcurrentLinkedDeque<Movable> _obj = new ConcurrentLinkedDeque<Movable>();
+  private ConcurrentLinkedDeque<Movable> _obj = new ConcurrentLinkedDeque<>();
   
   public int getFPS() { return _fps; }
   
@@ -38,26 +38,26 @@ public class Sandbox implements Runnable {
     while(_running) {
       if(_timer <= Time.getTime()) {
         for(Movable m : _obj) {
-          if(m._velTarget != 0) {
-            if(m._vel < m._velTerm) {
-              m.setVel(m._vel + m._acc);
-              if(m._vel > m._velTerm) m.setVel(m._velTerm);
+          if(m.velTarget() != 0) {
+            if(m.vel() < m.velTerm()) {
+              m.vel(m.vel() + m.acc());
+              if(m.vel() > m.velTerm()) m.vel(m.velTerm());
             }
           } else {
-            if(m._vel > 0) {
-              m.setVel(m._vel - m._dec);
-              if(m._vel < 0) m.setVel(0);
+            if(m.vel() > 0) {
+              m.vel(m.vel() - m.dec());
+              if(m.vel() < 0) m.vel(0);
             }
           }
           
-          if(m._vel != 0) {
-            if(m._bear != -1) {
-              double a = Math.toRadians(m._bear);
-              m.setX(m._x + (float)Math.cos(a) * m._vel * m._velScaleX);
-              m.setY(m._y + (float)Math.sin(a) * m._vel * m._velScaleY);
+          if(m.vel() != 0) {
+            if(m.bear() != -1) {
+              double a = Math.toRadians(m.bear());
+              m.x(m.x() + (float)Math.cos(a) * m.vel() * m.velScaleX());
+              m.y(m.y() + (float)Math.sin(a) * m.vel() * m.velScaleY());
             } else {
-              m.setX(m._x + m._vel * m._velScaleX);
-              m.setY(m._y + m._vel * m._velScaleY);
+              m.x(m.x() + m.vel() * m.velScaleX());
+              m.y(m.y() + m.vel() * m.velScaleY());
             }
           }
         }
@@ -73,9 +73,7 @@ public class Sandbox implements Runnable {
         _fpsCount = 0;
       }
       
-      try {
-        Thread.sleep(1);
-      } catch(InterruptedException e) { }
+      try { Thread.sleep(1); } catch(InterruptedException e) { }
     }
   }
   

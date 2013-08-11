@@ -2,7 +2,6 @@ package game.network.packet;
 
 import game.network.Connection;
 import game.settings.Settings;
-import game.world.Entity;
 import io.netty.buffer.ByteBuf;
 import network.packet.Packet;
 
@@ -29,21 +28,21 @@ public class InvDrop extends Packet {
     }
     
     Connection c = (Connection)_connection;
-    Entity e = c.getEntity();
+    game.world.EntityInv e = c.entity();
     
-    if(e.inv(_inv) == null) {
+    if(e.inv[_inv] == null) {
       _connection.kick("Null inv item");
       return;
     }
     
-    if(e.inv(_inv).val() < _val) {
+    if(e.inv[_inv].val() < _val) {
       _connection.kick("Not enough");
       return;
     }
     
-    c.getEntity().getWorld().addEntity(e.inv(_inv).item().createEntity(e.getX(), e.getY(), e.getZ(), _val));
+    c.entity().world().addEntity(e.inv[_inv].item().createEntity(e.x(), e.y(), e.z(), _val));
     
-    e.inv(_inv, null);
+    e.inv[_inv] = null;
     c.send(new EntityInvUpdate(e, null, _inv));
   }
 }

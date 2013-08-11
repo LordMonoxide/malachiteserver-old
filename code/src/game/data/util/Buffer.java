@@ -78,20 +78,17 @@ public class Buffer {
   public void save(File f) throws IOException {
     f.createNewFile();
     
-    FileOutputStream fs = new FileOutputStream(f);
-    
-    fs.write(serialize());
-    fs.close();
+    try(FileOutputStream fs = new FileOutputStream(f)) {
+      fs.write(serialize());
+    }
   }
   
   public void load(File f) throws IOException {
-    FileInputStream fs = new FileInputStream(f);
-    
-    _buffer = new byte[(int)f.length()];
-    _write = _buffer.length;
-    
-    fs.read(_buffer);
-    fs.close();
+    try(FileInputStream fs = new FileInputStream(f)) {
+      _buffer = new byte[(int)f.length()];
+      _write = _buffer.length;
+      fs.read(_buffer);
+    }
   }
   
   public byte[] serialize() {

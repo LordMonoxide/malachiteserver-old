@@ -12,7 +12,7 @@ import io.netty.buffer.ByteBuf;
 import network.packet.Packet;
 
 public abstract class EditorSave extends Packet {
-  protected ArrayList<TempData> _data = new ArrayList<TempData>();
+  protected ArrayList<TempData> _data = new ArrayList<>();
   
   private EditorSave() { }
   
@@ -58,12 +58,12 @@ public abstract class EditorSave extends Packet {
     
     public void process() {
       Connection c = (Connection)_connection;
-      if(!c.getAccount().getPermissions().canEditMaps()) {
+      if(!c.account().permissions().canEditMaps()) {
         c.kick("Not auth'd to edit maps");
         return;
       }
       
-      World world = c.getEntity().getWorld();
+      World world = c.entity().world();
       game.data.Map map;
       
       for(TempData data : _data) {
@@ -83,7 +83,7 @@ public abstract class EditorSave extends Packet {
     
     public void process() {
       Connection c = (Connection)_connection;
-      if(!c.getAccount().getPermissions().canEditSprites()) {
+      if(!c.account().permissions().canEditSprites()) {
         c.kick("Not auth'd to edit sprites");
         return;
       }
@@ -108,7 +108,7 @@ public abstract class EditorSave extends Packet {
     
     public void process() {
       Connection c = (Connection)_connection;
-      if(!c.getAccount().getPermissions().canEditItems()) {
+      if(!c.account().permissions().canEditItems()) {
         c.kick("Not auth'd to edit items");
         return;
       }
@@ -133,7 +133,7 @@ public abstract class EditorSave extends Packet {
     
     public void process() {
       Connection c = (Connection)_connection;
-      if(!c.getAccount().getPermissions().canEditNPCs()) {
+      if(!c.account().permissions().canEditNPCs()) {
         c.kick("Not auth'd to edit NPCs");
         return;
       }

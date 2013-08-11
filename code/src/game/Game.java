@@ -33,10 +33,10 @@ public class Game {
   
   private Server _net;
   
-  private ConcurrentHashMapV8<String, World>      _world      = new ConcurrentHashMapV8<String, World>();
-  private ConcurrentHashMapV8<String, Sprite>     _sprite     = new ConcurrentHashMapV8<String, Sprite>();
-  private ConcurrentHashMapV8<String, Item>       _item       = new ConcurrentHashMapV8<String, Item>();
-  private ConcurrentHashMapV8<String, NPC>        _npc        = new ConcurrentHashMapV8<String, NPC>();
+  private ConcurrentHashMapV8<String, World>  _world  = new ConcurrentHashMapV8<>();
+  private ConcurrentHashMapV8<String, Sprite> _sprite = new ConcurrentHashMapV8<>();
+  private ConcurrentHashMapV8<String, Item>   _item   = new ConcurrentHashMapV8<>();
+  private ConcurrentHashMapV8<String, NPC>    _npc    = new ConcurrentHashMapV8<>();
   
   private int _entityID;
   
@@ -97,9 +97,9 @@ public class Game {
     return w;
   }
   
-  public Sprite    [] getSprite()     { return _sprite    .values().toArray(new Sprite    [0]); }
-  public Item      [] getItem()       { return _item      .values().toArray(new Item      [0]); }
-  public NPC       [] getNPC()        { return _npc       .values().toArray(new NPC       [0]); }
+  public Sprite[] getSprite() { return _sprite.values().toArray(new Sprite[0]); }
+  public Item  [] getItem()   { return _item  .values().toArray(new Item  [0]); }
+  public NPC   [] getNPC()    { return _npc   .values().toArray(new NPC   [0]); }
   
   public Sprite getSprite(String file) { return _sprite.get(file); }
   public Sprite getSprite(String file, boolean create) {
