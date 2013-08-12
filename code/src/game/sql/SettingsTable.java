@@ -48,15 +48,6 @@ public class SettingsTable {
     _select = _sql.prepareStatement("SELECT * FROM settings WHERE id=? LIMIT 1");
   }
   
-  public void close() throws SQLException {
-    if(_create != null) _create.close();
-    if(_drop   != null) _drop  .close();
-    if(_insert != null) _insert.close();
-    if(_delete != null) _delete.close();
-    if(_update != null) _update.close();
-    if(_select != null) _select.close();
-  }
-  
   public int getID() {
     return _id;
   }

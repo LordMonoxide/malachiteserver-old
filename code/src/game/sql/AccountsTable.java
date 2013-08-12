@@ -18,10 +18,6 @@ public class AccountsTable {
     _create = _sql.prepareStatement("CREATE TABLE accounts (id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT, name VARCHAR(40) NOT NULL, pass CHAR(64) NOT NULL, permission_id INTEGER UNSIGNED NOT NULL, PRIMARY KEY (id), UNIQUE KEY accounts_name_unique (name), FOREIGN KEY (permission_id) REFERENCES permissions(id))");
   }
   
-  public void close() throws SQLException {
-    if(_create != null) _create.close();
-  }
-  
   public boolean exists() {
     return _sql.tableExists("accounts");
   }

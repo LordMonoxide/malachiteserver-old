@@ -22,11 +22,6 @@ public class CharactersTable {
     _createInv = _sql.prepareStatement("CREATE TABLE character_invs (id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT, character_id INTEGER UNSIGNED NOT NULL, file VARCHAR(40), val INTEGER UNSIGNED NOT NULL, PRIMARY KEY (id), FOREIGN KEY (character_id) REFERENCES characters(id))", Statement.RETURN_GENERATED_KEYS);
   }
   
-  public void close() throws SQLException {
-    if(_create != null) _create.close();
-    if(_createInv != null) _createInv.close();
-  }
-  
   public void create() throws SQLException {
     if(!_sql.tableExists("characters")) {
       System.out.println("Creating characters table...");

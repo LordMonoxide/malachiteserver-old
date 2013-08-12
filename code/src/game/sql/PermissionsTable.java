@@ -26,10 +26,6 @@ public class PermissionsTable {
                                    ")");
   }
   
-  public void close() throws SQLException {
-    if(_create != null) _create.close();
-  }
-  
   public boolean exists() {
     return _sql.tableExists("permissions");
   }

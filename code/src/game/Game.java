@@ -9,6 +9,8 @@ import java.io.File;
 
 import javax.swing.ImageIcon;
 
+import sql.SQL;
+
 import network.packet.Packet;
 
 import io.netty.util.internal.chmv8.ConcurrentHashMapV8;
@@ -18,10 +20,6 @@ import game.data.NPC;
 import game.data.Sprite;
 import game.network.Server;
 import game.settings.Settings;
-import game.sql.AccountsTable;
-import game.sql.CharactersTable;
-import game.sql.PermissionsTable;
-import game.sql.SettingsTable;
 import game.world.World;
 
 public class Game {
@@ -155,10 +153,7 @@ public class Game {
     //TODO: Close sockets
     //TODO: Stop handler threads
     
-    try { CharactersTable .getInstance().close(); } catch(Exception e) { }
-    try { AccountsTable   .getInstance().close(); } catch(Exception e) { }
-    try { PermissionsTable.getInstance().close(); } catch(Exception e) { }
-    try { SettingsTable   .getInstance().close(); } catch(Exception e) { }
+    SQL.getInstance().close();
     
     removeFromSystemTray();
     
