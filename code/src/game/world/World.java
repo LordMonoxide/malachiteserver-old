@@ -195,7 +195,7 @@ public class World implements Runnable {
           //TODO: range needs to depend on item stat
           if(attacker.isCloseTo(defender, 60)) {
             double x = attacker.x() - defender.x();
-            double y = attacker.x() - defender.x();
+            double y = attacker.y() - defender.y();
             double entityAngle = Math.atan2(y, x);
             //TODO: min/max angle needs to depend on item stat
             double lowerAngle = angle - Math.PI / 6;
