@@ -38,7 +38,7 @@ public class Settings {
       _settings.set("db",       Settings.SQL.DB());
       _settings.set("user",     Settings.SQL.User());
       _settings.set("pass",     Settings.SQL.Pass());
-      _settings.set("port",     String.valueOf(Settings.Net.Port()));
+      _settings.set("port",     Settings.Net.Port());
       
       try {
         _settings.store(new FileOutputStream(_file), null);
