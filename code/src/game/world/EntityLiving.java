@@ -3,6 +3,7 @@ package game.world;
 import physics.Movable;
 import game.data.Item;
 import game.network.packet.EntityPhysics;
+import game.network.packet.EntityVitals;
 import game.settings.Settings;
 
 public class EntityLiving extends EntityInv implements Movable {
@@ -71,9 +72,16 @@ public class EntityLiving extends EntityInv implements Movable {
     return damage;
   }
   
-  public void sendCreate() {
-    super.sendCreate();
+  public void create() {
+    super.create();
     world().send(new EntityPhysics(this));
+  }
+  
+  public void respawn() {
+    super.respawn();
+    stats.HP.restore();
+    stats.MP.restore();
+    world().send(new EntityVitals(this));
   }
   
   public static class Stats {

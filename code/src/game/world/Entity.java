@@ -2,7 +2,9 @@ package game.world;
 
 import game.Game;
 import game.network.packet.EntityCreate;
+import game.network.packet.EntityDespawn;
 import game.network.packet.EntityMoveStop;
+import game.network.packet.EntitySpawn;
 import game.settings.Settings;
 
 public class Entity {
@@ -18,6 +20,9 @@ public class Entity {
   private float _x, _y;
   private int _z;
   
+  private double _spawnTime = 3000;
+  private boolean _spawned;
+  
   public Entity(String sprite) {
     this(null, sprite);
   }
@@ -28,17 +33,19 @@ public class Entity {
     _sprite = sprite;
   }
   
-  public String name()   { return _name; }
-  public String sprite() { return _sprite; }
-  public World  world()  { return _world; }
-  public Region region() { return _region; }
-  public float  x()      { return _x; }
-  public float  y()      { return _y; }
-  public int    z()      { return _z; }
-  public float  rx()     { return _rx; }
-  public float  ry()     { return _ry; }
-  public int    mx()     { return _mx; }
-  public int    my()     { return _my; }
+  public String  name()      { return _name; }
+  public String  sprite()    { return _sprite; }
+  public World   world()     { return _world; }
+  public Region  region()    { return _region; }
+  public float   x()         { return _x; }
+  public float   y()         { return _y; }
+  public int     z()         { return _z; }
+  public float   rx()        { return _rx; }
+  public float   ry()        { return _ry; }
+  public int     mx()        { return _mx; }
+  public int     my()        { return _my; }
+  public double  spawnTime() { return _spawnTime; }
+  public boolean spawned()   { return _spawned; }
   
   public void world(World world) {
     _world = world;
@@ -123,8 +130,24 @@ public class Entity {
     return Math.sqrt(Math.pow(_x - e._x, 2) + Math.pow(_y - e._y, 2)) <= distance;
   }
   
-  public void sendCreate() {
+  public void create() {
     _world.send(new EntityCreate(this));
+    _world.scheduleRespawn(this);
+  }
+  
+  public void respawn() {
+    despawn();
+    _world.scheduleRespawn(this);
+  }
+  
+  public void spawn() {
+    _spawned = true;
+    _world.send(new EntitySpawn(this));
+  }
+  
+  public void despawn() {
+    _spawned = false;
+    _world.send(new EntityDespawn(this));
   }
   
   public static interface Source {

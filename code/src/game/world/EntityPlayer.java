@@ -20,8 +20,8 @@ public class EntityPlayer extends EntityLiving {
     connection.send(packet);
   }
   
-  public void sendCreate() {
-    super.sendCreate();
+  public void create() {
+    super.create();
     world().sendEntitiesTo(connection);
     
     send(new EntityVitals  (this));

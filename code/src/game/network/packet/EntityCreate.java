@@ -31,6 +31,7 @@ public class EntityCreate extends Packet {
     b.writeFloat(_entity.x());
     b.writeFloat(_entity.y());
     b.writeByte (_entity.z());
+    b.writeBoolean(_entity.spawned());
     
     return b;
   }

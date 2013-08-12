@@ -1,6 +1,7 @@
 package game.world;
 
 import game.data.Map;
+import game.data.util.Time;
 import game.network.Connection;
 import game.network.packet.EntityAttack;
 import game.network.packet.EntityCreate;
@@ -11,6 +12,7 @@ import game.settings.Settings;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 import network.packet.Packet;
@@ -31,6 +33,7 @@ public class World implements Runnable {
   private HashMap<String, Map> _map = new HashMap<>();
   
   private ConcurrentLinkedDeque<Entity> _entity = new ConcurrentLinkedDeque<>();
+  private ConcurrentLinkedDeque<EntitySpawn> _entitySpawn = new ConcurrentLinkedDeque<>();
   private ConcurrentLinkedDeque<Connection> _connection = new ConcurrentLinkedDeque<>();
   
   private String _name;
@@ -83,9 +86,9 @@ public class World implements Runnable {
         m = new Map(_name, x, y);
         
         if(m.load()) {
-          System.out.println("Map " + name + " loaded.");
+          //System.out.println("Map " + name + " loaded.");
         } else {
-          System.out.println("Map " + name + " created.");
+          //System.out.println("Map " + name + " created.");
         }
         
         _map.put(name, m);
@@ -124,7 +127,7 @@ public class World implements Runnable {
     
     _entity.add(e);
     
-    e.sendCreate();
+    e.create();
     
     if(e instanceof EntityLiving) {
       if(e instanceof EntityPlayer) {
@@ -202,10 +205,10 @@ public class World implements Runnable {
               defender.stats.HP.hurt(damage);
               send(new EntityAttack(attacker, defender, damage));
               
-              if(defender.stats.HP.val() <= 0) {
+              if(defender.stats.HP.val() > 0) {
                 send(new EntityVitals(defender));
               } else {
-                
+                defender.respawn();
               }
               
               attacked = true;
@@ -234,13 +237,38 @@ public class World implements Runnable {
     return _pathfinder.find(e, x, y);
   }
   
+  public void scheduleRespawn(Entity e) {
+    _entitySpawn.add(new EntitySpawn(e, e.spawnTime() + Time.getTime()));
+    
+  }
+  
   public void run() {
     while(_running) {
       for(Entity e : _entity) {
-        if(e instanceof EntityAI) {
-          ((EntityAI)e).checkMovement();
+        if(e.spawned()) {
+          if(e instanceof EntityAI) {
+            ((EntityAI)e).checkMovement();
+          }
         }
       }
+      
+      for(Iterator<EntitySpawn> it = _entitySpawn.iterator(); it.hasNext();) {
+        EntitySpawn e = it.next();
+        if(e.time <= Time.getTime()) {
+          it.remove();
+          e.entity.spawn();
+        }
+      }
+    }
+  }
+  
+  private class EntitySpawn {
+    private Entity entity;
+    private double time;
+    
+    private EntitySpawn(Entity e, double t) {
+      entity = e;
+      time = t;
     }
   }
 }
