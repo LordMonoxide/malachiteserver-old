@@ -19,6 +19,9 @@ public class EntitySpawn extends Packet {
   public ByteBuf serialize() {
     ByteBuf b = Unpooled.buffer();
     b.writeInt(_entity.id);
+    b.writeFloat(_entity.x());
+    b.writeFloat(_entity.y());
+    b.writeByte(_entity.z());
     return b;
   }
   
