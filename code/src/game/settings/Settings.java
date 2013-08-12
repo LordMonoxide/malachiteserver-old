@@ -94,12 +94,10 @@ public class Settings {
       return false;
     }
     
-    load();
-    
-    return true;
+    return load();
   }
   
-  public static void load() {
+  public static boolean load() {
     SettingsTable settingsTable = SettingsTable.getInstance();
     
     try {
@@ -116,10 +114,15 @@ public class Settings {
         Map.Attrib._instance._count = Map.Size() / Map.Attrib.Size();
         Player._instance._reach = settingsTable.getPlayerReach();
         Player.Inventory._instance._size = settingsTable.getPlayerInventorySize();
-      } catch(InvalidDataException e) { }
+      } catch(InvalidDataException e) {
+        return false;
+      }
     } catch(SQLException e) {
       e.printStackTrace();
+      return false;
     }
+    
+    return true;
   }
   
   public static class SQL {
