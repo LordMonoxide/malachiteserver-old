@@ -27,6 +27,20 @@ public class Character implements Entity.Source {
   private static PreparedStatement _updateInv   = _sql.prepareStatement("UPDATE `character_invs` SET `file`=?, `val`=? WHERE `id`=?");
   private static PreparedStatement _delete      = _sql.prepareStatement("DELETE FROM `characters` WHERE `id`=?");
   private static PreparedStatement _deleteInv   = _sql.prepareStatement("DELETE FROM `character_invs` WHERE `character_id`=?");
+  private static PreparedStatement _create      = _sql.prepareStatement("CREATE TABLE `characters` (`id` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT, `account_id` INTEGER UNSIGNED NOT NULL, `name` VARCHAR(16) NOT NULL, `sprite` VARCHAR(40) NOT NULL, `world` VARCHAR(40) NOT NULL, `x` FLOAT NOT NULL, `y` FLOAT NOT NULL, `z` INTEGER UNSIGNED NOT NULL, `hp` INTEGER UNSIGNED NOT NULL, `mp` INTEGER UNSIGNED NOT NULL, `str` INTEGER UNSIGNED NOT NULL, `str_exp` FLOAT NOT NULL, `int` INTEGER UNSIGNED NOT NULL, `int_exp` FLOAT NOT NULL, `dex` INTEGER UNSIGNED NOT NULL, `dex_exp` FLOAT NOT NULL, `currency` BIGINT UNSIGNED NOT NULL, `equip_hand1` VARCHAR(40), `equip_hand2` VARCHAR(40), `equip_body` VARCHAR(40), `equip_head` VARCHAR(40), `equip_hand` VARCHAR(40), `equip_legs` VARCHAR(40), `equip_feet` VARCHAR(40), `equip_ring` VARCHAR(40), `equip_amulet` VARCHAR(40), PRIMARY KEY (`id`), UNIQUE KEY `characters_name_unique` (`name`), FOREIGN KEY (`account_id`) REFERENCES `accounts`(`id`))", Statement.RETURN_GENERATED_KEYS);
+  private static PreparedStatement _createInv   = _sql.prepareStatement("CREATE TABLE `character_invs` (`id` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT, `character_id` INTEGER UNSIGNED NOT NULL, `file` VARCHAR(40), `val` INTEGER UNSIGNED NOT NULL, PRIMARY KEY (`id`), FOREIGN KEY (`character_id`) REFERENCES `characters`(`id`))", Statement.RETURN_GENERATED_KEYS);
+  
+  public static void createTable() throws SQLException {
+    if(!_sql.tableExists("characters")) {
+      System.out.println("Creating characters table...");
+      _create.executeUpdate();
+    }
+    
+    if(!_sql.tableExists("character_invs")) {
+      System.out.println("Creating character_invs table...");
+      _createInv.executeUpdate();
+    }
+  }
   
   public static int find(String name) throws SQLException {
     _selectExist.setString(1, name);

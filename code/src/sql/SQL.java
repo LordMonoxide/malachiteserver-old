@@ -8,13 +8,9 @@ import java.util.ArrayList;
 
 public abstract class SQL {
   private static SQL _instance;
-  
+  public static SQL getInstance() { return _instance; }
   public static void create(Class<? extends SQL> sql) throws InstantiationException, IllegalAccessException {
     _instance = sql.newInstance();
-  }
-  
-  public static SQL getInstance() {
-    return _instance;
   }
   
   private Connection _connection;

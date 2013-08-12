@@ -10,7 +10,15 @@ import game.network.Connection;
 
 public class Account {
   private static SQL _sql = SQL.getInstance();
-  private static PreparedStatement _select = _sql.prepareStatement("SELECT * FROM accounts WHERE name=? LIMIT 1");
+  private static PreparedStatement _select = _sql.prepareStatement("SELECT * FROM `accounts` WHERE `name`=? LIMIT 1");
+  private static PreparedStatement _create = _sql.prepareStatement("CREATE TABLE `accounts` (`id` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT, `name` VARCHAR(40) NOT NULL, `pass` CHAR(64) NOT NULL, `permission_id` INTEGER UNSIGNED NOT NULL, PRIMARY KEY (`id`), UNIQUE KEY `accounts_name_unique` (`name`), FOREIGN KEY (`permission_id`) REFERENCES `permissions`(`id`))");
+  
+  public static void createTable() throws SQLException {
+    if(!_sql.tableExists("accounts")) {
+      System.out.println("Creating accounts table...");
+      _create.executeUpdate();
+    }
+  }
   
   public static Account get(String name, String pass, Connection c) throws SQLException {
     _select.setString(1, name);

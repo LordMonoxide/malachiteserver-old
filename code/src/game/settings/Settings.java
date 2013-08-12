@@ -1,10 +1,10 @@
 package game.settings;
 
+import game.data.account.Account;
+import game.data.account.Character;
+import game.data.account.Permissions;
 import game.data.util.Properties;
 import game.data.util.Properties.InvalidDataException;
-import game.sql.AccountsTable;
-import game.sql.CharactersTable;
-import game.sql.PermissionsTable;
 import game.sql.SettingsTable;
 
 import java.io.File;
@@ -74,10 +74,6 @@ public class Settings {
     
     if(sql.SQL.getInstance().connect(Settings.SQL.Host(), Settings.SQL.DB(), Settings.SQL.User(), Settings.SQL.Pass())) {
       SettingsTable settingsTable = SettingsTable.getInstance();
-      PermissionsTable permissionsTable = PermissionsTable.getInstance();
-      AccountsTable accountTable = AccountsTable.getInstance();
-      CharactersTable charTable = CharactersTable.getInstance();
-      
       settingsTable.setID(SQL.ID());
       
       try {
@@ -86,18 +82,11 @@ public class Settings {
           settingsTable.create();
         }
         
-        if(!permissionsTable.exists()) {
-          System.out.println("Creating permissions table...");
-          permissionsTable.create();
-        }
-        
-        if(!accountTable.exists()) {
-          System.out.println("Creating account table...");
-          accountTable.create();
-        }
-        
-        charTable.create();
+        Permissions.createTable();
+        Account.createTable();
+        Character.createTable();
       } catch(SQLException e) {
+        System.err.println("Error while creating tables:");
         e.printStackTrace();
         return false;
       }
