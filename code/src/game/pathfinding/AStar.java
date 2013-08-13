@@ -35,15 +35,32 @@ public class AStar {
           current = current.prev;
           count++;
         }
-        current = old;
         
-        Node[] node = new Node[count];
-        for(int i = count - 1; i >= 0; i--) {
-          node[i] = current;
-          current = current.prev;
+        if(count != 0) {
+          current = old;
+          
+          Node[] node = new Node[count];
+          for(int i = count - 1; i >= 0; i--) {
+            Node prev = current.prev != null ? current.prev : start;
+            int x1 = current._x - prev._x;
+            int y1 = current._y - prev._y;
+            if(x1 ==  1 && y1 ==  0) current.angle =   0;
+            if(x1 ==  1 && y1 ==  1) current.angle =  45;
+            if(x1 ==  0 && y1 ==  1) current.angle =  90;
+            if(x1 == -1 && y1 ==  1) current.angle = 135;
+            if(x1 == -1 && y1 ==  0) current.angle = 180;
+            if(x1 == -1 && y1 == -1) current.angle = 225;
+            if(x1 ==  0 && y1 == -1) current.angle = 270;
+            if(x1 ==  1 && y1 == -1) current.angle = 315;
+            
+            node[i] = current;
+            current = current.prev;
+          }
+          
+          return node;
         }
         
-        return node;
+        return null;
       }
       
       open.remove(current);
@@ -125,6 +142,7 @@ public class AStar {
     int _xWorld, _yWorld;
     double f, g;
     Node prev;
+    int angle;
     
     public Node(int x, int y) {
       _x = x;
@@ -133,8 +151,11 @@ public class AStar {
       _yWorld = y * Settings.Map.Attrib.Size();
     }
     
+    public int x() { return _x; }
+    public int y() { return _y; }
     public int getWorldX() { return _xWorld; }
     public int getWorldY() { return _yWorld; }
+    public int angle() { return angle; }
     
     public String toString() {
       return _x + "\t" + _y + "\t" + g;
