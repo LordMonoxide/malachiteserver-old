@@ -17,7 +17,7 @@ public class Map extends GameData {
   protected LinkedList<NPC>    _npc    = new LinkedList<>();
   
   public Map(String world, int x, int y) {
-    super(1, new File("../data/worlds/" + world + "/" + x + "x" + y));
+    super(2, new File("../data/worlds/" + world + "/" + x + "x" + y));
     _x = x;
     _y = y;
     
@@ -40,17 +40,17 @@ public class Map extends GameData {
     Game game = Game.getInstance();
     
     for(final Sprite sprite : _sprite) {
-      e[i] = new Entity(sprite._file);
-      e[i].xyz(sprite._x + _x * Settings.Map.Size(), sprite._y + _y * Settings.Map.Size(), sprite._z);
+      e[i] = new Entity(sprite.file);
+      e[i].xyz(sprite.x + _x * Settings.Map.Size(), sprite.y + _y * Settings.Map.Size(), sprite.z);
       i++;
     }
     
     for(Item item : _item) {
-      e[i++] = game.getItem(item._file).createEntity(item._x + _x * Settings.Map.Size(), item._y + _y * Settings.Map.Size(), item._z, item._val);
+      e[i++] = game.getItem(item.file).createEntity(item.x + _x * Settings.Map.Size(), item.y + _y * Settings.Map.Size(), item.z, item.val);
     }
     
     for(NPC npc : _npc) {
-      e[i++] = game.getNPC(npc._file).createEntity(npc._x + _x * Settings.Map.Size(), npc._y + _y * Settings.Map.Size(), npc._z);
+      e[i++] = game.getNPC(npc.file).createEntity(npc.x + _x * Settings.Map.Size(), npc.y + _y * Settings.Map.Size(), npc.z);
     }
     
     return e;
@@ -91,25 +91,26 @@ public class Map extends GameData {
     
     if(full) {
       for(Sprite s : _sprite) {
-        b.put(s._file);
-        b.put(s._x);
-        b.put(s._y);
-        b.put(s._z);
+        b.put(s.file);
+        b.put(s.anim);
+        b.put(s.x);
+        b.put(s.y);
+        b.put(s.z);
       }
       
       for(Item i : _item) {
-        b.put(i._file);
-        b.put(i._val);
-        b.put(i._x);
-        b.put(i._y);
-        b.put(i._z);
+        b.put(i.file);
+        b.put(i.val);
+        b.put(i.x);
+        b.put(i.y);
+        b.put(i.z);
       }
       
       for(NPC n : _npc) {
-        b.put(n._file);
-        b.put(n._x);
-        b.put(n._y);
-        b.put(n._z);
+        b.put(n.file);
+        b.put(n.x);
+        b.put(n.y);
+        b.put(n.z);
       }
     }
   }
@@ -117,6 +118,7 @@ public class Map extends GameData {
   protected void deserializeInternal(Buffer b, boolean full) {
     switch(getVersion()) {
       case 1: deserialize01(b, full); break;
+      case 2: deserialize02(b, full); break;
     }
   }
   
@@ -172,29 +174,110 @@ public class Map extends GameData {
     if(full) {
       for(int i = 0; i < spriteSize; i++) {
         Sprite s = new Sprite();
-        s._file = b.getString();
-        s._x = b.getInt();
-        s._y = b.getInt();
-        s._z = b.getByte();
+        s.file = b.getString();
+        s.x = b.getInt();
+        s.y = b.getInt();
+        s.z = b.getByte();
         _sprite.add(s);
       }
       
       for(int i = 0; i < itemSize; i++) {
         Item item = new Item();
-        item._file = b.getString();
-        item._val = b.getInt();
-        item._x = b.getInt();
-        item._y = b.getInt();
-        item._z = b.getByte();
+        item.file = b.getString();
+        item.val = b.getInt();
+        item.x = b.getInt();
+        item.y = b.getInt();
+        item.z = b.getByte();
         _item.add(item);
       }
       
       for(int i = 0; i < npcSize; i++) {
         NPC n = new NPC();
-        n._file = b.getString();
-        n._x = b.getInt();
-        n._y = b.getInt();
-        n._z = b.getByte();
+        n.file = b.getString();
+        n.x = b.getInt();
+        n.y = b.getInt();
+        n.z = b.getByte();
+        _npc.add(n);
+      }
+    }
+  }
+  
+  private void deserialize02(Buffer b, boolean full) {
+    _sprite.clear();
+    _item.clear();
+    _npc.clear();
+    
+    _x = b.getInt();
+    _y = b.getInt();
+    
+    int sizeZ = b.getInt();
+    int sizeX = b.getInt();
+    int sizeY = b.getInt();
+    int sizeXA = b.getInt();
+    int sizeYA = b.getInt();
+    
+    int spriteSize = 0, itemSize = 0, npcSize = 0;
+    
+    if(full) {
+      spriteSize = b.getInt();
+      itemSize = b.getInt();
+      npcSize = b.getInt();
+    }
+    
+    int maxX = sizeX > Settings.Map.Tile.Count() ? Settings.Map.Tile.Count() : sizeX;
+    int maxY = sizeY > Settings.Map.Tile.Count() ? Settings.Map.Tile.Count() : sizeY;
+    int maxZ = sizeZ > Settings.Map.Depth() ? Settings.Map.Depth() : sizeZ;
+    int maxXA = sizeXA > (Settings.Map.Attrib.Count()) ? (Settings.Map.Attrib.Count()) : sizeXA;
+    int maxYA = sizeYA > (Settings.Map.Attrib.Count()) ? (Settings.Map.Attrib.Count()) : sizeYA;
+    
+    _layer = new Layer[Settings.Map.Depth()];
+    
+    for(int z = 0; z < maxZ; z++) {
+      _layer[z] = new Layer();
+      
+      for(int x = 0; x < maxX; x++) {
+        for(int y = 0; y < maxY; y++) {
+          _layer[z]._tile[x][y]._x = b.getByte();
+          _layer[z]._tile[x][y]._y = b.getByte();
+          _layer[z]._tile[x][y]._tileset = b.getByte();
+          _layer[z]._tile[x][y]._a = b.getByte();
+        }
+      }
+      
+      for(int x = 0; x < maxXA; x++) {
+        for(int y = 0; y < maxYA; y++) {
+          _layer[z]._attrib[x][y]._type = b.getByte();
+        }
+      }
+    }
+    
+    if(full) {
+      for(int i = 0; i < spriteSize; i++) {
+        Sprite s = new Sprite();
+        s.file = b.getString();
+        s.anim = b.getString();
+        s.x = b.getInt();
+        s.y = b.getInt();
+        s.z = b.getByte();
+        _sprite.add(s);
+      }
+      
+      for(int i = 0; i < itemSize; i++) {
+        Item item = new Item();
+        item.file = b.getString();
+        item.val = b.getInt();
+        item.x = b.getInt();
+        item.y = b.getInt();
+        item.z = b.getByte();
+        _item.add(item);
+      }
+      
+      for(int i = 0; i < npcSize; i++) {
+        NPC n = new NPC();
+        n.file = b.getString();
+        n.x = b.getInt();
+        n.y = b.getInt();
+        n.z = b.getByte();
         _npc.add(n);
       }
     }
@@ -268,17 +351,17 @@ public class Map extends GameData {
   }
   
   public static class Data {
-    public String _file;
-    public int _x, _y;
-    public byte _z;
+    public String file;
+    public int x, y;
+    public byte z;
   }
   
   public static class Sprite extends Data {
-    
+    public String anim;
   }
   
   public static class Item extends Data {
-    public int _val;
+    public int val;
   }
   
   public static class NPC extends Data {
