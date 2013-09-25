@@ -104,6 +104,11 @@ public class Character implements Entity.Source {
     stats = new Stats();
     inv = new Inv[Settings.Player.Inventory.Size()];
     equip = new Equip();
+    
+    if(account.charNames == null) {
+      account.charNames = new ArrayList<>();
+    }
+    
     account.charNames.add(this);
     
     for(int i = 0; i < inv.length; i++) {

@@ -92,6 +92,8 @@ public class Login extends Packet {
           b.writeShort(c.name().length());
           b.writeBytes(c.name().getBytes());
         }
+      } else {
+        b.writeInt(0);
       }
       
       return b;
